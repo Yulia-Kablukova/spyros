@@ -1,0 +1,28 @@
+{
+  "name": "spyros",
+  "private": true,
+  "version": "0.0.0",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "lint": "eslint --ext .js,.vue --ignore-path .gitignore --fix src",
+    "format": "prettier .  --write"
+  },
+  "dependencies": {
+    "maska": "^2.1.10",
+    "moment": "^2.29.4",
+    "sass": "^1.69.5",
+    "vue": "^3.3.4"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-vue": "^4.2.3",
+    "eslint": "^8.52.0",
+    "eslint-config-prettier": "^9.0.0",
+    "eslint-plugin-vue": "^9.18.1",
+    "prettier": "3.0.3",
+    "vite": "^4.4.5",
+    "vite-plugin-eslint": "^1.8.1"
+  },
+  "license": "UNLICENSED"
+}
