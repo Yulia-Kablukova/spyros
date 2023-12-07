@@ -10,6 +10,7 @@
     "format": "prettier .  --write"
   },
   "dependencies": {
+    "@vuepic/vue-datepicker": "^7.3.0",
     "maska": "^2.1.10",
     "moment": "^2.29.4",
     "sass": "^1.69.5",

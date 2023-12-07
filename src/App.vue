@@ -4,15 +4,15 @@ import { vMaska } from "maska";
 
 //const task = ref("");
 const task = ref(
-  "3,5 км(до 22)+500 м(до 27)(пульс)+упражнения+1х50 м-б.у.+3х100 м-с.у.(через 100 м(до 22))+1 км(до 27)(4:50)+100 м(до 22)+2х2 км(до 27)(4:50)(через 200 м(до 22))+400 м(до 22)+8х200 м-с.у.(через 200 м(до 22))+2 км(до 22)+п+с+р+с-д+ноги(1 серия)+массаж(при необходимости)+баня(при необходимости)",
+  "2 км(до 22)+7 км(до 27)(5:00)(пульс)+упражнения+2хсиловая нагрузка(1)3х1 разу-полный присед с весом,2)3х1 разу-полуприсед с весом,3)3х1 разу-выпрыгивание с полуприседа с весом,4)3х1 разу-зашагивание на платформу с весом с выпрыгиванием вверх на левой ноге,5)3х1 разу-зашагивание на платформу с весом с выпрыгиванием вверх на правой ноге,6)3х1 разу-пистолетик на левой ноге,7)3х1 разу-пистолетик на правой ноге,8)7х1 разу-прыжок через барьер,9)3х1 разу-выпрыгивание с весом из положения стоя,10)3х1 разу-бросок веса вперёд из полуприседа,11)3х1 разу-прыжок из полного приседа на платформу с выпрыгиванием на ней вверх из полуприседа)+2 км(до 22)+п+с+р+с-д+ноги(1 серия)+массаж(при необходимости)+баня(при необходимости)",
 );
 const subtasks = ref([]);
 const results = ref([]);
 const dailyReportData = ref({
-  date: null,
-  time: null,
+  date: new Date(),
+  time: "08:00",
   place: null,
-  state: Array(3),
+  states: Array(3),
   comment: null,
 });
 const report = ref("");
@@ -138,7 +138,7 @@ const templates = ref([
     type: 22,
     regexp:
       /^([0-9]+х)?силовая нагрузка\(1\)[0-9]+х1 разу-полный присед с весом,2\)[0-9]+х1 разу-полуприсед с весом,3\)[0-9]+х1 разу-выпрыгивание с полуприседа с весом,4\)[0-9]+х1 разу-зашагивание на платформу с весом с выпрыгиванием вверх на левой ноге,5\)[0-9]+х1 разу-зашагивание на платформу с весом с выпрыгиванием вверх на правой ноге,6\)[0-9]+х1 разу-пистолетик на левой ноге,7\)[0-9]+х1 разу-пистолетик на правой ноге,8\)[0-9]+х1 разу-прыжок через барьер,9\)[0-9]+х1 разу-выпрыгивание с весом из положения стоя,10\)[0-9]+х1 разу-бросок веса вперёд из полуприседа,11\)[0-9]+х1 разу-прыжок из полного приседа на платформу с выпрыгиванием на ней вверх из полуприседа\)/,
-    resultsPerSeries: 0,
+    resultsPerSeries: 1,
   },
   {
     type: 23,
@@ -224,6 +224,9 @@ const handleResultsFill = () => {
           case 12:
             parseType12(match);
             break;
+          case 22:
+            parseType22(match);
+            break;
           default:
             parseDefault(match, template);
             break;
@@ -263,7 +266,7 @@ const parseType2 = () => {
 };
 
 const parseType3 = () => {
-  results.value.push([3, undefined, undefined]);
+  results.value.push([3, undefined]);
   subtasks.value.push({
     match: "пресс",
     type: 3,
@@ -271,7 +274,7 @@ const parseType3 = () => {
     distance: null,
   });
 
-  results.value.push([3, undefined, undefined]);
+  results.value.push([3, undefined]);
   subtasks.value.push({
     match: "спина",
     type: 3,
@@ -279,7 +282,7 @@ const parseType3 = () => {
     distance: null,
   });
 
-  results.value.push([3, undefined, undefined]);
+  results.value.push([3, undefined]);
   subtasks.value.push({
     match: "руки",
     type: 3,
@@ -287,7 +290,7 @@ const parseType3 = () => {
     distance: null,
   });
 
-  results.value.push([1, undefined, undefined]);
+  results.value.push([1, undefined]);
   subtasks.value.push({
     match: "стато-динамика",
     type: 3,
@@ -354,6 +357,93 @@ const parseType12 = (match) => {
     type: 12,
     resultsCount: 1,
     distance,
+  });
+};
+
+const parseType22 = (match) => {
+  const seriesCount = match.match(/^[0-9]+/);
+
+  results.value.push([seriesCount, 3, undefined]);
+  subtasks.value.push({
+    match: "Полный присед с весом",
+    type: 22,
+    resultsCount: 3,
+    distance: null,
+  });
+
+  results.value.push([seriesCount, 3, undefined]);
+  subtasks.value.push({
+    match: "полуприсед с весом",
+    type: 22,
+    resultsCount: 3,
+    distance: null,
+  });
+
+  results.value.push([seriesCount, 3, undefined]);
+  subtasks.value.push({
+    match: "выпрыгивание с полуприседа с весом",
+    type: 22,
+    resultsCount: 3,
+    distance: null,
+  });
+
+  results.value.push([seriesCount, 3, undefined]);
+  subtasks.value.push({
+    match:
+      "зашагивание на платформу с весом с выпрыгиванием вверх на левой ноге",
+    type: 22,
+    resultsCount: 3,
+    distance: null,
+  });
+
+  results.value.push([seriesCount, 3, undefined]);
+  subtasks.value.push({
+    match:
+      "зашагивание на платформу с весом с выпрыгиванием вверх на правой ноге",
+    type: 22,
+    resultsCount: 3,
+    distance: null,
+  });
+
+  results.value.push([seriesCount, 3]);
+  subtasks.value.push({
+    match: "пистолетик на левой ноге",
+    type: 22,
+    resultsCount: 2,
+    distance: null,
+  });
+
+  results.value.push([seriesCount, 3]);
+  subtasks.value.push({
+    match: "пистолетик на правой ноге",
+    type: 22,
+    resultsCount: 2,
+    distance: null,
+  });
+
+  results.value.push([seriesCount, 7]);
+  subtasks.value.push({
+    match: "прыжок через барьер",
+    type: 22,
+    resultsCount: 2,
+    distance: null,
+  });
+
+  results.value.push([seriesCount, 3, undefined]);
+  subtasks.value.push({
+    match: "выпрыгивание с весом из положения стоя",
+    type: 22,
+    resultsCount: 3,
+    distance: null,
+  });
+
+  results.value.push([seriesCount, 3]);
+  subtasks.value.push({
+    match:
+      "прыжок из полного приседа на платформу с выпрыгиванием на ней вверх из полуприседа",
+    type: 22,
+    resultsCount: 2,
+    distance: null,
   });
 };
 
@@ -457,7 +547,41 @@ const getFormattedMatch = (match) => {
         >
           <span>{{ getFormattedMatch(subtask.match) }} *</span>
 
-          <div class="generator__result-inputs">
+          <div v-if="subtask.type === 2" class="generator__result-inputs">
+            <input
+              v-for="(result, resultIndex) in results[index]"
+              :key="`${index}-${resultIndex}`"
+              v-model="results[index][resultIndex]"
+            />
+          </div>
+
+          <div v-else-if="subtask.type === 3" class="generator__result-inputs">
+            <input v-model="results[index][0]" placeholder="3" />
+
+            <span>x</span>
+
+            <input v-model="results[index][1]" placeholder="20" />
+          </div>
+
+          <div
+            v-else-if="subtask.type === 4 || subtask.type === 22"
+            class="generator__result-inputs"
+          >
+            <input v-model="results[index][0]" placeholder="3" />
+
+            <span>x</span>
+
+            <input v-model="results[index][1]" placeholder="20" />
+
+            <input
+              v-if="results[index].length > 2"
+              v-model="results[index][2]"
+              placeholder="10 кг"
+              class="generator__result-input--width-1"
+            />
+          </div>
+
+          <div v-else class="generator__result-inputs">
             <input
               v-for="(result, resultIndex) in results[index]"
               :key="`${index}-${resultIndex}`"
@@ -468,6 +592,70 @@ const getFormattedMatch = (match) => {
               data-maska-reversed
             />
           </div>
+        </div>
+      </div>
+
+      <div v-if="subtasks.length" class="generator__daily-report">
+        <h2>Информация для ежедневного отчета (опционально)</h2>
+
+        <div class="generator__result-container">
+          <span>Дата</span>
+
+          <vue-date-picker
+            v-model="dailyReportData.date"
+            format="dd.MM"
+            :teleport="true"
+            :clearable="false"
+            disable-year-select
+            locale="ru"
+            dark
+            position="left"
+            input-class-name="generator__date-time-picker"
+          />
+        </div>
+
+        <div class="generator__result-container">
+          <span>Время</span>
+
+          <vue-date-picker
+            v-model="dailyReportData.time"
+            model-type="HH:mm"
+            format="HH:mm"
+            time-picker
+            :teleport="true"
+            :clearable="false"
+            locale="ru"
+            dark
+            position="left"
+            input-class-name="generator__date-time-picker"
+          />
+        </div>
+
+        <div class="generator__result-container">
+          <span>Место</span>
+
+          <input
+            v-model="dailyReportData.place"
+            class="generator__result-input--width-2"
+          />
+        </div>
+
+        <div class="generator__result-container">
+          <span>Оценка самочувствия</span>
+
+          <div class="generator__result-inputs">
+            <input
+              v-for="(state, stateIndex) in dailyReportData.states"
+              :key="`state-${stateIndex}`"
+              v-model="dailyReportData.states[stateIndex]"
+            />
+          </div>
+        </div>
+
+        <div class="generator__result-container">
+          <span>Комментарий</span>
+
+          <textarea v-model="dailyReportData.comment" />
         </div>
       </div>
 
@@ -522,6 +710,47 @@ const getFormattedMatch = (match) => {
     display: flex;
     gap: 15px;
     flex-wrap: wrap;
+    align-items: center;
   }
+
+  &__result-input {
+    &--width-1 {
+      width: 200px;
+    }
+
+    &--width-2 {
+      width: 230px;
+    }
+  }
+
+  &__daily-report {
+    margin-top: 30px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+}
+</style>
+
+<style lang="scss">
+.generator__date-time-picker {
+  border-radius: 6px;
+  border: #c1c1c1 1px solid !important;
+  background-color: transparent;
+  height: 40px;
+  width: 120px !important;
+  color: inherit;
+  font-size: inherit;
+}
+
+.dp__menu {
+  border-radius: 6px;
+  border: #c1c1c1 1px solid !important;
+  margin-left: -70px;
+}
+
+.dp__arrow_top {
+  border-inline-end: #c1c1c1 1px solid !important;
+  border-top: #c1c1c1 1px solid !important;
 }
 </style>
