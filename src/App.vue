@@ -810,7 +810,7 @@ const handleErrorPopupClose = () => {
 <template>
   <div>
     <header>
-      <img src="images/header.png" alt="" />
+      <img src="../public/images/header.png" alt="" />
     </header>
 
     <div class="content">
@@ -969,7 +969,7 @@ const handleErrorPopupClose = () => {
       <div v-if="errors.isInvalidTask" class="generator__error-popup">
         <div class="generator__error-container">
           <img
-            src="icons/close.png"
+            src="../public/icons/close.png"
             alt=""
             class="generator__close-icon"
             @click="handleErrorPopupClose"
