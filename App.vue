@@ -123,19 +123,19 @@ const templates = ref([
   {
     type: 20,
     regexp:
-        /^([0-9]+х)?\([0-9]+х\([0-9]+ раз-выпады в гору\+[0-9]+ м-олень в гору\([0-9]+ м-левая\+[0-9]+ м-правая\)\+[0-9]+ м-очень спокойная трусца под гору\+[0-9]+ м-с\.у\. в гору силовым бегом\+[0-9]+ раз-выпрыгивания с полуприседов вверх на месте\+[0-9]+ м-очень спокойная трусца под гору\)\+[0-9]+ раз-выпады в гору\+[0-9]+ раз-лягушка с полуприседов в гору\+[0-9]+ м-бег в гору с высоким подниманием бёдер\+[0-9]+ м-очень спокойная трусца под гору\+[0-9]+ м-прыжки в гору на стопах\+[0-9]+ м-очень спокойная трусца под гору\+[0-9]+ м-частый бег в гору\+[0-9]+ м-очень спокойная трусца под гору\+[0-9]+ м-с\.у\. в гору\)(\(через [0-9]+ м\(до 22\)\))?/,
+      /^([0-9]+х)?\([0-9]+х\([0-9]+ раз-выпады в гору\+[0-9]+ м-олень в гору\([0-9]+ м-левая\+[0-9]+ м-правая\)\+[0-9]+ м-очень спокойная трусца под гору\+[0-9]+ м-с\.у\. в гору силовым бегом\+[0-9]+ раз-выпрыгивания с полуприседов вверх на месте\+[0-9]+ м-очень спокойная трусца под гору\)\+[0-9]+ раз-выпады в гору\+[0-9]+ раз-лягушка с полуприседов в гору\+[0-9]+ м-бег в гору с высоким подниманием бёдер\+[0-9]+ м-очень спокойная трусца под гору\+[0-9]+ м-прыжки в гору на стопах\+[0-9]+ м-очень спокойная трусца под гору\+[0-9]+ м-частый бег в гору\+[0-9]+ м-очень спокойная трусца под гору\+[0-9]+ м-с\.у\. в гору\)(\(через [0-9]+ м\(до 22\)\))?/,
     resultsPerSeries: 1,
   },
   {
     type: 21,
     regexp:
-        /^([0-9]+х)?[0-9]+ м\([0-9]+ раз-прыжки в выпадах на месте со сменой ног в воздухе\+[0-9]+ м-многоскоки в гору\+[0-9]+ м-с\.у\. в гору силовым бегом\+[0-9]+ раз-выпрыгивания вверх с полных приседов на месте\+[0-9]+ м-очень спокойная трусца под гору\+[0-9]+ раз-прыжки в выпадах на месте со сменой ног в воздухе\+[0-9]+ м-многоскоки в гору\+[0-9]+ м-с\.у\. в гору\+[0-9]+ раз-выпрыгивания вверх с полных приседов на месте\+[0-9]+ м-очень спокойная трусца под гору\+[0-9]+ раз-прыжки в выпадах на месте со сменой ног в воздухе\+[0-9]+ м-прыжки на одной ноге в гору\([0-9]+ м-на левой,[0-9]+ м-на правой\)\+[0-9]+ м-многоскоки в гору\+[0-9]+ м-с\.у\. в гору\)(\(через [0-9]+ м\(до 22\)\))?/,
+      /^([0-9]+х)?[0-9]+ м\([0-9]+ раз-прыжки в выпадах на месте со сменой ног в воздухе\+[0-9]+ м-многоскоки в гору\+[0-9]+ м-с\.у\. в гору силовым бегом\+[0-9]+ раз-выпрыгивания вверх с полных приседов на месте\+[0-9]+ м-очень спокойная трусца под гору\+[0-9]+ раз-прыжки в выпадах на месте со сменой ног в воздухе\+[0-9]+ м-многоскоки в гору\+[0-9]+ м-с\.у\. в гору\+[0-9]+ раз-выпрыгивания вверх с полных приседов на месте\+[0-9]+ м-очень спокойная трусца под гору\+[0-9]+ раз-прыжки в выпадах на месте со сменой ног в воздухе\+[0-9]+ м-прыжки на одной ноге в гору\([0-9]+ м-на левой,[0-9]+ м-на правой\)\+[0-9]+ м-многоскоки в гору\+[0-9]+ м-с\.у\. в гору\)(\(через [0-9]+ м\(до 22\)\))?/,
     resultsPerSeries: 1,
   },
   {
     type: 22,
     regexp:
-        /^([0-9]+х)?силовая нагрузка\(1\)[0-9]+х1 разу-полный присед с весом,2\)[0-9]+х1 разу-полуприсед с весом,3\)[0-9]+х1 разу-выпрыгивание с полуприседа с весом,4\)[0-9]+х1 разу-зашагивание на платформу с весом с выпрыгиванием вверх на левой ноге,5\)[0-9]+х1 разу-зашагивание на платформу с весом с выпрыгиванием вверх на правой ноге,6\)[0-9]+х1 разу-пистолетик на левой ноге,7\)[0-9]+х1 разу-пистолетик на правой ноге,8\)[0-9]+х1 разу-прыжок через барьер,9\)[0-9]+х1 разу-выпрыгивание с весом из положения стоя,10\)[0-9]+х1 разу-бросок веса вперёд из полуприседа,11\)[0-9]+х1 разу-прыжок из полного приседа на платформу с выпрыгиванием на ней вверх из полуприседа\)/,
+      /^([0-9]+х)?силовая нагрузка\(1\)[0-9]+х1 разу-полный присед с весом,2\)[0-9]+х1 разу-полуприсед с весом,3\)[0-9]+х1 разу-выпрыгивание с полуприседа с весом,4\)[0-9]+х1 разу-зашагивание на платформу с весом с выпрыгиванием вверх на левой ноге,5\)[0-9]+х1 разу-зашагивание на платформу с весом с выпрыгиванием вверх на правой ноге,6\)[0-9]+х1 разу-пистолетик на левой ноге,7\)[0-9]+х1 разу-пистолетик на правой ноге,8\)[0-9]+х1 разу-прыжок через барьер,9\)[0-9]+х1 разу-выпрыгивание с весом из положения стоя,10\)[0-9]+х1 разу-бросок веса вперёд из полуприседа,11\)[0-9]+х1 разу-прыжок из полного приседа на платформу с выпрыгиванием на ней вверх из полуприседа\)/,
     resultsPerSeries: 1,
   },
   {
@@ -146,13 +146,13 @@ const templates = ref([
   {
     type: 24,
     regexp:
-        /^ вкл\. ([0-9]+х[0-9]+ м-многоскоки в любые моменты и )?[0-9]+х[0-9]+ м-с\.у\. (под тягун )?в любые моменты/,
+      /^ вкл\. ([0-9]+х[0-9]+ м-многоскоки в любые моменты и )?[0-9]+х[0-9]+ м-с\.у\. (под тягун )?в любые моменты/,
     resultsPerSeries: 0,
   },
   {
     type: 25,
     regexp:
-        /^[0-9]+х\([0-9]+ раз-прыжки в выпадах на месте со сменой ног в воздухе\+[0-9]+ м-прыжки на одной ноге в гору\([0-9]+ м-на левой,[0-9]+ м-на правой\)\+[0-9]+ м-многоскоки в гору\)/,
+      /^[0-9]+х\([0-9]+ раз-прыжки в выпадах на месте со сменой ног в воздухе\+[0-9]+ м-прыжки на одной ноге в гору\([0-9]+ м-на левой,[0-9]+ м-на правой\)\+[0-9]+ м-многоскоки в гору\)/,
     resultsPerSeries: 0,
   },
   {
@@ -163,13 +163,13 @@ const templates = ref([
   {
     type: 27,
     regexp:
-        /^[0-9]+х[0-9]+ м-с\.у\.\(растянуть до старта(,закончить за 7-8 минут до старта)?\)/,
+      /^[0-9]+х[0-9]+ м-с\.у\.\(растянуть до старта(,закончить за 7-8 минут до старта)?\)/,
     resultsPerSeries: 0,
   },
   {
     type: 28,
     regexp:
-        /^([0-9]+х)?[0-9]+ м-темповой бег в гору широкими и мощными шагами с проталкиваниями/,
+      /^([0-9]+х)?[0-9]+ м-темповой бег в гору широкими и мощными шагами с проталкиваниями/,
     resultsPerSeries: 1,
   },
   /*  {
@@ -302,8 +302,8 @@ const addType1ReportData = (index) => {
   }
 
   report.value += `${getPace(
-      results.value[index][0],
-      subtasks.value[index].distance,
+    results.value[index][0],
+    subtasks.value[index].distance,
   )}\n`;
 };
 
@@ -320,8 +320,8 @@ const addType2ReportData = (index) => {
 
 const addType3ReportData = (index) => {
   if (
-      subtasks.value[index - 1]?.type === 3 ||
-      subtasks.value[index - 1]?.type === 4
+    subtasks.value[index - 1]?.type === 3 ||
+    subtasks.value[index - 1]?.type === 4
   ) {
     report.value += subtasks.value[index].match;
   } else {
@@ -331,8 +331,8 @@ const addType3ReportData = (index) => {
   report.value += `(${results.value[index][0]}х${results.value[index][1]})`;
 
   if (
-      subtasks.value[index + 1]?.type === 3 ||
-      subtasks.value[index + 1]?.type === 4
+    subtasks.value[index + 1]?.type === 3 ||
+    subtasks.value[index + 1]?.type === 4
   ) {
     report.value += `+`;
   } else {
@@ -342,8 +342,8 @@ const addType3ReportData = (index) => {
 
 const addType4ReportData = (index) => {
   if (
-      subtasks.value[index - 1]?.type === 3 ||
-      subtasks.value[index - 1]?.type === 4
+    subtasks.value[index - 1]?.type === 3 ||
+    subtasks.value[index - 1]?.type === 4
   ) {
     report.value += subtasks.value[index].match;
   } else {
@@ -358,8 +358,8 @@ const addType4ReportData = (index) => {
   }
 
   if (
-      subtasks.value[index + 1]?.type === 3 ||
-      subtasks.value[index + 1]?.type === 4
+    subtasks.value[index + 1]?.type === 3 ||
+    subtasks.value[index + 1]?.type === 4
   ) {
     report.value += `+`;
   } else {
@@ -370,13 +370,13 @@ const addType4ReportData = (index) => {
 const addType11ReportData = (index) => {
   if (subtasks.value[index].resultsCount === 1) {
     report.value += `${subtasks.value[index].distance * 1000} м:${getAverage(
-        index,
+      index,
     )}\n`;
     return;
   }
 
   report.value += `${subtasks.value[index].distance * 1000} м(ср.)=${getAverage(
-      index,
+    index,
   )}\n`;
 };
 
@@ -417,12 +417,12 @@ const addDefaultTypeReportData = (index) => {
 
   if (subtasks.value[index].resultsCount === 1) {
     if (
-        subtasks.value[index].match.match(/ км/) &&
-        subtasks.value[index].distance > 2
+      subtasks.value[index].match.match(/ км/) &&
+      subtasks.value[index].distance > 2
     ) {
       buffer.value += `1 км(ср.)=${getPace(
-          results.value[index][0],
-          subtasks.value[index].distance,
+        results.value[index][0],
+        subtasks.value[index].distance,
       )}\n`;
     }
 
@@ -431,37 +431,37 @@ const addDefaultTypeReportData = (index) => {
 
   if (series) {
     report.value += `${subtasks.value[index].match.slice(
-        series[0].length,
+      series[0].length,
     )}(ср.)=${getAverage(index)}\n`;
   } else {
     report.value += `${subtasks.value[index].match}(ср.)=${getAverage(
-        index,
+      index,
     )}\n`;
   }
 };
 
 const getAverage = (index) => {
   const averageInSeconds =
-      results.value[index].reduce((sum, result) => {
-        let totalSeconds = 0;
-        let factor = 1;
+    results.value[index].reduce((sum, result) => {
+      let totalSeconds = 0;
+      let factor = 1;
 
-        result
-            .match(/[0-9]+(\.[0-9]+)*/g)
-            .reverse()
-            .forEach((el) => {
-              totalSeconds += parseFloat(el) * factor;
-              factor *= 60;
-            });
+      result
+        .match(/[0-9]+(\.[0-9]+)*/g)
+        .reverse()
+        .forEach((el) => {
+          totalSeconds += parseFloat(el) * factor;
+          factor *= 60;
+        });
 
-        return sum + totalSeconds;
-      }, 0) / results.value[index].length;
+      return sum + totalSeconds;
+    }, 0) / results.value[index].length;
 
   const resultMinutes = (averageInSeconds / 60) >> 0;
   const resultSeconds = (averageInSeconds - resultMinutes * 60)
-      .toFixed(1)
-      .toString()
-      .replace(".", ",");
+    .toFixed(1)
+    .toString()
+    .replace(".", ",");
   const leadingZero = resultSeconds.length < 4 ? "0" : "";
 
   if (!resultMinutes) {
@@ -477,7 +477,7 @@ const getDailyReportData = () => {
   }
 
   let dailyReportBeginning = `Отчет ${getDateFormatted()}\nВ: ${
-      dailyReportData.value.time
+    dailyReportData.value.time
   }\n`;
 
   if (dailyReportData.value.place) {
@@ -489,9 +489,9 @@ const getDailyReportData = () => {
   report.value = dailyReportBeginning + report.value;
 
   if (
-      dailyReportData.value.states[0] &&
-      dailyReportData.value.states[1] &&
-      dailyReportData.value.states[2]
+    dailyReportData.value.states[0] &&
+    dailyReportData.value.states[1] &&
+    dailyReportData.value.states[2]
   ) {
     report.value += `С: ${dailyReportData.value.states[0]}\nФ: ${dailyReportData.value.states[1]}\nМ: ${dailyReportData.value.states[2]}\n`;
   }
@@ -505,7 +505,7 @@ const getDateFormatted = () => {
   const daysOfWeek = ["Пн", "Вт", "Ср", "Чт", "Пт", "Сб", "Вс"];
   const dayNumber = moment(dailyReportData.value.date, "DD.MM.YYYY").day();
   const date = moment(dailyReportData.value.date, "DD.MM.YYYY").format(
-      "DD.MM.YYYY",
+    "DD.MM.YYYY",
   );
 
   return `${date}(${daysOfWeek[dayNumber - 1]})`;
@@ -600,8 +600,8 @@ const parseType12 = (match) => {
 
   const sameSubtaskIndex = subtasks.value.findIndex((subtask) => {
     return (
-        (subtask.type === 11 || subtask.type === 12) &&
-        subtask.distance === distance
+      (subtask.type === 11 || subtask.type === 12) &&
+      subtask.distance === distance
     );
   });
 
@@ -670,7 +670,7 @@ const parseType22 = (match) => {
   results.value.push([seriesCount, 3, undefined]);
   subtasks.value.push({
     match:
-        "зашагивание на платформу с весом с выпрыгиванием вверх на левой ноге",
+      "зашагивание на платформу с весом с выпрыгиванием вверх на левой ноге",
     type: 22,
     resultsCount: 3,
     distance: null,
@@ -679,7 +679,7 @@ const parseType22 = (match) => {
   results.value.push([seriesCount, 3, undefined]);
   subtasks.value.push({
     match:
-        "зашагивание на платформу с весом с выпрыгиванием вверх на правой ноге",
+      "зашагивание на платформу с весом с выпрыгиванием вверх на правой ноге",
     type: 22,
     resultsCount: 3,
     distance: null,
@@ -728,7 +728,7 @@ const parseType22 = (match) => {
   results.value.push([seriesCount, 3]);
   subtasks.value.push({
     match:
-        "прыжок из полного приседа на платформу с выпрыгиванием на ней вверх из полуприседа",
+      "прыжок из полного приседа на платформу с выпрыгиванием на ней вверх из полуприседа",
     type: 22,
     resultsCount: 2,
     distance: null,
@@ -737,12 +737,12 @@ const parseType22 = (match) => {
 
 const parseDefault = (match, template) => {
   const matchBeginning = match.match(
-      /^([0-9]+х)?[0-9]+(,[0-9]?)? (км)?(м)?/,
+    /^([0-9]+х)?[0-9]+(,[0-9]?)? (км)?(м)?/,
   )[0];
 
   const resultsCount = getResultsCount(
-      matchBeginning,
-      template.resultsPerSeries,
+    matchBeginning,
+    template.resultsPerSeries,
   );
 
   results.value.push(Array(resultsCount));
@@ -783,12 +783,12 @@ const getPace = (time, distance) => {
   let factor = 1;
 
   time
-      .match(/[0-9]+(\.[0-9]+)*/g)
-      .reverse()
-      .forEach((el) => {
-        totalSeconds += parseFloat(el) * factor;
-        factor *= 60;
-      });
+    .match(/[0-9]+(\.[0-9]+)*/g)
+    .reverse()
+    .forEach((el) => {
+      totalSeconds += parseFloat(el) * factor;
+      factor *= 60;
+    });
 
   const paceInSeconds = Math.round(totalSeconds / distance);
   const resultMinutes = (paceInSeconds / 60) >> 0;
@@ -810,7 +810,7 @@ const handleErrorPopupClose = () => {
 <template>
   <div>
     <header>
-      <img src="/images/header.png" alt="" />
+      <img src="/header.png" alt="" />
     </header>
 
     <div class="content">
@@ -838,17 +838,17 @@ const handleErrorPopupClose = () => {
         </p>
 
         <div
-            v-for="(subtask, index) in subtasks"
-            :key="index"
-            class="generator__result-container"
+          v-for="(subtask, index) in subtasks"
+          :key="index"
+          class="generator__result-container"
         >
           <span>{{ getFormattedMatch(subtask.match) }} *</span>
 
           <div v-if="subtask.type === 2" class="generator__result-inputs">
             <input
-                v-for="(result, resultIndex) in results[index]"
-                :key="`${index}-${resultIndex}`"
-                v-model="results[index][resultIndex]"
+              v-for="(result, resultIndex) in results[index]"
+              :key="`${index}-${resultIndex}`"
+              v-model="results[index][resultIndex]"
             />
           </div>
 
@@ -861,8 +861,8 @@ const handleErrorPopupClose = () => {
           </div>
 
           <div
-              v-else-if="subtask.type === 4 || subtask.type === 22"
-              class="generator__result-inputs"
+            v-else-if="subtask.type === 4 || subtask.type === 22"
+            class="generator__result-inputs"
           >
             <input v-model="results[index][0]" placeholder="3" />
 
@@ -871,22 +871,22 @@ const handleErrorPopupClose = () => {
             <input v-model="results[index][1]" placeholder="20" />
 
             <input
-                v-if="results[index].length > 2"
-                v-model="results[index][2]"
-                placeholder="10 кг"
-                class="generator__result-input--width-1"
+              v-if="results[index].length > 2"
+              v-model="results[index][2]"
+              placeholder="10 кг"
+              class="generator__result-input--width-1"
             />
           </div>
 
           <div v-else class="generator__result-inputs">
             <input
-                v-for="(result, resultIndex) in results[index]"
-                :key="`${index}-${resultIndex}`"
-                v-model="results[index][resultIndex]"
-                v-maska
-                data-maska="00:00:##.#"
-                data-maska-tokens="0:[0-9]:optional|::::optional"
-                data-maska-reversed
+              v-for="(result, resultIndex) in results[index]"
+              :key="`${index}-${resultIndex}`"
+              v-model="results[index][resultIndex]"
+              v-maska
+              data-maska="00:00:##.#"
+              data-maska-tokens="0:[0-9]:optional|::::optional"
+              data-maska-reversed
             />
           </div>
         </div>
@@ -899,15 +899,15 @@ const handleErrorPopupClose = () => {
           <span>Дата</span>
 
           <vue-date-picker
-              v-model="dailyReportData.date"
-              format="dd.MM.yyyy"
-              :teleport="true"
-              :clearable="false"
-              disable-year-select
-              locale="ru"
-              dark
-              position="left"
-              input-class-name="generator__date-time-picker"
+            v-model="dailyReportData.date"
+            format="dd.MM.yyyy"
+            :teleport="true"
+            :clearable="false"
+            disable-year-select
+            locale="ru"
+            dark
+            position="left"
+            input-class-name="generator__date-time-picker"
           />
         </div>
 
@@ -915,16 +915,16 @@ const handleErrorPopupClose = () => {
           <span>Время</span>
 
           <vue-date-picker
-              v-model="dailyReportData.time"
-              model-type="HH:mm"
-              format="HH:mm"
-              time-picker
-              :teleport="true"
-              :clearable="false"
-              locale="ru"
-              dark
-              position="left"
-              input-class-name="generator__date-time-picker"
+            v-model="dailyReportData.time"
+            model-type="HH:mm"
+            format="HH:mm"
+            time-picker
+            :teleport="true"
+            :clearable="false"
+            locale="ru"
+            dark
+            position="left"
+            input-class-name="generator__date-time-picker"
           />
         </div>
 
@@ -932,8 +932,8 @@ const handleErrorPopupClose = () => {
           <span>Место</span>
 
           <input
-              v-model="dailyReportData.place"
-              class="generator__result-input--width-2"
+            v-model="dailyReportData.place"
+            class="generator__result-input--width-2"
           />
         </div>
 
@@ -942,9 +942,9 @@ const handleErrorPopupClose = () => {
 
           <div class="generator__result-inputs">
             <input
-                v-for="(state, stateIndex) in dailyReportData.states"
-                :key="`state-${stateIndex}`"
-                v-model="dailyReportData.states[stateIndex]"
+              v-for="(state, stateIndex) in dailyReportData.states"
+              :key="`state-${stateIndex}`"
+              v-model="dailyReportData.states[stateIndex]"
             />
           </div>
         </div>
@@ -957,9 +957,9 @@ const handleErrorPopupClose = () => {
       </div>
 
       <button
-          v-if="subtasks.length"
-          class="generator__button"
-          @click="handleGetReport"
+        v-if="subtasks.length"
+        class="generator__button"
+        @click="handleGetReport"
       >
         Получить отчет
       </button>
@@ -969,10 +969,10 @@ const handleErrorPopupClose = () => {
       <div v-if="errors.isInvalidTask" class="generator__error-popup">
         <div class="generator__error-container">
           <img
-              src="/icons/close.png"
-              alt=""
-              class="generator__close-icon"
-              @click="handleErrorPopupClose"
+            src="/close.png"
+            alt=""
+            class="generator__close-icon"
+            @click="handleErrorPopupClose"
           />
 
           <h1>Произошла ошибка</h1>
