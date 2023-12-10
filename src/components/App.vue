@@ -914,12 +914,7 @@ const handleErrorPopupClose = () => {
         <div class="generator__result-container">
           <span>Время</span>
 
-          <input
-            v-model="dailyReportData.time"
-            v-maska
-            data-maska="##:##"
-            data-maska-reversed
-          />
+          <input v-model="dailyReportData.time" v-maska data-maska="##:##" />
         </div>
 
         <div class="generator__result-container">
