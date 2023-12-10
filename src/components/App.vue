@@ -102,7 +102,7 @@ const templates = ref([
   },
   {
     type: 16,
-    regexp: /^([0-9]+х)?[0-9]+ м-с\.у\./,
+    regexp: /^([0-9]+х)?[0-9]+ м-с\.у\.( с акцентом на частоту)?/,
     resultsPerSeries: 1,
   },
   {
@@ -608,6 +608,8 @@ const parseType12 = (match) => {
   if (~sameSubtaskIndex) {
     results.value[sameSubtaskIndex].push(undefined);
     subtasks.value[sameSubtaskIndex].resultsCount++;
+    subtasks.value.push(subtasks.value.splice(sameSubtaskIndex, 1)[0]);
+    results.value.push(results.value.splice(sameSubtaskIndex, 1)[0]);
     return;
   }
 
@@ -912,17 +914,11 @@ const handleErrorPopupClose = () => {
         <div class="generator__result-container">
           <span>Время</span>
 
-          <vue-date-picker
+          <input
             v-model="dailyReportData.time"
-            model-type="HH:mm"
-            format="HH:mm"
-            time-picker
-            :teleport="true"
-            :clearable="false"
-            locale="ru"
-            dark
-            position="left"
-            input-class-name="generator__date-time-picker"
+            v-maska
+            data-maska="##:##"
+            data-maska-reversed
           />
         </div>
 
