@@ -200,7 +200,7 @@ const handleResultsFill = () => {
   results.value = [];
   errors.value.isInvalidTask = false;
 
-  let taskCopy = task.value;
+  let taskCopy = task.value.replaceAll("\n", "");
 
   while (taskCopy.length) {
     for (const index in templates.value) {
