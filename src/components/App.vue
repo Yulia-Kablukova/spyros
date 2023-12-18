@@ -37,7 +37,7 @@ const templates = ref([
   },
   {
     type: 3,
-    regexp: /^п\+с\+р\+с-д/,
+    regexp: /^П?п?\+с\+р\+с-д/,
     resultsPerSeries: 6,
   },
   {
@@ -172,6 +172,23 @@ const templates = ref([
       /^([0-9]+х)?[0-9]+ м-темповой бег в гору широкими и мощными шагами с проталкиваниями/,
     resultsPerSeries: 1,
   },
+  {
+    type: 29,
+    regexp:
+      /^([0-9]+х)?[0-9]+ м\([0-9]+ м-многоскоки в гору\+[0-9]+ м-с\.у\. в гору силовым бегом\)\(через [0-9]+ м\(до 22\)\)/,
+    resultsPerSeries: 0,
+  },
+  {
+    type: 30,
+    regexp:
+      /^([0-9]+х)?силовая нагрузка\(1\)[0-9]+х1 разу-полный присед с весом,2\)[0-9]+х1 разу-выпрыгивание с полуприседа с весом,3\)[0-9]+х1 разу-прыжок через барьер,4\)[0-9]+х1 разу-прыжок из полного приседа на платформу с выпрыгиванием на ней вверх из полуприседа;5\)[0-9]+х1 разу-полуприсед с весом;6\)[0-9]+х1 разу-бросок веса вперёд из полуприседа;7\)[0-9]+х1 разу-поднятие с весом на стопах\)/,
+    resultsPerSeries: 1,
+  },
+  {
+    type: 31,
+    regexp: /^([0-9]+х)?[0-9]+ раз(а)?-прыжки на носках на ступеньку и обратно/,
+    resultsPerSeries: 0,
+  },
   /*  {
     type: 28,
     regexp: /^[0-9]+(,[0-9]?)? км-соревнования/,
@@ -239,6 +256,9 @@ const handleResultsFill = () => {
           case 22:
             parseType22(match);
             break;
+          case 30:
+            parseType30(match);
+            break;
           default:
             parseDefault(match, template);
             break;
@@ -248,6 +268,7 @@ const handleResultsFill = () => {
       }
 
       if (+index === templates.value.length - 1) {
+        console.log(taskCopy);
         errors.value.isInvalidTask = true;
         taskCopy = "";
         subtasks.value = [];
@@ -279,6 +300,7 @@ const handleGetReport = () => {
         addType11ReportData(index);
         break;
       case 22:
+      case 30:
         addType22ReportData(index);
         break;
       default:
@@ -389,7 +411,7 @@ const addType22ReportData = (index) => {
 
   report.value += `(${results.value[index][0]}х${results.value[index][1]})`;
 
-  if (subtasks.value[index + 1]?.type === 22) {
+  if (subtasks.value[index + 1]?.type === subtasks.value[index].type) {
     report.value += `, `;
   } else {
     report.value += `\n`;
@@ -737,6 +759,67 @@ const parseType22 = (match) => {
   });
 };
 
+const parseType30 = (match) => {
+  const seriesCount = match.match(/^[0-9]+/);
+
+  results.value.push([seriesCount, 3, undefined]);
+  subtasks.value.push({
+    match: "Полный присед с весом",
+    type: 30,
+    resultsCount: 3,
+    distance: null,
+  });
+
+  results.value.push([seriesCount, 3, undefined]);
+  subtasks.value.push({
+    match: "выпрыгивание с полуприседа с весом",
+    type: 30,
+    resultsCount: 3,
+    distance: null,
+  });
+
+  results.value.push([seriesCount, 7]);
+  subtasks.value.push({
+    match: "прыжок через барьер",
+    type: 30,
+    resultsCount: 2,
+    distance: null,
+  });
+
+  results.value.push([seriesCount, 3]);
+  subtasks.value.push({
+    match:
+      "прыжок из полного приседа на платформу с выпрыгиванием на ней вверх из полуприседа",
+    type: 30,
+    resultsCount: 2,
+    distance: null,
+  });
+
+  results.value.push([seriesCount, 3, undefined]);
+  subtasks.value.push({
+    match: "полуприсед с весом",
+    type: 30,
+    resultsCount: 3,
+    distance: null,
+  });
+
+  results.value.push([seriesCount, 3, undefined]);
+  subtasks.value.push({
+    match: "бросок веса вперёд из полуприседа",
+    type: 30,
+    resultsCount: 3,
+    distance: null,
+  });
+
+  results.value.push([seriesCount, 3, undefined]);
+  subtasks.value.push({
+    match: "поднятие с весом на стопах",
+    type: 30,
+    resultsCount: 3,
+    distance: null,
+  });
+};
+
 const parseDefault = (match, template) => {
   const matchBeginning = match.match(
     /^([0-9]+х)?[0-9]+(,[0-9]?)? (км)?(м)?/,
@@ -861,7 +944,9 @@ const handleErrorPopupClose = () => {
           </div>
 
           <div
-            v-else-if="subtask.type === 4 || subtask.type === 22"
+            v-else-if="
+              subtask.type === 4 || subtask.type === 22 || subtask.type === 30
+            "
             class="generator__result-inputs"
           >
             <input v-model="results[index][0]" placeholder="3" />
