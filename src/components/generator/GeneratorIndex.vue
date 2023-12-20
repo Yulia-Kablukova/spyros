@@ -27,7 +27,7 @@ const handleResultsFill = () => {
 };
 
 const handleGetReport = () => {
-  report.value = getReportData(subtasks, results);
+  report.value = getReportData(subtasks, results, task, dailyReportData);
 };
 
 const getFormattedMatch = (match) => {

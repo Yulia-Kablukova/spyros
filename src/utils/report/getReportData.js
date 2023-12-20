@@ -4,7 +4,7 @@ import moment from "moment/moment";
 const report = ref("");
 const buffer = ref("");
 
-export const getReportData = (subtasks, results) => {
+export const getReportData = (subtasks, results, task, dailyReportData) => {
   subtasks.value.forEach(({ type }, index) => {
     switch (type) {
       case 1:
@@ -33,7 +33,7 @@ export const getReportData = (subtasks, results) => {
     }
   });
 
-  addDailyReportData();
+  addDailyReportData(task, dailyReportData);
 
   return report.value;
 };
@@ -191,7 +191,7 @@ const addDefaultTypeReportData = (subtasks, results, index) => {
   }
 };
 
-const addDailyReportData = (dailyReportData, task) => {
+const addDailyReportData = (task, dailyReportData) => {
   if (!dailyReportData.value.comment) {
     return;
   }
