@@ -36,8 +36,8 @@ export const templates = [
   },
   {
     type: 7,
-    resultsPerSeries: 0,
     regexp: /^упражнения/,
+    resultsPerSeries: 0,
   },
   {
     type: 8,

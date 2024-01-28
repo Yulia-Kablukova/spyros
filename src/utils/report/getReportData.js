@@ -1,10 +1,13 @@
 import { ref } from "vue";
 import moment from "moment/moment";
+import { AVERAGE_PACE } from "@/consts/report/timeTypes";
 
 const report = ref("");
 const buffer = ref("");
 
 export const getReportData = (subtasks, results, task, dailyReportData) => {
+  report.value = "";
+
   subtasks.value.forEach(({ type }, index) => {
     switch (type) {
       case 1:
@@ -49,10 +52,14 @@ const addType1ReportData = (subtasks, results, index) => {
     report.value += `Б=`;
   }
 
-  report.value += `${getPace(
-    results.value[index][0],
-    subtasks.value[index].distance,
-  )}\n`;
+  if (subtasks.value[index].timeType.value === AVERAGE_PACE.value) {
+    report.value += `${results.value[index][0]}\n`;
+  } else {
+    report.value += `${getPace(
+      getTotalTime(results.value[index]),
+      subtasks.value[index].distance,
+    )}\n`;
+  }
 };
 
 const addType2ReportData = (subtasks, results, index) => {
@@ -147,6 +154,11 @@ const addType22ReportData = (subtasks, results, index) => {
 };
 
 const addDefaultTypeReportData = (subtasks, results, index) => {
+  if (subtasks.value[index].timeType) {
+    addTimeTypeReportData(subtasks, results, index);
+    return;
+  }
+
   const series = subtasks.value[index].match.match(/^[0-9]+х/);
 
   if (series) {
@@ -170,10 +182,17 @@ const addDefaultTypeReportData = (subtasks, results, index) => {
       subtasks.value[index].match.match(/ км/) &&
       subtasks.value[index].distance > 2
     ) {
-      buffer.value += `1 км(ср.)=${getPace(
-        results.value[index][0],
-        subtasks.value[index].distance,
-      )}\n`;
+      if (subtasks.value[index + 1]?.type === 2) {
+        buffer.value += `1 км(ср.)=${getPace(
+          results.value[index][0],
+          subtasks.value[index].distance,
+        )}\n`;
+      } else {
+        report.value += `1 км(ср.)=${getPace(
+          results.value[index][0],
+          subtasks.value[index].distance,
+        )}\n`;
+      }
     }
 
     return;
@@ -191,8 +210,84 @@ const addDefaultTypeReportData = (subtasks, results, index) => {
   }
 };
 
+const addTimeTypeReportData = (subtasks, results, index) => {
+  const totalTime =
+    subtasks.value[index].timeType.value === 0
+      ? results.value[index][0]
+      : getTotalTime(results.value[index]);
+
+  report.value += `${subtasks.value[index].match}:${totalTime.replace(
+    ".",
+    ",",
+  )}`;
+
+  if (
+    subtasks.value[index].timeType.value !== 0 &&
+    subtasks.value[index].distance > 9
+  ) {
+    addCutoffs(subtasks, results, index);
+  } else {
+    report.value += "\n";
+  }
+
+  if (subtasks.value[index + 1]?.type === 2) {
+    buffer.value += `1 км(ср.)=${getPace(
+      totalTime,
+      subtasks.value[index].distance,
+    )}\n`;
+  } else {
+    report.value += `1 км(ср.)=${getPace(
+      totalTime,
+      subtasks.value[index].distance,
+    )}\n`;
+  }
+};
+
+const addCutoffs = (subtasks, results, index) => {
+  report.value += "(";
+
+  let factor = 0;
+  let step = 1;
+  let previousStepTime = null;
+
+  if (subtasks.value[index].timeType.value === 2) {
+    step = 5;
+  }
+
+  while (factor * step < results.value[index].length) {
+    const hasNext = (factor + 1) * step < results.value[index].length;
+
+    const start = factor * step;
+    const end = hasNext ? (factor + 1) * step : undefined;
+
+    const currentStepTime =
+      step === 1
+        ? results.value[index][start]
+        : getTotalTime(results.value[index].slice(start, end));
+
+    report.value += `${currentStepTime.replace(".", ",")}`;
+
+    if (factor % 2 && subtasks.value[index].distance > 10) {
+      report.value += `(${getTotalTime([
+        previousStepTime,
+        currentStepTime,
+      ]).replace(".", ",")})`;
+    } else {
+      previousStepTime = currentStepTime;
+    }
+
+    if (hasNext) {
+      report.value += "; ";
+    }
+
+    factor++;
+  }
+
+  report.value += ")\n";
+};
+
 const addDailyReportData = (task, dailyReportData) => {
-  if (!dailyReportData.value.comment) {
+  if (!dailyReportData.value.isIncluded) {
     return;
   }
 
@@ -219,14 +314,18 @@ const addDailyReportData = (task, dailyReportData) => {
   if (dailyReportData.value.comment) {
     report.value += `К: ${dailyReportData.value.comment}`;
   }
+
+  if (dailyReportData.value.weights[0] && dailyReportData.value.weights[1]) {
+    report.value += `В: ${dailyReportData.value.weights[0]}; ${dailyReportData.value.weights[1]}\n`;
+  }
 };
 
 const getDateFormatted = (date) => {
-  const daysOfWeek = ["Пн", "Вт", "Ср", "Чт", "Пт", "Сб", "Вс"];
+  const daysOfWeek = ["Вс", "Пн", "Вт", "Ср", "Чт", "Пт", "Сб"];
   const dayNumber = moment(date, "DD.MM.YYYY").day();
   const dateFormatted = moment(date, "DD.MM.YYYY").format("DD.MM.YYYY");
 
-  return `${dateFormatted}(${daysOfWeek[dayNumber - 1]})`;
+  return `${dateFormatted}(${daysOfWeek[dayNumber]})`;
 };
 
 const getAverage = (results, index) => {
@@ -258,6 +357,57 @@ const getAverage = (results, index) => {
   }
 
   return `${resultMinutes}:${leadingZero}${resultSeconds}`;
+};
+
+const getTotalTime = (cutoffs) => {
+  const resultInSeconds = getAccumulatedTimeInSeconds(cutoffs);
+
+  const resultHours = (resultInSeconds / 3600) >> 0;
+  const resultMinutes = (
+    ((resultInSeconds - resultHours * 3600) / 60) >>
+    0
+  ).toString();
+  const resultSeconds = (
+    resultInSeconds -
+    resultMinutes * 60 -
+    resultHours * 3600
+  )
+    .toFixed(1)
+    .toString();
+
+  const minutesLeadingZero = resultMinutes.length < 2 ? "0" : "";
+  const secondsLeadingZero = resultSeconds.length < 4 ? "0" : "";
+
+  let result = "";
+
+  if (resultHours) {
+    result += `${resultHours}:${minutesLeadingZero}`;
+  }
+
+  if (resultMinutes) {
+    result += `${resultMinutes}:${secondsLeadingZero}`;
+  }
+
+  result += resultSeconds;
+
+  return result;
+};
+
+const getAccumulatedTimeInSeconds = (cutoffs) => {
+  return cutoffs.reduce((sum, cutoff) => {
+    let cutoffInSeconds = 0;
+    let factor = 1;
+
+    cutoff
+      .match(/[0-9]+(\.[0-9]+)*/g)
+      .reverse()
+      .forEach((el) => {
+        cutoffInSeconds += parseFloat(el) * factor;
+        factor *= 60;
+      });
+
+    return sum + cutoffInSeconds;
+  }, 0);
 };
 
 const getPace = (time, distance) => {

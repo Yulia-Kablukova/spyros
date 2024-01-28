@@ -1,3 +1,5 @@
+@import "vue-multiselect/dist/vue-multiselect.css";
+
 :root {
   font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
   background-color: #212121;
@@ -92,4 +94,26 @@ input {
 input::placeholder {
   color: #717171;
   opacity: 1;
+}
+
+.date-time-picker {
+  border-radius: 6px;
+  border: #c1c1c1 1px solid !important;
+  background-color: transparent;
+  height: 40px;
+  width: 150px !important;
+  color: inherit;
+  font-size: inherit;
+  text-align: start;
+}
+
+.dp__menu {
+  border-radius: 6px;
+  border: #c1c1c1 1px solid !important;
+  margin-left: -70px;
+}
+
+.dp__arrow_top {
+  border-inline-end: #c1c1c1 1px solid !important;
+  border-top: #c1c1c1 1px solid !important;
 }

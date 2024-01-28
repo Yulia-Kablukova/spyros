@@ -1,5 +1,6 @@
 import { ref } from "vue";
-import { templates as templatesRef } from "@/consts/report";
+import { templates as templatesRef } from "../../consts/report/tasksTemplates";
+import { CUTOFFS_5_KM, TOTAL_TIME } from "../../consts/report/timeTypes";
 
 const templates = ref(templatesRef);
 
@@ -76,6 +77,7 @@ const parseType2 = (results, subtasks) => {
     type: 2,
     resultsCount: 3,
     distance: null,
+    timeType: null,
   });
 };
 
@@ -86,6 +88,7 @@ const parseType3 = (results, subtasks) => {
     type: 3,
     resultsCount: 2,
     distance: null,
+    timeType: null,
   });
 
   results.value.push([3, undefined]);
@@ -94,6 +97,7 @@ const parseType3 = (results, subtasks) => {
     type: 3,
     resultsCount: 2,
     distance: null,
+    timeType: null,
   });
 
   results.value.push([3, undefined]);
@@ -102,6 +106,7 @@ const parseType3 = (results, subtasks) => {
     type: 3,
     resultsCount: 2,
     distance: null,
+    timeType: null,
   });
 
   results.value.push([1, undefined]);
@@ -110,6 +115,7 @@ const parseType3 = (results, subtasks) => {
     type: 3,
     resultsCount: 2,
     distance: null,
+    timeType: null,
   });
 };
 
@@ -119,10 +125,11 @@ const parseType4 = (match, results, subtasks) => {
     type: 4,
     resultsCount: 3,
     distance: null,
+    timeType: null,
   });
 
   if (match.match(/с собственным весом/)) {
-    results.value.push([undefined, undefined, "с собственным весом"]);
+    results.value.push([3, undefined, "с собственным весом"]);
     return;
   }
 
@@ -149,6 +156,7 @@ const parseType11 = (match, results, subtasks) => {
     type: 11,
     resultsCount,
     distance: getDistance(match),
+    timeType: null,
   });
 };
 
@@ -176,6 +184,7 @@ const parseType12 = (match, results, subtasks) => {
     type: 12,
     resultsCount: 1,
     distance,
+    timeType: null,
   });
 };
 
@@ -196,6 +205,7 @@ const parseType20 = (match, results, subtasks) => {
     type: 11,
     resultsCount,
     distance: getDistance(rest),
+    timeType: null,
   });
 };
 
@@ -208,6 +218,7 @@ const parseType22 = (match, results, subtasks) => {
     type: 22,
     resultsCount: 3,
     distance: null,
+    timeType: null,
   });
 
   results.value.push([seriesCount, 3, undefined]);
@@ -216,6 +227,7 @@ const parseType22 = (match, results, subtasks) => {
     type: 22,
     resultsCount: 3,
     distance: null,
+    timeType: null,
   });
 
   results.value.push([seriesCount, 3, undefined]);
@@ -224,6 +236,7 @@ const parseType22 = (match, results, subtasks) => {
     type: 22,
     resultsCount: 3,
     distance: null,
+    timeType: null,
   });
 
   results.value.push([seriesCount, 3, undefined]);
@@ -233,6 +246,7 @@ const parseType22 = (match, results, subtasks) => {
     type: 22,
     resultsCount: 3,
     distance: null,
+    timeType: null,
   });
 
   results.value.push([seriesCount, 3, undefined]);
@@ -242,6 +256,7 @@ const parseType22 = (match, results, subtasks) => {
     type: 22,
     resultsCount: 3,
     distance: null,
+    timeType: null,
   });
 
   results.value.push([seriesCount, 3]);
@@ -250,6 +265,7 @@ const parseType22 = (match, results, subtasks) => {
     type: 22,
     resultsCount: 2,
     distance: null,
+    timeType: null,
   });
 
   results.value.push([seriesCount, 3]);
@@ -258,6 +274,7 @@ const parseType22 = (match, results, subtasks) => {
     type: 22,
     resultsCount: 2,
     distance: null,
+    timeType: null,
   });
 
   results.value.push([seriesCount, 7]);
@@ -266,6 +283,7 @@ const parseType22 = (match, results, subtasks) => {
     type: 22,
     resultsCount: 2,
     distance: null,
+    timeType: null,
   });
 
   results.value.push([seriesCount, 3, undefined]);
@@ -274,6 +292,7 @@ const parseType22 = (match, results, subtasks) => {
     type: 22,
     resultsCount: 3,
     distance: null,
+    timeType: null,
   });
 
   results.value.push([seriesCount, 3, undefined]);
@@ -282,6 +301,7 @@ const parseType22 = (match, results, subtasks) => {
     type: 22,
     resultsCount: 3,
     distance: null,
+    timeType: null,
   });
 
   results.value.push([seriesCount, 3]);
@@ -291,6 +311,7 @@ const parseType22 = (match, results, subtasks) => {
     type: 22,
     resultsCount: 2,
     distance: null,
+    timeType: null,
   });
 };
 
@@ -303,6 +324,7 @@ const parseType30 = (match, results, subtasks) => {
     type: 30,
     resultsCount: 3,
     distance: null,
+    timeType: null,
   });
 
   results.value.push([seriesCount, 3, undefined]);
@@ -311,6 +333,7 @@ const parseType30 = (match, results, subtasks) => {
     type: 30,
     resultsCount: 3,
     distance: null,
+    timeType: null,
   });
 
   results.value.push([seriesCount, 7]);
@@ -319,6 +342,7 @@ const parseType30 = (match, results, subtasks) => {
     type: 30,
     resultsCount: 2,
     distance: null,
+    timeType: null,
   });
 
   results.value.push([seriesCount, 3]);
@@ -328,6 +352,7 @@ const parseType30 = (match, results, subtasks) => {
     type: 30,
     resultsCount: 2,
     distance: null,
+    timeType: null,
   });
 
   results.value.push([seriesCount, 3, undefined]);
@@ -336,6 +361,7 @@ const parseType30 = (match, results, subtasks) => {
     type: 30,
     resultsCount: 3,
     distance: null,
+    timeType: null,
   });
 
   results.value.push([seriesCount, 3, undefined]);
@@ -352,6 +378,7 @@ const parseType30 = (match, results, subtasks) => {
     type: 30,
     resultsCount: 3,
     distance: null,
+    timeType: null,
   });
 };
 
@@ -360,9 +387,15 @@ const parseDefault = (match, template, results, subtasks) => {
     /^([0-9]+х)?[0-9]+(,[0-9]?)? (км)?(м)?/,
   )[0];
 
+  const distance = getDistance(matchBeginning);
+
+  const timeType = getTimeType(template.type, matchBeginning, distance);
+
   const resultsCount = getResultsCount(
     matchBeginning,
     template.resultsPerSeries,
+    timeType,
+    distance,
   );
 
   results.value.push(Array(resultsCount));
@@ -370,12 +403,23 @@ const parseDefault = (match, template, results, subtasks) => {
     match: matchBeginning,
     type: template.type,
     resultsCount,
-    distance: getDistance(matchBeginning),
+    distance,
+    timeType,
   });
 };
 
-const getResultsCount = (match, resultsPerSeries) => {
-  if (match.match(/^[0-9]+х/)) {
+const getResultsCount = (match, resultsPerSeries, timeType, distance) => {
+  if (timeType === TOTAL_TIME) {
+    return 1;
+  }
+
+  if (timeType === CUTOFFS_5_KM) {
+    return Math.ceil(distance / 5);
+  }
+
+  const seriesCount = getSeriesCount(match);
+
+  if (seriesCount) {
     return +match.match(/^[0-9]+/)[0] * resultsPerSeries;
   }
 
@@ -383,10 +427,10 @@ const getResultsCount = (match, resultsPerSeries) => {
 };
 
 const getDistance = (match) => {
-  const seriesCount = match.match(/^[0-9]+х/);
+  const seriesCount = getSeriesCount(match);
 
   if (seriesCount) {
-    match = match.slice(seriesCount[0].length);
+    match = match.slice(seriesCount.length);
   }
 
   const distance = +match.match(/^[0-9]+(,[0-9]?)?/)[0].replace(",", ".");
@@ -396,4 +440,30 @@ const getDistance = (match) => {
   }
 
   return distance / 1000;
+};
+
+const getSeriesCount = (match) => {
+  const seriesCountMatches = match.match(/^[0-9]+х/);
+
+  return seriesCountMatches ? seriesCountMatches[0] : null;
+};
+
+const getTimeType = (templateType, match, distance) => {
+  if (templateType === 1) {
+    return TOTAL_TIME;
+  }
+
+  if (getSeriesCount(match)) {
+    return null;
+  }
+
+  if (templateType === 14 || templateType === 18 || templateType === 19) {
+    if (distance < 10) {
+      return TOTAL_TIME;
+    }
+
+    return CUTOFFS_5_KM;
+  }
+
+  return null;
 };

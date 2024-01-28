@@ -1,16 +1,30 @@
 <script setup>
-defineEmits(["close"]);
+import WindowClose from "vue-material-design-icons/WindowClose.vue";
+import { onMounted, onUnmounted } from "vue";
+
+const emits = defineEmits(["close"]);
+
+function handleKeyDown(e) {
+  if (e.keyCode === 27) {
+    emits("close");
+  }
+}
+
+onMounted(() => {
+  window.addEventListener("keydown", handleKeyDown);
+});
+
+onUnmounted(() => {
+  window.removeEventListener("keydown", handleKeyDown);
+});
 </script>
 
 <template>
-  <div class="generator__error-popup">
-    <div class="generator__error-container">
-      <img
-        src="/icons/close.png"
-        alt=""
-        class="generator__close-icon"
-        @click="$emit('close')"
-      />
+  <div class="generator__popup">
+    <div class="generator__popup-wrapper" @click="$emit('close')" />
+
+    <div class="generator__popup-container">
+      <window-close class="generator__close-icon" @click="$emit('close')" />
 
       <h1>Произошла ошибка</h1>
 
@@ -24,7 +38,7 @@ defineEmits(["close"]);
 
 <style scoped lang="scss">
 .generator {
-  &__error-popup {
+  &__popup {
     position: fixed;
     z-index: 1;
     top: 0;
@@ -34,7 +48,16 @@ defineEmits(["close"]);
     background-color: rgba(0, 0, 0, 0.6);
   }
 
-  &__error-container {
+  &__popup-wrapper {
+    position: fixed;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    cursor: pointer;
+  }
+
+  &__popup-container {
     position: absolute;
     z-index: 1;
     top: 50%;
@@ -50,8 +73,6 @@ defineEmits(["close"]);
   }
 
   &__close-icon {
-    width: 16px;
-    height: 16px;
     align-self: flex-end;
     cursor: pointer;
   }

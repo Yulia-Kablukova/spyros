@@ -13,7 +13,9 @@
     "maska": "^2.1.10",
     "moment": "^2.29.4",
     "sass": "^1.69.5",
-    "vue": "^3.2.13"
+    "vue": "^3.2.13",
+    "vue-material-design-icons": "^5.2.0",
+    "vue-multiselect": "^3.0.0-beta.3"
   },
   "devDependencies": {
     "@babel/core": "^7.12.16",

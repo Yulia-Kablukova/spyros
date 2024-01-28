@@ -1,9 +1,11 @@
 <script setup>
 import { ref } from "vue";
+import ResultsIndex from "@/components/generator/sections/ResultsIndex.vue";
+import DailyReport from "@/components/generator/sections/DailyReportIndex.vue";
+import ReportResult from "@/components/generator/sections/ReportResultIndex.vue";
+import ErrorPopupIndex from "@/components/generator/popups/ErrorPopupIndex.vue";
 import { parseTask } from "@/utils/report/parseTask";
 import { getReportData } from "@/utils/report/getReportData";
-import { vMaska } from "maska";
-import ErrorPopupIndex from "@/components/generator/popups/ErrorPopupIndex.vue";
 
 const task = ref("");
 const subtasks = ref([]);
@@ -11,11 +13,13 @@ const results = ref([]);
 const report = ref("");
 
 const dailyReportData = ref({
+  isIncluded: false,
   date: new Date(),
   time: "08:00",
   place: null,
   states: Array(3),
   comment: null,
+  weights: Array(2),
 });
 
 const errors = ref({
@@ -23,15 +27,12 @@ const errors = ref({
 });
 
 const handleResultsFill = () => {
+  report.value = "";
   parseTask(task, subtasks, results, errors);
 };
 
 const handleGetReport = () => {
   report.value = getReportData(subtasks, results, task, dailyReportData);
-};
-
-const getFormattedMatch = (match) => {
-  return match[0].toUpperCase() + match.slice(1);
 };
 
 const handleErrorPopupClose = () => {
@@ -54,133 +55,29 @@ const handleErrorPopupClose = () => {
       Заполнить результаты
     </button>
 
-    <div v-if="subtasks.length" class="generator__results">
-      <p>
-        Формат ввода временных отсечек: 2:11:53.0 (с десятыми долями
-        секунды).<br />
-        Достаточно вводить только цифры - разделительные символы подставляются
-        автоматически.
-      </p>
+    <div v-if="subtasks.length">
+      <results-index :subtasks="subtasks" :results="results" />
 
-      <div
-        v-for="(subtask, index) in subtasks"
-        :key="index"
-        class="generator__result-container"
-      >
-        <span>{{ getFormattedMatch(subtask.match) }} *</span>
-
-        <div v-if="subtask.type === 2" class="generator__result-inputs">
-          <input
-            v-for="(result, resultIndex) in results[index]"
-            :key="`${index}-${resultIndex}`"
-            v-model="results[index][resultIndex]"
-          />
-        </div>
-
-        <div v-else-if="subtask.type === 3" class="generator__result-inputs">
-          <input v-model="results[index][0]" placeholder="3" />
-
-          <span>x</span>
-
-          <input v-model="results[index][1]" placeholder="20" />
-        </div>
-
-        <div
-          v-else-if="
-            subtask.type === 4 || subtask.type === 22 || subtask.type === 30
-          "
-          class="generator__result-inputs"
-        >
-          <input v-model="results[index][0]" placeholder="3" />
-
-          <span>x</span>
-
-          <input v-model="results[index][1]" placeholder="20" />
-
-          <input
-            v-if="results[index].length > 2"
-            v-model="results[index][2]"
-            placeholder="10 кг"
-            class="generator__result-input--width-1"
-          />
-        </div>
-
-        <div v-else class="generator__result-inputs">
-          <input
-            v-for="(result, resultIndex) in results[index]"
-            :key="`${index}-${resultIndex}`"
-            v-model="results[index][resultIndex]"
-            v-maska
-            data-maska="00:00:##.#"
-            data-maska-tokens="0:[0-9]:optional|::::optional"
-            data-maska-reversed
-          />
-        </div>
-      </div>
-    </div>
-
-    <div v-if="subtasks.length" class="generator__daily-report">
-      <h2>Информация для ежедневного отчета (опционально)</h2>
-
-      <div class="generator__result-container">
-        <span>Дата</span>
-
-        <vue-date-picker
-          v-model="dailyReportData.date"
-          format="dd.MM.yyyy"
-          :teleport="true"
-          :clearable="false"
-          disable-year-select
-          locale="ru"
-          dark
-          position="left"
-          input-class-name="generator__date-time-picker"
-        />
-      </div>
-
-      <div class="generator__result-container">
-        <span>Время</span>
-
-        <input v-model="dailyReportData.time" v-maska data-maska="##:##" />
-      </div>
-
-      <div class="generator__result-container">
-        <span>Место</span>
-
+      <div class="generator__daily-report-checkbox-container">
         <input
-          v-model="dailyReportData.place"
-          class="generator__result-input--width-2"
+          id="daily-report-checkbox"
+          v-model="dailyReportData.isIncluded"
+          type="checkbox"
         />
+
+        <label for="daily-report-checkbox">
+          Внести данные для ежедневного отчета
+        </label>
       </div>
 
-      <div class="generator__result-container">
-        <span>Оценка самочувствия</span>
+      <daily-report v-if="dailyReportData.isIncluded" :data="dailyReportData" />
 
-        <div class="generator__result-inputs">
-          <input
-            v-for="(state, stateIndex) in dailyReportData.states"
-            :key="`state-${stateIndex}`"
-            v-model="dailyReportData.states[stateIndex]"
-          />
-        </div>
-      </div>
+      <button class="generator__button" @click="handleGetReport">
+        Получить отчет
+      </button>
 
-      <div class="generator__result-container">
-        <span>Комментарий</span>
-
-        <textarea v-model="dailyReportData.comment" />
-      </div>
+      <report-result v-if="report" :data="report" />
     </div>
-
-    <button
-      v-if="subtasks.length"
-      class="generator__button"
-      @click="handleGetReport"
-    >
-      Получить отчет
-    </button>
-
-    <div v-if="report" class="generator__report">{{ report }}</div>
 
     <error-popup-index
       v-if="errors.isInvalidTask"
@@ -205,74 +102,24 @@ const handleErrorPopupClose = () => {
     margin-bottom: 30px;
   }
 
-  &__results {
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
-  }
-
-  &__result-container {
-    display: flex;
-    flex-direction: column;
-    gap: 15px;
-
-    > span {
-      font-weight: 500;
-    }
-  }
-
-  &__result-inputs {
-    display: flex;
-    gap: 15px;
-    flex-wrap: wrap;
-    align-items: center;
-  }
-
-  &__result-input {
-    &--width-1 {
-      width: 200px;
-    }
-
-    &--width-2 {
-      width: 230px;
-    }
-  }
-
-  &__daily-report {
+  &__daily-report-checkbox-container {
     margin-top: 30px;
     display: flex;
-    flex-direction: column;
-    gap: 20px;
+    align-items: center;
+
+    > input {
+      width: 24px;
+      height: 24px;
+      margin-right: 10px;
+
+      &[type="checkbox"] {
+        accent-color: #717171;
+      }
+    }
+
+    > label {
+      cursor: pointer;
+    }
   }
-
-  &__report {
-    white-space: pre-line;
-    padding: 30px 40px;
-    background-color: #333333;
-  }
-}
-</style>
-
-<style lang="scss">
-.generator__date-time-picker {
-  border-radius: 6px;
-  border: #c1c1c1 1px solid !important;
-  background-color: transparent;
-  height: 40px;
-  width: 150px !important;
-  color: inherit;
-  font-size: inherit;
-  text-align: start;
-}
-
-.dp__menu {
-  border-radius: 6px;
-  border: #c1c1c1 1px solid !important;
-  margin-left: -70px;
-}
-
-.dp__arrow_top {
-  border-inline-end: #c1c1c1 1px solid !important;
-  border-top: #c1c1c1 1px solid !important;
 }
 </style>
