@@ -1,5 +1,5 @@
 <script setup>
-import { ref } from "vue";
+import { ref, computed } from "vue";
 import ResultsIndex from "@/components/generator/sections/ResultsIndex.vue";
 import DailyReport from "@/components/generator/sections/DailyReportIndex.vue";
 import ReportResult from "@/components/generator/sections/ReportResultIndex.vue";
@@ -8,6 +8,7 @@ import { parseTask } from "@/utils/report/parseTask";
 import { getReportData } from "@/utils/report/getReportData";
 
 const task = ref("");
+const taskDistance = ref(0);
 const subtasks = ref([]);
 const results = ref([]);
 const report = ref("");
@@ -26,9 +27,13 @@ const errors = ref({
   isInvalidTask: false,
 });
 
+const getTaskDistance = computed(() => {
+  return taskDistance.value.toString().replace(".", ",");
+});
+
 const handleResultsFill = () => {
   report.value = "";
-  parseTask(task, subtasks, results, errors);
+  parseTask(task, subtasks, results, errors, taskDistance);
 };
 
 const handleGetReport = () => {
@@ -51,9 +56,11 @@ const handleErrorPopupClose = () => {
 
     <textarea v-model="task" placeholder="Введите задание" />
 
-    <button class="generator__button" @click="handleResultsFill">
-      Заполнить результаты
-    </button>
+    <div class="generator__task-options">
+      <button @click="handleResultsFill">Заполнить результаты</button>
+
+      <span class="generator__distance">Объем: {{ getTaskDistance }} км</span>
+    </div>
 
     <div v-if="subtasks.length">
       <results-index :subtasks="subtasks" :results="results" />
@@ -72,7 +79,7 @@ const handleErrorPopupClose = () => {
 
       <daily-report v-if="dailyReportData.isIncluded" :data="dailyReportData" />
 
-      <button class="generator__button" @click="handleGetReport">
+      <button class="generator__get-report-button" @click="handleGetReport">
         Получить отчет
       </button>
 
@@ -97,7 +104,18 @@ const handleErrorPopupClose = () => {
     margin-bottom: 30px;
   }
 
-  &__button {
+  &__task-options {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 30px;
+    margin-bottom: 30px;
+  }
+
+  &__distance {
+    width: 120px;
+  }
+
+  &__get-report-button {
     margin-top: 30px;
     margin-bottom: 30px;
   }
@@ -111,10 +129,6 @@ const handleErrorPopupClose = () => {
       width: 24px;
       height: 24px;
       margin-right: 10px;
-
-      &[type="checkbox"] {
-        accent-color: #717171;
-      }
     }
 
     > label {

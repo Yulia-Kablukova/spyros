@@ -4,10 +4,11 @@ import { CUTOFFS_5_KM, TOTAL_TIME } from "../../consts/report/timeTypes";
 
 const templates = ref(templatesRef);
 
-export const parseTask = (task, subtasks, results, errors) => {
+export const parseTask = (task, subtasks, results, errors, taskDistance) => {
   subtasks.value = [];
   results.value = [];
   errors.value.isInvalidTask = false;
+  taskDistance.value = 0;
 
   let taskCopy = task.value.trim().replaceAll("\n", "");
 
@@ -22,6 +23,7 @@ export const parseTask = (task, subtasks, results, errors) => {
         taskCopy = taskCopy.slice(match.length);
 
         if (!template.resultsPerSeries) {
+          addDistance(match, template.type, taskDistance);
           break;
         }
 
@@ -36,14 +38,14 @@ export const parseTask = (task, subtasks, results, errors) => {
             parseType4(match, results, subtasks);
             break;
           case 11:
-            parseType11(match, results, subtasks);
+            parseType11(match, results, subtasks, taskDistance);
             break;
           case 12:
-            parseType12(match, results, subtasks);
+            parseType12(match, results, subtasks, taskDistance);
             break;
           case 20:
           case 21:
-            parseType20(match, results, subtasks);
+            parseType20(match, results, subtasks, taskDistance);
             break;
           case 22:
             parseType22(match, results, subtasks);
@@ -51,8 +53,14 @@ export const parseTask = (task, subtasks, results, errors) => {
           case 30:
             parseType30(match, results, subtasks);
             break;
+          case 33:
+            parseType33(match, results, subtasks, taskDistance);
+            break;
+          case 34:
+            parseType34(match, results, subtasks, taskDistance);
+            break;
           default:
-            parseDefault(match, template, results, subtasks);
+            parseDefault(match, template, results, subtasks, taskDistance);
             break;
         }
 
@@ -146,22 +154,27 @@ const parseType4 = (match, results, subtasks) => {
   results.value.push([3, undefined, undefined]);
 };
 
-const parseType11 = (match, results, subtasks) => {
+const parseType11 = (match, results, subtasks, taskDistance) => {
   match = match.slice(7, -1);
+
   const resultsCount = subtasks.value.slice(-1)[0].resultsCount - 1;
+  const distance = getDistance(match);
 
   results.value.push(Array(resultsCount));
   subtasks.value.push({
     match,
     type: 11,
     resultsCount,
-    distance: getDistance(match),
+    distance,
     timeType: null,
   });
+  taskDistance.value += resultsCount * distance;
 };
 
-const parseType12 = (match, results, subtasks) => {
+const parseType12 = (match, results, subtasks, taskDistance) => {
   const distance = getDistance(match);
+
+  taskDistance.value += distance;
 
   const sameSubtaskIndex = subtasks.value.findIndex((subtask) => {
     return (
@@ -188,7 +201,7 @@ const parseType12 = (match, results, subtasks) => {
   });
 };
 
-const parseType20 = (match, results, subtasks) => {
+const parseType20 = (match, results, subtasks, taskDistance) => {
   let rest = match.match(/\(через [0-9]+ м\(до 22\)\)/);
 
   if (!rest) {
@@ -382,9 +395,74 @@ const parseType30 = (match, results, subtasks) => {
   });
 };
 
-const parseDefault = (match, template, results, subtasks) => {
+const parseType33 = (match, results, subtasks, taskDistance) => {
+  const matchBeginning = match.match(/^[0-9]+ км\(/)[0];
+  const matchEnding = ")(пульс)";
+
+  const fartlekParts = match
+    .slice(matchBeginning.length, match.length - matchEnding.length)
+    .split("/");
+
+  const totalDistance = +match.match(/^[0-9]+/)[0];
+  const seriesCount =
+    totalDistance /
+    (getDistance(fartlekParts[0]) + getDistance(fartlekParts[1]));
+
+  fartlekParts.forEach((part) => {
+    results.value.push(Array(seriesCount));
+
+    subtasks.value.push({
+      match: part,
+      type: 330,
+      resultsCount: seriesCount,
+      distance: getDistance(part),
+      timeType: null,
+    });
+  });
+
+  results.value.push(Array(3));
+  subtasks.value.push({
+    match: "пульс",
+    type: 2,
+    resultsCount: 3,
+    distance: null,
+    timeType: null,
+  });
+};
+
+const parseType34 = (match, results, subtasks, taskDistance) => {
+  const matchBeginning = match.match(/^[0-9]+ км\(/)[0];
+  const matchEnding = ")(пульс)";
+
+  const fartlekParts = match
+    .slice(matchBeginning.length, match.length - matchEnding.length)
+    .split("+");
+
+  fartlekParts.forEach((part) => {
+    results.value.push([undefined]);
+
+    subtasks.value.push({
+      match: part,
+      type: 340,
+      resultsCount: 1,
+      distance: getDistance(part),
+      timeType: TOTAL_TIME,
+    });
+  });
+
+  results.value.push(Array(3));
+  subtasks.value.push({
+    match: "пульс",
+    type: 2,
+    resultsCount: 3,
+    distance: null,
+    timeType: null,
+  });
+};
+
+const parseDefault = (match, template, results, subtasks, taskDistance) => {
   const matchBeginning = match.match(
-    /^([0-9]+х)?[0-9]+(,[0-9]?)? (км)?(м)?/,
+    /^([0-9]+х)?[0-9]+(,[0-9]?)? (км)?(м)?/
   )[0];
 
   const distance = getDistance(matchBeginning);
@@ -395,7 +473,7 @@ const parseDefault = (match, template, results, subtasks) => {
     matchBeginning,
     template.resultsPerSeries,
     timeType,
-    distance,
+    distance
   );
 
   results.value.push(Array(resultsCount));
@@ -466,4 +544,43 @@ const getTimeType = (templateType, match, distance) => {
   }
 
   return null;
+};
+
+const addDistance = (match, type, taskDistance) => {
+  if (type === 8) {
+    taskDistance.value += 0.15;
+    return;
+  }
+
+  if (type === 9) {
+    const seriesCount = match.match(/^[0-9]+/)[0];
+    taskDistance.value += (2 * seriesCount - 1) * 0.05;
+    return;
+  }
+
+  if (type === 13) {
+    const seriesCount = match.match(/^[0-9]+/)[0];
+    taskDistance.value += (2 * seriesCount - 1) * 0.1;
+    return;
+  }
+
+  if (type === 25) {
+    //
+  }
+
+  if (type === 26) {
+    //
+  }
+
+  if (type === 27) {
+    //
+  }
+
+  if (type === 29) {
+    //
+  }
+
+  if (type === 32) {
+    //
+  }
 };

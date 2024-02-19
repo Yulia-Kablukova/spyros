@@ -1,5 +1,5 @@
 <template>
-  <div class="custom-select">
+  <div v-click-outside="handleClose" class="custom-select">
     <div
       class="custom-select__selected"
       :class="{ 'custom-select--opened': isOpened }"
@@ -47,6 +47,10 @@ const isOpened = ref(false);
 const handleSelect = (option) => {
   isOpened.value = false;
   emits("input", option);
+};
+
+const handleClose = () => {
+  isOpened.value = false;
 };
 </script>
 

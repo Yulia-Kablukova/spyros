@@ -31,7 +31,11 @@ const getTimeTypes = (subtask) => {
     return [];
   }
 
-  const timeTypes = [TOTAL_TIME, CUTOFFS_1_KM];
+  const timeTypes = [TOTAL_TIME];
+
+  if (subtask.distance > 1) {
+    timeTypes.push(CUTOFFS_1_KM);
+  }
 
   if (subtask.distance > 9) {
     timeTypes.push(CUTOFFS_5_KM);
@@ -118,7 +122,7 @@ const handleTimeTypeSelect = (subtask, index, timeType) => {
 
       <div v-else>
         <custom-select
-          v-if="getTimeTypes(subtask).length"
+          v-if="getTimeTypes(subtask).length > 1"
           :value="subtask.timeType"
           :options="getTimeTypes(subtask)"
           class="results__time-type-select"

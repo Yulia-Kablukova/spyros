@@ -4,6 +4,8 @@ import { AVERAGE_PACE } from "@/consts/report/timeTypes";
 
 const report = ref("");
 const buffer = ref("");
+const fartlekSubtasks = ref([]);
+const fartlekResults = ref([]);
 
 export const getReportData = (subtasks, results, task, dailyReportData) => {
   report.value = "";
@@ -29,6 +31,12 @@ export const getReportData = (subtasks, results, task, dailyReportData) => {
       case 22:
       case 30:
         addType22ReportData(subtasks, results, index);
+        break;
+      case 330:
+        addType33ReportData(subtasks, results, index);
+        break;
+      case 340:
+        addType34ReportData(subtasks, results, index);
         break;
       default:
         addDefaultTypeReportData(subtasks, results, index);
@@ -57,7 +65,7 @@ const addType1ReportData = (subtasks, results, index) => {
   } else {
     report.value += `${getPace(
       getTotalTime(results.value[index]),
-      subtasks.value[index].distance,
+      subtasks.value[index].distance
     )}\n`;
   }
 };
@@ -125,15 +133,13 @@ const addType4ReportData = (subtasks, results, index) => {
 const addType11ReportData = (subtasks, results, index) => {
   if (subtasks.value[index].resultsCount === 1) {
     report.value += `${subtasks.value[index].distance * 1000} м:${getAverage(
-      results,
-      index,
+      results.value[index]
     )}\n`;
     return;
   }
 
   report.value += `${subtasks.value[index].distance * 1000} м(ср.)=${getAverage(
-    results,
-    index,
+    results.value[index]
   )}\n`;
 };
 
@@ -151,6 +157,158 @@ const addType22ReportData = (subtasks, results, index) => {
   } else {
     report.value += `\n`;
   }
+};
+
+const addType33ReportData = (subtasks, results, index) => {
+  fartlekSubtasks.value.push(subtasks.value[index]);
+  fartlekResults.value.push(results.value[index]);
+
+  if (subtasks.value[index + 1].type !== 2) {
+    return;
+  }
+
+  const totalDistance = fartlekSubtasks.value.reduce(
+    (sum, { resultsCount, distance }) => sum + resultsCount * distance,
+    0
+  );
+
+  const totalTime = getTotalTime([
+    getTotalTime(fartlekResults.value[0]),
+    getTotalTime(fartlekResults.value[1]),
+  ]);
+
+  report.value += `${totalDistance} км: ${totalTime.replace(".", ",")}(`;
+
+  let currentMergedTime = "00,0";
+  let previousMergedTime = "00,0";
+  let mergedDistance = 0;
+
+  fartlekResults.value[0].forEach((result, index) => {
+    report.value += result.replace(".", ",");
+
+    currentMergedTime = getTotalTime([currentMergedTime, result]);
+    mergedDistance += fartlekSubtasks.value[0].distance;
+
+    if (mergedDistance === 5 && totalDistance > 5) {
+      report.value += `(${currentMergedTime.replace(".", ",")})`;
+
+      if (previousMergedTime !== "00,0" && totalDistance > 10) {
+        report.value += `(${getTotalTime([
+          previousMergedTime,
+          currentMergedTime,
+        ]).replace(".", ",")})`;
+
+        previousMergedTime = "00,0";
+      } else {
+        previousMergedTime = currentMergedTime;
+      }
+
+      currentMergedTime = "00,0";
+      mergedDistance = 0;
+    }
+
+    report.value += `; ${fartlekResults.value[1][index].replace(".", ",")}`;
+
+    currentMergedTime = getTotalTime([
+      currentMergedTime,
+      fartlekResults.value[1][index],
+    ]);
+    mergedDistance += fartlekSubtasks.value[1].distance;
+
+    if (mergedDistance === 5 && totalDistance > 5) {
+      report.value += `(${currentMergedTime.replace(".", ",")})`;
+
+      if (previousMergedTime !== "00,0" && totalDistance > 10) {
+        report.value += `(${getTotalTime([
+          previousMergedTime,
+          currentMergedTime,
+        ]).replace(".", ",")})`;
+
+        previousMergedTime = "00,0";
+      } else {
+        previousMergedTime = currentMergedTime;
+      }
+
+      currentMergedTime = "00,0";
+      mergedDistance = 0;
+    }
+
+    if (index < fartlekResults.value[0].length - 1) {
+      report.value += "; ";
+    }
+  });
+
+  report.value += ")\n";
+
+  buffer.value = `1 км(ср.)=${getPace(totalTime, totalDistance)}\n`;
+
+  fartlekSubtasks.value.forEach(({ match }, index) => {
+    buffer.value += `${match.replace(/\(до [0-9]+\)/, "")}(ср.)=${getAverage(
+      fartlekResults.value[index]
+    )}\n`;
+  });
+
+  fartlekSubtasks.value = [];
+  fartlekResults.value = [];
+};
+
+const addType34ReportData = (subtasks, results, index) => {
+  fartlekSubtasks.value.push(subtasks.value[index]);
+  fartlekResults.value.push(getTotalTime(results.value[index]));
+
+  if (subtasks.value[index + 1].type !== 2) {
+    return;
+  }
+
+  const totalDistance = fartlekSubtasks.value.reduce(
+    (sum, { distance }) => sum + distance,
+    0
+  );
+
+  const totalTime = getTotalTime(fartlekResults.value);
+
+  report.value += `${totalDistance} км: ${totalTime.replace(".", ",")}(`;
+
+  fartlekResults.value.forEach((result, index) => {
+    report.value += result.replace(".", ",");
+
+    if (index < fartlekResults.value.length - 1) {
+      report.value += "; ";
+    }
+  });
+
+  report.value += ")\n";
+
+  buffer.value = `1 км(ср.)=${getPace(totalTime, totalDistance)}\n`;
+
+  fartlekSubtasks.value
+    .reduce((mergedSubtasks, subtask, index) => {
+      const mergedSubtaskIndex = mergedSubtasks.findIndex(
+        ({ match }) => match === subtask.match
+      );
+
+      if (~mergedSubtaskIndex) {
+        mergedSubtasks[mergedSubtaskIndex].results.push(
+          fartlekResults.value[index]
+        );
+      } else {
+        mergedSubtasks.push({
+          match: subtask.match,
+          results: [fartlekResults.value[index]],
+        });
+      }
+
+      return mergedSubtasks;
+    }, [])
+    .filter(({ results }) => results.length > 1)
+    .forEach(({ match, results }) => {
+      buffer.value += `${match.replace(/\(до [0-9]+\)/, "")}(ср.)=${getAverage(
+        results
+      )}\n`;
+    });
+
+  fartlekSubtasks.value = [];
+  fartlekResults.value = [];
 };
 
 const addDefaultTypeReportData = (subtasks, results, index) => {
@@ -185,12 +343,12 @@ const addDefaultTypeReportData = (subtasks, results, index) => {
       if (subtasks.value[index + 1]?.type === 2) {
         buffer.value += `1 км(ср.)=${getPace(
           results.value[index][0],
-          subtasks.value[index].distance,
+          subtasks.value[index].distance
         )}\n`;
       } else {
         report.value += `1 км(ср.)=${getPace(
           results.value[index][0],
-          subtasks.value[index].distance,
+          subtasks.value[index].distance
         )}\n`;
       }
     }
@@ -200,12 +358,11 @@ const addDefaultTypeReportData = (subtasks, results, index) => {
 
   if (series) {
     report.value += `${subtasks.value[index].match.slice(
-      series[0].length,
-    )}(ср.)=${getAverage(results, index)}\n`;
+      series[0].length
+    )}(ср.)=${getAverage(results.value[index])}\n`;
   } else {
     report.value += `${subtasks.value[index].match}(ср.)=${getAverage(
-      results,
-      index,
+      results.value[index]
     )}\n`;
   }
 };
@@ -218,7 +375,7 @@ const addTimeTypeReportData = (subtasks, results, index) => {
 
   report.value += `${subtasks.value[index].match}:${totalTime.replace(
     ".",
-    ",",
+    ","
   )}`;
 
   if (
@@ -233,12 +390,12 @@ const addTimeTypeReportData = (subtasks, results, index) => {
   if (subtasks.value[index + 1]?.type === 2) {
     buffer.value += `1 км(ср.)=${getPace(
       totalTime,
-      subtasks.value[index].distance,
+      subtasks.value[index].distance
     )}\n`;
   } else {
     report.value += `1 км(ср.)=${getPace(
       totalTime,
-      subtasks.value[index].distance,
+      subtasks.value[index].distance
     )}\n`;
   }
 };
@@ -292,7 +449,7 @@ const addDailyReportData = (task, dailyReportData) => {
   }
 
   let dailyReportBeginning = `Отчет ${getDateFormatted(
-    dailyReportData.value.date,
+    dailyReportData.value.date
   )}\nВ: ${dailyReportData.value.time}\n`;
 
   if (dailyReportData.value.place) {
@@ -328,9 +485,9 @@ const getDateFormatted = (date) => {
   return `${dateFormatted}(${daysOfWeek[dayNumber]})`;
 };
 
-const getAverage = (results, index) => {
+const getAverage = (results) => {
   const averageInSeconds =
-    results.value[index].reduce((sum, result) => {
+    results.reduce((sum, result) => {
       let totalSeconds = 0;
       let factor = 1;
 
@@ -343,7 +500,7 @@ const getAverage = (results, index) => {
         });
 
       return sum + totalSeconds;
-    }, 0) / results.value[index].length;
+    }, 0) / results.length;
 
   const resultMinutes = (averageInSeconds / 60) >> 0;
   const resultSeconds = (averageInSeconds - resultMinutes * 60)
