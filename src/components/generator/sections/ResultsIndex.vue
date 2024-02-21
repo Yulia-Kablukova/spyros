@@ -82,7 +82,7 @@ const handleTimeTypeSelect = (subtask, index, timeType) => {
       :key="index"
       class="results__result-container"
     >
-      <span>{{ getFormattedMatch(subtask.match) }} *</span>
+      <span>{{ getFormattedMatch(subtask.match) }}</span>
 
       <div v-if="subtask.type === 2" class="results__result-inputs">
         <input

@@ -45,7 +45,7 @@ export const parseTask = (task, subtasks, results, errors, taskDistance) => {
             break;
           case 20:
           case 21:
-            parseType20(match, results, subtasks, taskDistance);
+            parseType20(match, results, subtasks, template.type, taskDistance);
             break;
           case 22:
             parseType22(match, results, subtasks);
@@ -75,6 +75,8 @@ export const parseTask = (task, subtasks, results, errors, taskDistance) => {
       }
     }
   }
+
+  taskDistance.value = Math.round(taskDistance.value * 2) / 2;
 };
 
 const parseType2 = (results, subtasks) => {
@@ -201,25 +203,37 @@ const parseType12 = (match, results, subtasks, taskDistance) => {
   });
 };
 
-const parseType20 = (match, results, subtasks, taskDistance) => {
+const parseType20 = (match, results, subtasks, type, taskDistance) => {
   let rest = match.match(/\(через [0-9]+ м\(до 22\)\)/);
-
-  if (!rest) {
-    return;
-  }
 
   rest = rest[0].slice(7, -1);
 
-  const resultsCount = +match.match(/^[0-9]+/) - 1;
+  const seriesCount = +match.match(/^[0-9]+/);
+  const restDistance = getDistance(rest);
 
-  results.value.push(Array(resultsCount));
+  results.value.push(Array(seriesCount - 1));
   subtasks.value.push({
     match: rest,
     type: 11,
-    resultsCount,
-    distance: getDistance(rest),
+    resultsCount: seriesCount - 1,
+    distance: restDistance,
     timeType: null,
   });
+  taskDistance.value += (seriesCount - 1) * restDistance;
+
+  if (type === 20) {
+    const subseriesCount = +match.match(/[0-9]+/g)[1];
+    const subdistance = +match.match(/[0-9]+/g)[3];
+
+    taskDistance.value +=
+      (seriesCount * (subseriesCount * 4 + 3.5) * subdistance) / 1000;
+  }
+
+  if (type === 21) {
+    const subdistance = +match.match(/[0-9]+/g)[1];
+
+    taskDistance.value += (seriesCount * subdistance) / 1000;
+  }
 };
 
 const parseType22 = (match, results, subtasks) => {
@@ -428,6 +442,8 @@ const parseType33 = (match, results, subtasks, taskDistance) => {
     distance: null,
     timeType: null,
   });
+
+  taskDistance.value += totalDistance;
 };
 
 const parseType34 = (match, results, subtasks, taskDistance) => {
@@ -458,6 +474,8 @@ const parseType34 = (match, results, subtasks, taskDistance) => {
     distance: null,
     timeType: null,
   });
+
+  taskDistance.value += +match.match(/^[0-9]+/)[0];
 };
 
 const parseDefault = (match, template, results, subtasks, taskDistance) => {
@@ -484,6 +502,9 @@ const parseDefault = (match, template, results, subtasks, taskDistance) => {
     distance,
     timeType,
   });
+
+  const seriesCount = +getSeriesCount(match)?.match(/^[0-9]+/)[0] || 1;
+  taskDistance.value += seriesCount * distance;
 };
 
 const getResultsCount = (match, resultsPerSeries, timeType, distance) => {
@@ -554,33 +575,30 @@ const addDistance = (match, type, taskDistance) => {
 
   if (type === 9) {
     const seriesCount = match.match(/^[0-9]+/)[0];
+
     taskDistance.value += (2 * seriesCount - 1) * 0.05;
     return;
   }
 
   if (type === 13) {
     const seriesCount = match.match(/^[0-9]+/)[0];
+
     taskDistance.value += (2 * seriesCount - 1) * 0.1;
     return;
   }
 
-  if (type === 25) {
-    //
+  if (type === 25 || type === 29 || type === 32) {
+    const seriesCount = match.match(/^[0-9]+/)[0];
+    const distance = match.match(/через [0-9]+/)[0].match(/[0-9]+/)[0];
+
+    taskDistance.value += ((2 * seriesCount - 1) * distance) / 1000;
+    return;
   }
 
   if (type === 26) {
-    //
-  }
+    const seriesCount = match.match(/^[0-9]+/)[0];
+    const distance = match.match(/х[0-9]+/)[0].match(/[0-9]+/)[0];
 
-  if (type === 27) {
-    //
-  }
-
-  if (type === 29) {
-    //
-  }
-
-  if (type === 32) {
-    //
+    taskDistance.value += (seriesCount * distance) / 1000;
   }
 };
