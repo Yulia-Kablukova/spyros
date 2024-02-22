@@ -71,10 +71,14 @@ const handleTimeTypeSelect = (subtask, index, timeType) => {
 
 <template>
   <div class="results__wrapper">
-    <p>
-      Формат ввода временных отсечек: 2:11:53.0 (с десятыми долями секунды).<br />
-      Достаточно вводить только цифры - разделительные символы подставляются
-      автоматически.
+    <p class="results__description">
+      <span>
+        Формат ввода временных отсечек: 2:11:53.0 (с десятыми долями секунды).
+      </span>
+      <span>
+        Достаточно вводить только цифры - разделительные символы подставляются
+        автоматически.
+      </span>
     </p>
 
     <div
@@ -158,6 +162,11 @@ const handleTimeTypeSelect = (subtask, index, timeType) => {
     gap: 20px;
   }
 
+  &__description {
+    display: flex;
+    flex-direction: column;
+  }
+
   &__result-container {
     display: flex;
     flex-direction: column;
@@ -189,6 +198,22 @@ const handleTimeTypeSelect = (subtask, index, timeType) => {
   &__time-type-select {
     margin-bottom: 15px;
     width: 175px;
+  }
+}
+
+@media only screen and (max-width: 600px) {
+  .results {
+    &__wrapper {
+      gap: 15px;
+    }
+
+    &__description {
+      gap: 6px;
+    }
+
+    &__result-container {
+      gap: 10px;
+    }
   }
 }
 </style>

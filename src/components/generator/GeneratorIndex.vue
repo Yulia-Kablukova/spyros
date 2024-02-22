@@ -136,4 +136,27 @@ const handleErrorPopupClose = () => {
     }
   }
 }
+
+@media only screen and (max-width: 600px) {
+  .generator {
+    &__heading {
+      margin-top: 30px;
+    }
+
+    &__description {
+      margin-top: 20px;
+      margin-bottom: 20px;
+    }
+
+    &__task-options {
+      margin-top: 20px;
+      margin-bottom: 20px;
+      align-items: center;
+    }
+
+    &__daily-report-checkbox-container {
+      margin-top: 20px;
+    }
+  }
+}
 </style>

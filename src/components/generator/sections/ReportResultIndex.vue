@@ -1,5 +1,6 @@
 <script setup>
 import ContentCopy from "vue-material-design-icons/ContentCopy.vue";
+import { copyToClipboard } from "@/utils/document-manipulation";
 
 const props = defineProps({
   data: {
@@ -10,7 +11,7 @@ const props = defineProps({
 });
 
 const handleCopyReport = () => {
-  navigator.clipboard.writeText(props.data);
+  copyToClipboard(props.data);
 
   document
     .getElementsByClassName("report-result__notification")[0]
@@ -67,6 +68,12 @@ const handleCopyReport = () => {
     &--show {
       opacity: 1;
     }
+  }
+}
+
+@media only screen and (max-width: 600px) {
+  .report-result {
+    padding: 20px 25px;
   }
 }
 </style>

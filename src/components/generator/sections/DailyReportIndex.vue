@@ -123,4 +123,21 @@ const props = defineProps({
     font-weight: 500;
   }
 }
+
+@media only screen and (max-width: 600px) {
+  .daily-report {
+    &__wrapper {
+      gap: 15px;
+    }
+
+    &__hint {
+      font-size: 12px;
+      line-height: 18px;
+    }
+
+    &__data-block {
+      gap: 10px;
+    }
+  }
+}
 </style>
