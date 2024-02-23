@@ -132,7 +132,7 @@ const addType4ReportData = (subtasks, results, index) => {
 
 const addType11ReportData = (subtasks, results, index) => {
   if (subtasks.value[index].resultsCount === 1) {
-    report.value += `${subtasks.value[index].distance * 1000} м:${getAverage(
+    report.value += `${subtasks.value[index].distance * 1000} м: ${getAverage(
       results.value[index]
     )}\n`;
     return;
@@ -320,9 +320,9 @@ const addDefaultTypeReportData = (subtasks, results, index) => {
   const series = subtasks.value[index].match.match(/^[0-9]+х/);
 
   if (series) {
-    report.value += `${subtasks.value[index].match.slice(series[0].length)}:`;
+    report.value += `${subtasks.value[index].match.slice(series[0].length)}: `;
   } else {
-    report.value += `${subtasks.value[index].match}:`;
+    report.value += `${subtasks.value[index].match}: `;
   }
 
   results.value[index].forEach((result, resultIndex) => {
@@ -373,7 +373,7 @@ const addTimeTypeReportData = (subtasks, results, index) => {
       ? results.value[index][0]
       : getTotalTime(results.value[index]);
 
-  report.value += `${subtasks.value[index].match}:${totalTime.replace(
+  report.value += `${subtasks.value[index].match}: ${totalTime.replace(
     ".",
     ","
   )}`;
@@ -469,7 +469,7 @@ const addDailyReportData = (task, dailyReportData) => {
   }
 
   if (dailyReportData.value.comment) {
-    report.value += `К: ${dailyReportData.value.comment}`;
+    report.value += `К: ${dailyReportData.value.comment}\n`;
   }
 
   if (dailyReportData.value.weights[0] && dailyReportData.value.weights[1]) {

@@ -5,11 +5,6 @@ import { CUTOFFS_5_KM, TOTAL_TIME } from "../../consts/report/timeTypes";
 const templates = ref(templatesRef);
 
 export const parseTask = (task, subtasks, results, errors, taskDistance) => {
-  subtasks.value = [];
-  results.value = [];
-  errors.value.isInvalidTask = false;
-  taskDistance.value = 0;
-
   let taskCopy = task.value.trim().replaceAll("\n", "");
 
   while (taskCopy.length) {

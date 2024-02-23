@@ -32,8 +32,25 @@ const getTaskDistance = computed(() => {
 });
 
 const handleResultsFill = () => {
-  report.value = "";
+  resetResults();
   parseTask(task, subtasks, results, errors, taskDistance);
+};
+
+const resetResults = () => {
+  report.value = "";
+  subtasks.value = [];
+  results.value = [];
+  errors.value.isInvalidTask = false;
+  taskDistance.value = 0;
+  dailyReportData.value = {
+    isIncluded: false,
+    date: new Date(),
+    time: "08:00",
+    place: null,
+    states: Array(3),
+    comment: null,
+    weights: Array(2),
+  };
 };
 
 const handleGetReport = () => {
