@@ -31,6 +31,10 @@ const getTimeTypes = (subtask) => {
     return [];
   }
 
+  if (subtask.type === 27) {
+    return [CUTOFFS_1_KM];
+  }
+
   const timeTypes = [TOTAL_TIME];
 
   if (subtask.distance > 1) {

@@ -32,6 +32,9 @@ export const getReportData = (subtasks, results, task, dailyReportData) => {
       case 30:
         addType22ReportData(subtasks, results, index);
         break;
+      case 27:
+        addType27ReportData(subtasks, results, index);
+        break;
       case 330:
         addType33ReportData(subtasks, results, index);
         break;
@@ -157,6 +160,56 @@ const addType22ReportData = (subtasks, results, index) => {
   } else {
     report.value += `\n`;
   }
+};
+
+const addType27ReportData = (subtasks, results, index) => {
+  const totalTime = getTotalTime(results.value[index]);
+
+  report.value += `${subtasks.value[index].match}: ${totalTime.replace(
+    ".",
+    ","
+  )}(`;
+
+  let currentMergedTime = "00,0";
+  let previousMergedTime = "00,0";
+  let mergedDistance = 0;
+
+  results.value[index].forEach((result, resultIndex) => {
+    report.value += result.replace(".", ",");
+
+    currentMergedTime = getTotalTime([currentMergedTime, result]);
+    mergedDistance++;
+
+    if (mergedDistance === 5 && subtasks.value[index].distance > 5) {
+      report.value += `(${currentMergedTime.replace(".", ",")})`;
+
+      if (
+        previousMergedTime !== "00,0" &&
+        subtasks.value[index].distance > 10
+      ) {
+        report.value += `(${getTotalTime([
+          previousMergedTime,
+          currentMergedTime,
+        ]).replace(".", ",")})`;
+
+        previousMergedTime = "00,0";
+      } else {
+        previousMergedTime = currentMergedTime;
+      }
+
+      currentMergedTime = "00,0";
+      mergedDistance = 0;
+    }
+
+    if (resultIndex < results.value[index].length - 1) {
+      report.value += "; ";
+    }
+  });
+
+  report.value += `)\n1 км(ср.)=${getPace(
+    totalTime,
+    subtasks.value[index].distance
+  )}\n`;
 };
 
 const addType33ReportData = (subtasks, results, index) => {

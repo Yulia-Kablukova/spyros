@@ -1,6 +1,10 @@
 import { ref } from "vue";
 import { templates as templatesRef } from "../../consts/report/tasksTemplates";
-import { CUTOFFS_5_KM, TOTAL_TIME } from "../../consts/report/timeTypes";
+import {
+  CUTOFFS_1_KM,
+  CUTOFFS_5_KM,
+  TOTAL_TIME,
+} from "../../consts/report/timeTypes";
 
 const templates = ref(templatesRef);
 
@@ -44,6 +48,9 @@ export const parseTask = (task, subtasks, results, errors, taskDistance) => {
             break;
           case 22:
             parseType22(match, results, subtasks);
+            break;
+          case 27:
+            parseType27(match, results, subtasks, taskDistance);
             break;
           case 30:
             parseType30(match, results, subtasks);
@@ -335,6 +342,21 @@ const parseType22 = (match, results, subtasks) => {
     distance: null,
     timeType: null,
   });
+};
+
+const parseType27 = (match, results, subtasks, taskDistance) => {
+  const distance = getDistance(match);
+  const resultsCount = Math.ceil(distance);
+
+  results.value.push(Array(resultsCount));
+  subtasks.value.push({
+    match: `${distance.toString().replace(".", ",")} км`,
+    type: 27,
+    resultsCount,
+    distance,
+    timeType: CUTOFFS_1_KM,
+  });
+  taskDistance.value += distance;
 };
 
 const parseType30 = (match, results, subtasks) => {
