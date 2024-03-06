@@ -49,7 +49,7 @@ export const getReportData = (subtasks, results, task, dailyReportData) => {
 
   addDailyReportData(task, dailyReportData);
 
-  return report.value;
+  return report.value.trim();
 };
 
 const addType1ReportData = (subtasks, results, index) => {
@@ -296,7 +296,9 @@ const addType33ReportData = (subtasks, results, index) => {
   buffer.value = `1 км(ср.)=${getPace(totalTime, totalDistance)}\n`;
 
   fartlekSubtasks.value.forEach(({ match }, index) => {
-    buffer.value += `${match.replace(/\(до [0-9]+\)/, "")}(ср.)=${getAverage(
+    buffer.value += `${match
+      .replace(/\(до [0-9]+\)/, "")
+      .replace(/-с\.к [0-9]+ км/, "")}(ср.)=${getAverage(
       fartlekResults.value[index]
     )}\n`;
   });
@@ -355,9 +357,9 @@ const addType34ReportData = (subtasks, results, index) => {
     }, [])
     .filter(({ results }) => results.length > 1)
     .forEach(({ match, results }) => {
-      buffer.value += `${match.replace(/\(до [0-9]+\)/, "")}(ср.)=${getAverage(
-        results
-      )}\n`;
+      buffer.value += `${match
+        .replace(/\(до [0-9]+\)/, "")
+        .replace(/-с\.к [0-9]+ км/, "")}(ср.)=${getAverage(results)}\n`;
     });
 
   fartlekSubtasks.value = [];

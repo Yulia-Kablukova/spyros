@@ -551,11 +551,11 @@ const getDistance = (match) => {
 
   const distance = +match.match(/^[0-9]+(,[0-9]?)?/)[0].replace(",", ".");
 
-  if (match.match(/км/)) {
-    return distance;
+  if (match.match(/ м/)) {
+    return distance / 1000;
   }
 
-  return distance / 1000;
+  return distance;
 };
 
 const getSeriesCount = (match) => {
