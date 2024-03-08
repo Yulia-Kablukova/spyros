@@ -76,7 +76,11 @@ const addType1ReportData = (subtasks, results, index) => {
 const addType2ReportData = (subtasks, results, index) => {
   report.value = report.value.slice(0, -1);
 
-  report.value += `(${results.value[index][0]}-${results.value[index][1]}-${results.value[index][2]})\n`;
+  const heartRate = [...results.value[index]].map((v) => {
+    return (v > 50) ? Math.floor(v / 6) : v;
+  });
+
+  report.value += `(${heartRate[0]}-${heartRate[1]}-${heartRate[2]})\n`;
 
   if (buffer.value) {
     report.value += buffer.value;
