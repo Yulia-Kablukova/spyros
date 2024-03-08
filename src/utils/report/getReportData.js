@@ -528,7 +528,7 @@ const addDailyReportData = (task, dailyReportData) => {
   }
 
   if (dailyReportData.value.weights[0] && dailyReportData.value.weights[1]) {
-    report.value += `В: ${dailyReportData.value.weights[0]}; ${dailyReportData.value.weights[1]}\n`;
+    report.value += `В: ${dailyReportData.value.weights[0]}: ${dailyReportData.value.weights[1]}\n`;
   }
 };
 
