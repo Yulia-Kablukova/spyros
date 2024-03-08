@@ -129,14 +129,6 @@ const handleTimeTypeSelect = (subtask, index, timeType) => {
       </div>
 
       <div v-else>
-        <custom-select
-          v-if="getTimeTypes(subtask).length > 1"
-          :value="subtask.timeType"
-          :options="getTimeTypes(subtask)"
-          class="results__time-type-select"
-          @input="handleTimeTypeSelect(subtask, index, $event)"
-        />
-
         <div
           class="results__result-inputs"
           :class="{
@@ -151,6 +143,14 @@ const handleTimeTypeSelect = (subtask, index, timeType) => {
             :data-maska="subtask.timeType?.value === 1 ? '#:##' : '00:00:##.#'"
             data-maska-tokens="0:[0-9]:optional|::::optional"
             data-maska-reversed
+          />
+
+          <custom-select
+            v-if="getTimeTypes(subtask).length > 1"
+            :value="subtask.timeType"
+            :options="getTimeTypes(subtask)"
+            class="results__time-type-select"
+            @input="handleTimeTypeSelect(subtask, index, $event)"
           />
         </div>
       </div>
@@ -200,7 +200,6 @@ const handleTimeTypeSelect = (subtask, index, timeType) => {
   }
 
   &__time-type-select {
-    margin-bottom: 15px;
     width: 175px;
   }
 }
