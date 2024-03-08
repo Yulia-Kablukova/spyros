@@ -520,7 +520,7 @@ const addDailyReportData = (task, dailyReportData) => {
     dailyReportData.value.states[1] &&
     dailyReportData.value.states[2]
   ) {
-    report.value += `С: ${dailyReportData.value.states[0]}\nФ: ${dailyReportData.value.states[1]}\nМ: ${dailyReportData.value.states[2]}\n`;
+    report.value += `С-Ф-М: ${dailyReportData.value.states[0]}-${dailyReportData.value.states[1]}-${dailyReportData.value.states[2]}\n`;
   }
 
   if (dailyReportData.value.comment) {
