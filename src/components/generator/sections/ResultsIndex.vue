@@ -90,7 +90,13 @@ const handleTimeTypeSelect = (subtask, index, timeType) => {
       :key="index"
       class="results__result-container"
     >
-      <span>{{ getFormattedMatch(subtask.match) }}</span>
+      <div>
+        <div>{{ getFormattedMatch(subtask.match) }}</div>
+
+        <div class="results__hint">
+          {{ subtask.hint }}
+        </div>
+      </div>
 
       <div v-if="subtask.type === 2" class="results__result-inputs">
         <input
@@ -203,6 +209,11 @@ const handleTimeTypeSelect = (subtask, index, timeType) => {
     margin-bottom: 15px;
     width: 175px;
   }
+
+  &__hint {
+    font-size: 13px;
+    color: #717171;
+  }
 }
 
 @media only screen and (max-width: 600px) {
@@ -217,6 +228,11 @@ const handleTimeTypeSelect = (subtask, index, timeType) => {
 
     &__result-container {
       gap: 10px;
+    }
+
+    &__hint {
+      font-size: 12px;
+      line-height: 18px;
     }
   }
 }

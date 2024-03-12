@@ -5,10 +5,18 @@ import {
   CUTOFFS_5_KM,
   TOTAL_TIME,
 } from "../../consts/report/timeTypes";
+import { BETWEEN_SERIES, FILL_ALL_SERIES } from "@/consts/report/hints";
 
 const templates = ref(templatesRef);
 
-export const parseTask = (task, subtasks, results, errors, taskDistance) => {
+export const parseTask = (
+  task,
+  subtasks,
+  results,
+  errors,
+  taskDistance,
+  globalSeriesCount = 1
+) => {
   let taskCopy = task.value.trim().replaceAll("\n", "");
 
   while (taskCopy.length) {
@@ -37,10 +45,22 @@ export const parseTask = (task, subtasks, results, errors, taskDistance) => {
             parseType4(match, results, subtasks);
             break;
           case 11:
-            parseType11(match, results, subtasks, taskDistance);
+            parseType11(
+              match,
+              results,
+              subtasks,
+              taskDistance,
+              globalSeriesCount
+            );
             break;
           case 12:
-            parseType12(match, results, subtasks, taskDistance);
+            parseType12(
+              match,
+              results,
+              subtasks,
+              taskDistance,
+              globalSeriesCount
+            );
             break;
           case 20:
           case 21:
@@ -61,8 +81,18 @@ export const parseTask = (task, subtasks, results, errors, taskDistance) => {
           case 34:
             parseType34(match, results, subtasks, taskDistance);
             break;
+          case 35:
+            parseType35(match, results, subtasks, taskDistance, errors);
+            break;
           default:
-            parseDefault(match, template, results, subtasks, taskDistance);
+            parseDefault(
+              match,
+              template,
+              results,
+              subtasks,
+              taskDistance,
+              globalSeriesCount
+            );
             break;
         }
 
@@ -158,11 +188,20 @@ const parseType4 = (match, results, subtasks) => {
   results.value.push([3, undefined, undefined]);
 };
 
-const parseType11 = (match, results, subtasks, taskDistance) => {
+const parseType11 = (
+  match,
+  results,
+  subtasks,
+  taskDistance,
+  globalSeriesCount
+) => {
   match = match.slice(7, -1);
 
-  const resultsCount = subtasks.value.slice(-1)[0].resultsCount - 1;
+  const resultsCount =
+    subtasks.value.slice(-1)[0].resultsCount - globalSeriesCount;
   const distance = getDistance(match);
+
+  const hint = globalSeriesCount > 1 ? FILL_ALL_SERIES : null;
 
   results.value.push(Array(resultsCount));
   subtasks.value.push({
@@ -171,14 +210,21 @@ const parseType11 = (match, results, subtasks, taskDistance) => {
     resultsCount,
     distance,
     timeType: null,
+    hint,
   });
   taskDistance.value += resultsCount * distance;
 };
 
-const parseType12 = (match, results, subtasks, taskDistance) => {
+const parseType12 = (
+  match,
+  results,
+  subtasks,
+  taskDistance,
+  globalSeriesCount
+) => {
   const distance = getDistance(match);
 
-  taskDistance.value += distance;
+  taskDistance.value += distance * globalSeriesCount;
 
   const sameSubtaskIndex = subtasks.value.findIndex((subtask) => {
     return (
@@ -187,7 +233,7 @@ const parseType12 = (match, results, subtasks, taskDistance) => {
     );
   });
 
-  if (~sameSubtaskIndex) {
+  if (~sameSubtaskIndex && globalSeriesCount === 1) {
     results.value[sameSubtaskIndex].push(undefined);
     subtasks.value[sameSubtaskIndex].resultsCount++;
     subtasks.value.push(subtasks.value.splice(sameSubtaskIndex, 1)[0]);
@@ -195,13 +241,16 @@ const parseType12 = (match, results, subtasks, taskDistance) => {
     return;
   }
 
-  results.value.push(Array(1));
+  const hint = globalSeriesCount > 1 ? FILL_ALL_SERIES : null;
+
+  results.value.push(Array(globalSeriesCount));
   subtasks.value.push({
     match,
     type: 12,
-    resultsCount: 1,
+    resultsCount: globalSeriesCount,
     distance,
     timeType: null,
+    hint,
   });
 };
 
@@ -495,7 +544,43 @@ const parseType34 = (match, results, subtasks, taskDistance) => {
   taskDistance.value += +match.match(/^[0-9]+/)[0];
 };
 
-const parseDefault = (match, template, results, subtasks, taskDistance) => {
+const parseType35 = (match, results, subtasks, taskDistance, errors) => {
+  const matchBeginning = getSeriesCount(match);
+  const matchEnding = match.match(/\(через [0-9]+ м\(до 22\)\)/g).pop();
+
+  match = match.slice(
+    matchBeginning.length + 1,
+    match.length - matchEnding.length - 1
+  );
+
+  const seriesCount = +matchBeginning.match(/^[0-9]+/)[0];
+
+  parseTask(ref(match), subtasks, results, errors, taskDistance, seriesCount);
+
+  const restMatch = matchEnding.slice(7, matchEnding.length - 1);
+  const restDistance = getDistance(restMatch);
+  const restResultsCount = seriesCount - 1;
+
+  results.value.push(Array(restResultsCount));
+  subtasks.value.push({
+    match: restMatch,
+    type: 11,
+    resultsCount: restResultsCount,
+    distance: restDistance,
+    timeType: null,
+    hint: BETWEEN_SERIES,
+  });
+  taskDistance.value += restDistance * restResultsCount;
+};
+
+const parseDefault = (
+  match,
+  template,
+  results,
+  subtasks,
+  taskDistance,
+  globalSeriesCount
+) => {
   const matchBeginning = match.match(
     /^([0-9]+х)?[0-9]+(,[0-9]?)? (км)?(м)?/
   )[0];
@@ -504,12 +589,15 @@ const parseDefault = (match, template, results, subtasks, taskDistance) => {
 
   const timeType = getTimeType(template.type, matchBeginning, distance);
 
-  const resultsCount = getResultsCount(
-    matchBeginning,
-    template.resultsPerSeries,
-    timeType,
-    distance
-  );
+  const resultsCount =
+    getResultsCount(
+      matchBeginning,
+      template.resultsPerSeries,
+      timeType,
+      distance
+    ) * globalSeriesCount;
+
+  const hint = globalSeriesCount > 1 ? FILL_ALL_SERIES : null;
 
   results.value.push(Array(resultsCount));
   subtasks.value.push({
@@ -518,10 +606,11 @@ const parseDefault = (match, template, results, subtasks, taskDistance) => {
     resultsCount,
     distance,
     timeType,
+    hint,
   });
 
   const seriesCount = +getSeriesCount(match)?.match(/^[0-9]+/)[0] || 1;
-  taskDistance.value += seriesCount * distance;
+  taskDistance.value += seriesCount * distance * globalSeriesCount;
 };
 
 const getResultsCount = (match, resultsPerSeries, timeType, distance) => {

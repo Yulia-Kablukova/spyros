@@ -186,10 +186,9 @@ export const templates = [
     regexp: /^[0-9]+ км\(.*\)\(пульс\)/,
     resultsPerSeries: 1,
   },
-  /*{
-      type: 29,
-      regexp:
-        /^[0-9]+х\([0-9]+х[0-9]+ м-с\.у\.\(([0-9]+:)?[0-9]+(,[0-9]+)? или быстрее\)\)/,
-      resultsPerSeries: 1,
-    },*/
+  {
+    type: 35,
+    regexp: /^[0-9]+х\(.*\)\(через [0-9]+ м\(до 22\)\)/,
+    resultsPerSeries: 1,
+  },
 ];
