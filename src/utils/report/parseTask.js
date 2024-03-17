@@ -84,6 +84,9 @@ export const parseTask = (
           case 35:
             parseType35(match, results, subtasks, taskDistance, errors);
             break;
+          case 36:
+            parseType36(match, results, subtasks, taskDistance, errors);
+            break;
           default:
             parseDefault(
               match,
@@ -571,6 +574,22 @@ const parseType35 = (match, results, subtasks, taskDistance, errors) => {
     hint: BETWEEN_SERIES,
   });
   taskDistance.value += restDistance * restResultsCount;
+};
+
+const parseType36 = (match, results, subtasks, taskDistance, errors) => {
+  const matchBeginning = getSeriesCount(match);
+  const matchEnding = match
+    .match(/\(через [0-9]+(,[0-9]?)? мин\. отдыха\)/g)
+    .pop();
+
+  match = match.slice(
+    matchBeginning.length + 1,
+    match.length - matchEnding.length - 1
+  );
+
+  const seriesCount = +matchBeginning.match(/^[0-9]+/)[0];
+
+  parseTask(ref(match), subtasks, results, errors, taskDistance, seriesCount);
 };
 
 const parseDefault = (

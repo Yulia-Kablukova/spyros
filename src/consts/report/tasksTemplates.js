@@ -191,4 +191,9 @@ export const templates = [
     regexp: /^[0-9]+х\(.*\)\(через [0-9]+ м\(до 22\)\)/,
     resultsPerSeries: 1,
   },
+  {
+    type: 36,
+    regexp: /^[0-9]+х\(.*\)\(через [0-9]+(,[0-9]?)? мин\. отдыха\)/,
+    resultsPerSeries: 1,
+  },
 ];
