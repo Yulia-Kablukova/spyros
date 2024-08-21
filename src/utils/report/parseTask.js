@@ -11,23 +11,25 @@ const templates = ref(templatesRef);
 
 export const parseTask = (
   task,
+  taskCopy,
   subtasks,
   results,
   errors,
   taskDistance,
   globalSeriesCount = 1
 ) => {
-  let taskCopy = task.value.trim().replaceAll("\n", "");
+  task.value = task.value.trim();
+  taskCopy.value = task.value.replaceAll("\n", "");
 
-  while (taskCopy.length) {
+  while (taskCopy.value.length && !errors.value.isInvalidTask) {
     for (const index in templates.value) {
       const template = templates.value[index];
-      const matches = taskCopy.match(template.regexp);
+      const matches = taskCopy.value.match(template.regexp);
 
       if (matches) {
         const match = matches[0];
 
-        taskCopy = taskCopy.slice(match.length);
+        taskCopy.value = taskCopy.value.slice(match.length);
 
         if (!template.resultsPerSeries) {
           addDistance(match, template.type, taskDistance);
@@ -104,7 +106,6 @@ export const parseTask = (
 
       if (+index === templates.value.length - 1) {
         errors.value.isInvalidTask = true;
-        taskCopy = "";
         subtasks.value = [];
         results.value = [];
       }

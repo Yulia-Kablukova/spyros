@@ -8,6 +8,7 @@ import { parseTask } from "@/utils/report/parseTask";
 import { getReportData } from "@/utils/report/getReportData";
 
 const task = ref("");
+const taskCopy = ref("");
 const taskDistance = ref(0);
 const subtasks = ref([]);
 const results = ref([]);
@@ -33,7 +34,7 @@ const getTaskDistance = computed(() => {
 
 const handleResultsFill = () => {
   resetResults();
-  parseTask(task, subtasks, results, errors, taskDistance);
+  parseTask(task, taskCopy, subtasks, results, errors, taskDistance);
 };
 
 const resetResults = () => {
@@ -59,6 +60,7 @@ const handleGetReport = () => {
 
 const handleErrorPopupClose = () => {
   errors.value.isInvalidTask = false;
+  taskCopy.value = "";
 };
 </script>
 
@@ -105,6 +107,7 @@ const handleErrorPopupClose = () => {
 
     <error-popup-index
       v-if="errors.isInvalidTask"
+      :task-copy="taskCopy"
       @close="handleErrorPopupClose"
     />
   </div>

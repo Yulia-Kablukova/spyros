@@ -442,16 +442,18 @@ const addTimeTypeReportData = (subtasks, results, index) => {
     report.value += "\n";
   }
 
-  if (subtasks.value[index + 1]?.type === 2) {
-    buffer.value += `1 км(ср.)=${getPace(
-      totalTime,
-      subtasks.value[index].distance
-    )}\n`;
-  } else {
-    report.value += `1 км(ср.)=${getPace(
-      totalTime,
-      subtasks.value[index].distance
-    )}\n`;
+  if (subtasks.value[index].distance > 1) {
+    if (subtasks.value[index + 1]?.type === 2) {
+      buffer.value += `1 км(ср.)=${getPace(
+        totalTime,
+        subtasks.value[index].distance
+      )}\n`;
+    } else {
+      report.value += `1 км(ср.)=${getPace(
+        totalTime,
+        subtasks.value[index].distance
+      )}\n`;
+    }
   }
 };
 

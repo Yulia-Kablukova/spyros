@@ -11,7 +11,7 @@ export const templates = [
   },
   {
     type: 2,
-    regexp: /^\(пульс\)/,
+    regexp: /^\(пульс( после [0-9] раза)?\)/,
     resultsPerSeries: 3,
   },
   {

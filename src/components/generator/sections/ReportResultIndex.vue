@@ -28,7 +28,9 @@ const handleCopyReport = () => {
 <template>
   <div>
     <div class="report-result">
-      <p>{{ props.data }}</p>
+      <p class="report-result__text">
+        {{ props.data }}
+      </p>
 
       <content-copy
         :size="20"
@@ -54,6 +56,10 @@ const handleCopyReport = () => {
     cursor: pointer;
   }
 
+  &__text {
+    word-break: break-all;
+  }
+
   &__notification {
     position: fixed;
     top: 20px;
@@ -74,6 +80,12 @@ const handleCopyReport = () => {
 @media only screen and (max-width: 600px) {
   .report-result {
     padding: 20px 25px;
+    position: relative;
+
+    &__copy-icon {
+      position: absolute;
+      right: 25px;
+    }
   }
 }
 </style>
