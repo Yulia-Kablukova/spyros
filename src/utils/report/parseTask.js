@@ -84,10 +84,24 @@ export const parseTask = (
             parseType34(match, results, subtasks, taskDistance);
             break;
           case 35:
-            parseType35(match, results, subtasks, taskDistance, errors);
+            parseType35(
+              match,
+              taskCopy,
+              results,
+              subtasks,
+              taskDistance,
+              errors
+            );
             break;
           case 36:
-            parseType36(match, results, subtasks, taskDistance, errors);
+            parseType36(
+              match,
+              taskCopy,
+              results,
+              subtasks,
+              taskDistance,
+              errors
+            );
             break;
           default:
             parseDefault(
@@ -548,7 +562,14 @@ const parseType34 = (match, results, subtasks, taskDistance) => {
   taskDistance.value += +match.match(/^[0-9]+/)[0];
 };
 
-const parseType35 = (match, results, subtasks, taskDistance, errors) => {
+const parseType35 = (
+  match,
+  taskCopy,
+  results,
+  subtasks,
+  taskDistance,
+  errors
+) => {
   const matchBeginning = getSeriesCount(match);
   const matchEnding = match.match(/\(через [0-9]+ м\(до 22\)\)/g).pop();
 
@@ -559,7 +580,15 @@ const parseType35 = (match, results, subtasks, taskDistance, errors) => {
 
   const seriesCount = +matchBeginning.match(/^[0-9]+/)[0];
 
-  parseTask(ref(match), subtasks, results, errors, taskDistance, seriesCount);
+  parseTask(
+    ref(match),
+    taskCopy,
+    subtasks,
+    results,
+    errors,
+    taskDistance,
+    seriesCount
+  );
 
   const restMatch = matchEnding.slice(7, matchEnding.length - 1);
   const restDistance = getDistance(restMatch);
@@ -577,7 +606,14 @@ const parseType35 = (match, results, subtasks, taskDistance, errors) => {
   taskDistance.value += restDistance * restResultsCount;
 };
 
-const parseType36 = (match, results, subtasks, taskDistance, errors) => {
+const parseType36 = (
+  match,
+  taskCopy,
+  results,
+  subtasks,
+  taskDistance,
+  errors
+) => {
   const matchBeginning = getSeriesCount(match);
   const matchEnding = match
     .match(/\(через [0-9]+(,[0-9]?)? мин\. отдыха\)/g)
@@ -590,7 +626,15 @@ const parseType36 = (match, results, subtasks, taskDistance, errors) => {
 
   const seriesCount = +matchBeginning.match(/^[0-9]+/)[0];
 
-  parseTask(ref(match), subtasks, results, errors, taskDistance, seriesCount);
+  parseTask(
+    ref(match),
+    taskCopy,
+    subtasks,
+    results,
+    errors,
+    taskDistance,
+    seriesCount
+  );
 };
 
 const parseDefault = (
