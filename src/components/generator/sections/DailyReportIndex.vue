@@ -104,6 +104,11 @@ const props = defineProps({
     gap: 20px;
   }
 
+  &__hint {
+    font-size: 13px;
+    color: #717171;
+  }
+
   &__data-block {
     display: flex;
     flex-direction: column;
@@ -135,6 +140,7 @@ const props = defineProps({
 @media only screen and (max-width: 600px) {
   .daily-report {
     &__wrapper {
+      margin-top: 15px;
       gap: 15px;
     }
 
