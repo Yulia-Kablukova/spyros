@@ -18,10 +18,11 @@ const dailyReportData = ref({
   isIncluded: false,
   date: new Date(),
   time: "08:00",
-  place: null,
-  states: Array(3),
   comment: null,
+  states: Array(3),
+  sleep: null,
   weights: Array(2),
+  recovery: null,
 });
 
 const errors = ref({
@@ -55,7 +56,13 @@ const resetResults = () => {
 };
 
 const handleGetReport = () => {
-  report.value = getReportData(subtasks, results, task, dailyReportData);
+  report.value = getReportData(
+    subtasks,
+    results,
+    task,
+    dailyReportData,
+    taskDistance
+  );
 };
 
 const handleErrorPopupClose = () => {

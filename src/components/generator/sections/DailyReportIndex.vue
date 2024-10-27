@@ -12,10 +12,6 @@ const props = defineProps({
 
 <template>
   <div class="daily-report__wrapper">
-    <p class="daily-report__hint">
-      Идеальный ученик заполнит все поля. Бывалый сам знает, как лучше.
-    </p>
-
     <div class="daily-report__data-block">
       <span>Дата</span>
 
@@ -39,13 +35,24 @@ const props = defineProps({
     </div>
 
     <div class="daily-report__data-block">
-      <span>Место</span>
+      <div>
+        <div class="daily-report__subheader">Комментарий</div>
+        <div class="daily-report__hint">
+          Самочувствие, модель кроссовок, погода, длинный низ (если был на
+          рабочей нагрузке), покрытие
+        </div>
+      </div>
 
-      <input v-model="props.data.place" class="daily-report__input--width" />
+      <textarea v-model="props.data.comment" />
     </div>
 
     <div class="daily-report__data-block">
-      <span>Оценка самочувствия</span>
+      <div>
+        <div class="daily-report__subheader">Оценка самочувствия</div>
+        <div class="daily-report__hint">
+          От 1 до 10 баллов - общее, функциональное, мышечно-связочное
+        </div>
+      </div>
 
       <div class="daily-report__inputs">
         <input
@@ -57,9 +64,9 @@ const props = defineProps({
     </div>
 
     <div class="daily-report__data-block">
-      <span>Комментарий</span>
+      <span>Сон</span>
 
-      <textarea v-model="props.data.comment" />
+      <input v-model="props.data.sleep" class="daily-report__input--width" />
     </div>
 
     <div class="daily-report__data-block">
@@ -79,21 +86,22 @@ const props = defineProps({
         />
       </div>
     </div>
+
+    <div class="daily-report__data-block">
+      <span>Массаж, баня</span>
+
+      <input v-model="props.data.recovery" class="daily-report__input--width" />
+    </div>
   </div>
 </template>
 
 <style scoped lang="scss">
 .daily-report {
   &__wrapper {
-    margin-top: 5px;
+    margin-top: 20px;
     display: flex;
     flex-direction: column;
     gap: 20px;
-  }
-
-  &__hint {
-    font-size: 13px;
-    color: #717171;
   }
 
   &__data-block {
@@ -115,7 +123,7 @@ const props = defineProps({
 
   &__input {
     &--width {
-      width: 230px;
+      width: 210px;
     }
   }
 

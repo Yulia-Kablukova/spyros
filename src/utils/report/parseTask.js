@@ -193,8 +193,8 @@ const parseType4 = (match, results, subtasks) => {
     return;
   }
 
-  if (match.match(/1 серия/)) {
-    results.value.push([1, undefined, undefined]);
+  if (match.match(/[0-9] сери./)) {
+    results.value.push([match.match(/[0-9]/), undefined, undefined]);
     return;
   }
 
@@ -718,7 +718,7 @@ const getSeriesCount = (match) => {
 };
 
 const getTimeType = (templateType, match, distance) => {
-  if (templateType === 1) {
+  if (templateType === 1 || templateType === 19) {
     return TOTAL_TIME;
   }
 
@@ -726,7 +726,7 @@ const getTimeType = (templateType, match, distance) => {
     return null;
   }
 
-  if (templateType === 14 || templateType === 18 || templateType === 19) {
+  if (templateType === 14 || templateType === 18) {
     if (distance < 10) {
       return TOTAL_TIME;
     }

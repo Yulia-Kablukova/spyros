@@ -57,7 +57,7 @@ const handleCopyReport = () => {
   }
 
   &__text {
-    word-break: break-all;
+    word-break: break-word;
   }
 
   &__notification {

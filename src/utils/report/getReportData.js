@@ -7,7 +7,13 @@ const buffer = ref("");
 const fartlekSubtasks = ref([]);
 const fartlekResults = ref([]);
 
-export const getReportData = (subtasks, results, task, dailyReportData) => {
+export const getReportData = (
+  subtasks,
+  results,
+  task,
+  dailyReportData,
+  taskDistance
+) => {
   report.value = "";
 
   subtasks.value.forEach(({ type }, index) => {
@@ -47,7 +53,7 @@ export const getReportData = (subtasks, results, task, dailyReportData) => {
     }
   });
 
-  addDailyReportData(task, dailyReportData);
+  addDailyReportData(task, dailyReportData, taskDistance);
 
   return report.value.trim();
 };
@@ -94,7 +100,11 @@ const addType3ReportData = (subtasks, results, index) => {
     report.value += getFormattedMatch(subtasks.value[index].match);
   }
 
-  report.value += `(${results.value[index][0]}х${results.value[index][1]})`;
+  report.value += `(`;
+  if (results.value[index][0] > 1) {
+    report.value += `${results.value[index][0]}х`;
+  }
+  report.value += `${results.value[index][1]})`;
 
   if (
     subtasks.value[index + 1]?.type === 3 ||
@@ -115,13 +125,12 @@ const addType4ReportData = (subtasks, results, index) => {
   } else {
     report.value += getFormattedMatch(subtasks.value[index].match);
   }
-  report.value += `(${results.value[index][2]})`;
+  report.value += `(${results.value[index][2]})(`;
 
-  if (results.value[index][0] === "1" && results.value[index][1] === "12") {
-    report.value += `(1х12)`;
-  } else {
-    report.value += `(${results.value[index][0]}х${results.value[index][1]} и 12)`;
+  if (results.value[index][0] > 1) {
+    report.value += `${results.value[index][0]}х`;
   }
+  report.value += `${results.value[index][1]})`;
 
   if (
     subtasks.value[index + 1]?.type === 3 ||
@@ -500,38 +509,42 @@ const addCutoffs = (subtasks, results, index) => {
   report.value += ")\n";
 };
 
-const addDailyReportData = (task, dailyReportData) => {
+const addDailyReportData = (task, dailyReportData, taskDistance) => {
   if (!dailyReportData.value.isIncluded) {
     return;
   }
 
-  let dailyReportBeginning = `Отчет ${getDateFormatted(
+  const dailyReportBeginning = `${getDateFormatted(
     dailyReportData.value.date
-  )}\nВ: ${dailyReportData.value.time}\n`;
+  )}\n\n${dailyReportData.value.time}\n\n${task.value}\n\n`;
 
-  if (dailyReportData.value.place) {
-    dailyReportBeginning += `М: ${dailyReportData.value.place}\n`;
+  report.value = dailyReportBeginning + report.value + "\n";
+
+  if (dailyReportData.value.comment) {
+    report.value += `${dailyReportData.value.comment}\n\n`;
   }
-
-  dailyReportBeginning += `Н: ${task.value}\n`;
-
-  report.value = dailyReportBeginning + report.value;
 
   if (
     dailyReportData.value.states[0] &&
     dailyReportData.value.states[1] &&
     dailyReportData.value.states[2]
   ) {
-    report.value += `С: ${dailyReportData.value.states[0]}\nФ: ${dailyReportData.value.states[1]}\nМ: ${dailyReportData.value.states[2]}\n`;
+    report.value += `${dailyReportData.value.states[0]}-${dailyReportData.value.states[1]}-${dailyReportData.value.states[2]}\n\n`;
   }
 
-  if (dailyReportData.value.comment) {
-    report.value += `К: ${dailyReportData.value.comment}\n`;
+  if (dailyReportData.value.sleep) {
+    report.value += `${dailyReportData.value.sleep}\n\n`;
   }
 
   if (dailyReportData.value.weights[0] && dailyReportData.value.weights[1]) {
-    report.value += `В: ${dailyReportData.value.weights[0]}; ${dailyReportData.value.weights[1]}\n`;
+    report.value += `${dailyReportData.value.weights[0]}; ${dailyReportData.value.weights[1]}\n\n`;
   }
+
+  if (dailyReportData.value.recovery) {
+    report.value += `${dailyReportData.value.recovery}\n\n`;
+  }
+
+  report.value += `${taskDistance.value.toString().replace(".", ",")} км`;
 };
 
 const getDateFormatted = (date) => {
