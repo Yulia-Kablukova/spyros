@@ -77,7 +77,7 @@ const handleTimeTypeSelect = (subtask, index, timeType) => {
   <div class="results__wrapper">
     <p class="results__description">
       <span>
-        Формат ввода временных отсечек: 2:11:53.0 (с десятыми долями секунды).
+        Формат ввода временных отсечек: 2:09:56.0 (с десятыми долями секунды).
       </span>
       <span>
         Достаточно вводить только цифры - разделительные символы подставляются

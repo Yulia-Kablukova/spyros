@@ -8,7 +8,6 @@ import { parseTask } from "@/utils/report/parseTask";
 import { getReportData } from "@/utils/report/getReportData";
 
 const task = ref("");
-const taskCopy = ref("");
 const taskDistance = ref(0);
 const subtasks = ref([]);
 const results = ref([]);
@@ -26,7 +25,7 @@ const dailyReportData = ref({
 });
 
 const errors = ref({
-  isInvalidTask: false,
+  invalidTask: null,
 });
 
 const getTaskDistance = computed(() => {
@@ -35,14 +34,14 @@ const getTaskDistance = computed(() => {
 
 const handleResultsFill = () => {
   resetResults();
-  parseTask(task, taskCopy, subtasks, results, errors, taskDistance);
+  parseTask(task, subtasks, results, errors, taskDistance);
 };
 
 const resetResults = () => {
   report.value = "";
   subtasks.value = [];
   results.value = [];
-  errors.value.isInvalidTask = false;
+  errors.value.invalidTask = null;
   taskDistance.value = 0;
   dailyReportData.value = {
     isIncluded: false,
@@ -66,8 +65,7 @@ const handleGetReport = () => {
 };
 
 const handleErrorPopupClose = () => {
-  errors.value.isInvalidTask = false;
-  taskCopy.value = "";
+  errors.value.invalidTask = null;
 };
 </script>
 
@@ -113,8 +111,8 @@ const handleErrorPopupClose = () => {
     </div>
 
     <error-popup-index
-      v-if="errors.isInvalidTask"
-      :task-copy="taskCopy"
+      v-if="errors.invalidTask"
+      :invalid-task="errors.invalidTask"
       @close="handleErrorPopupClose"
     />
   </div>

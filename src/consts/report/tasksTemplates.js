@@ -41,7 +41,7 @@ export const templates = [
   },
   {
     type: 8,
-    regexp: /^1х50 м-б\.у\./,
+    regexp: /^50 м-б\.у\.\(через ходьбу обратно\)/,
     resultsPerSeries: 0,
   },
   {
@@ -188,12 +188,27 @@ export const templates = [
   },
   {
     type: 35,
-    regexp: /^[0-9]+х\(.*\)\(через [0-9]+ м\(до 22\)\)/,
+    regexp: /^[0-9]+х([0-9]+ км)?\(.*\)\(через [0-9]+ м\(до 22\)\)/,
     resultsPerSeries: 1,
   },
   {
     type: 36,
     regexp: /^[0-9]+х\(.*\)\(через [0-9]+(,[0-9]?)? мин\. отдыха\)/,
+    resultsPerSeries: 1,
+  },
+  {
+    type: 37,
+    regexp: /^анализ крови/,
+    resultsPerSeries: 0,
+  },
+  {
+    type: 38,
+    regexp: /^п\.о\./,
+    resultsPerSeries: 0,
+  },
+  {
+    type: 39,
+    regexp: /^500 м\(400 м\(до 27\)\+100 м-с\.у\.\)/,
     resultsPerSeries: 1,
   },
 ];

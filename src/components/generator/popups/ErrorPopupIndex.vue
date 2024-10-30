@@ -1,9 +1,9 @@
 <script setup>
 import WindowClose from "vue-material-design-icons/WindowClose.vue";
-import { ref, onMounted, onUnmounted } from "vue";
+import { onMounted, onUnmounted } from "vue";
 
 const props = defineProps({
-  taskCopy: {
+  invalidTask: {
     type: String,
     required: true,
     default: "",
@@ -12,8 +12,6 @@ const props = defineProps({
 
 const emits = defineEmits(["close"]);
 
-const errorPart = ref("");
-
 function handleKeyDown(e) {
   if (e.keyCode === 27) {
     emits("close");
@@ -21,8 +19,6 @@ function handleKeyDown(e) {
 }
 
 onMounted(() => {
-  errorPart.value = props.taskCopy.split("+")[0];
-
   window.addEventListener("keydown", handleKeyDown);
 });
 
@@ -40,7 +36,7 @@ onUnmounted(() => {
 
       <h1>Произошла ошибка</h1>
 
-      <p>Не удалось распознать "{{ errorPart }}".</p>
+      <p>Не удалось распознать "{{ invalidTask }}".</p>
 
       <p>Сообщить об ошибке можно в тг: djull_zzz</p>
     </div>

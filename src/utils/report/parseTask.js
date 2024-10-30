@@ -11,7 +11,6 @@ const templates = ref(templatesRef);
 
 export const parseTask = (
   task,
-  taskCopy,
   subtasks,
   results,
   errors,
@@ -19,17 +18,16 @@ export const parseTask = (
   globalSeriesCount = 1
 ) => {
   task.value = task.value.trim();
-  taskCopy.value = task.value.replaceAll("\n", "");
+  let taskCopy = task.value.replaceAll("\n", "");
 
-  while (taskCopy.value.length && !errors.value.isInvalidTask) {
+  while (taskCopy.length && !errors.value.invalidTask) {
     for (const index in templates.value) {
       const template = templates.value[index];
-      const matches = taskCopy.value.match(template.regexp);
+      const matches = taskCopy.match(template.regexp);
 
       if (matches) {
         const match = matches[0];
-
-        taskCopy.value = taskCopy.value.slice(match.length);
+        taskCopy = taskCopy.slice(match.length);
 
         if (!template.resultsPerSeries) {
           addDistance(match, template.type, taskDistance);
@@ -84,24 +82,10 @@ export const parseTask = (
             parseType34(match, results, subtasks, taskDistance);
             break;
           case 35:
-            parseType35(
-              match,
-              taskCopy,
-              results,
-              subtasks,
-              taskDistance,
-              errors
-            );
+            parseType35(match, results, subtasks, taskDistance, errors);
             break;
           case 36:
-            parseType36(
-              match,
-              taskCopy,
-              results,
-              subtasks,
-              taskDistance,
-              errors
-            );
+            parseType36(match, results, subtasks, taskDistance, errors);
             break;
           default:
             parseDefault(
@@ -119,9 +103,10 @@ export const parseTask = (
       }
 
       if (+index === templates.value.length - 1) {
-        errors.value.isInvalidTask = true;
+        errors.value.invalidTask = taskCopy.split("+")[0];
         subtasks.value = [];
         results.value = [];
+        taskCopy = "";
       }
     }
   }
@@ -562,15 +547,8 @@ const parseType34 = (match, results, subtasks, taskDistance) => {
   taskDistance.value += +match.match(/^[0-9]+/)[0];
 };
 
-const parseType35 = (
-  match,
-  taskCopy,
-  results,
-  subtasks,
-  taskDistance,
-  errors
-) => {
-  const matchBeginning = getSeriesCount(match);
+const parseType35 = (match, results, subtasks, taskDistance, errors) => {
+  const matchBeginning = match.match(/^[0-9]+х([0-9]+ км)?/)[0];
   const matchEnding = match.match(/\(через [0-9]+ м\(до 22\)\)/g).pop();
 
   match = match.slice(
@@ -580,15 +558,7 @@ const parseType35 = (
 
   const seriesCount = +matchBeginning.match(/^[0-9]+/)[0];
 
-  parseTask(
-    ref(match),
-    taskCopy,
-    subtasks,
-    results,
-    errors,
-    taskDistance,
-    seriesCount
-  );
+  parseTask(ref(match), subtasks, results, errors, taskDistance, seriesCount);
 
   const restMatch = matchEnding.slice(7, matchEnding.length - 1);
   const restDistance = getDistance(restMatch);
@@ -606,14 +576,7 @@ const parseType35 = (
   taskDistance.value += restDistance * restResultsCount;
 };
 
-const parseType36 = (
-  match,
-  taskCopy,
-  results,
-  subtasks,
-  taskDistance,
-  errors
-) => {
+const parseType36 = (match, results, subtasks, taskDistance, errors) => {
   const matchBeginning = getSeriesCount(match);
   const matchEnding = match
     .match(/\(через [0-9]+(,[0-9]?)? мин\. отдыха\)/g)
@@ -626,15 +589,7 @@ const parseType36 = (
 
   const seriesCount = +matchBeginning.match(/^[0-9]+/)[0];
 
-  parseTask(
-    ref(match),
-    taskCopy,
-    subtasks,
-    results,
-    errors,
-    taskDistance,
-    seriesCount
-  );
+  parseTask(ref(match), subtasks, results, errors, taskDistance, seriesCount);
 };
 
 const parseDefault = (
