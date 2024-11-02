@@ -65,6 +65,8 @@ const addType1ReportData = (subtasks, results, index) => {
 
   if (~warmUpCoolDownIndex) {
     report.value += warmUpCoolDownIndex > index ? `Р=` : `З=`;
+  } else if (report.value) {
+    report.value += `З=`;
   } else {
     report.value += `Б=`;
   }
