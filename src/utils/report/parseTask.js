@@ -87,6 +87,9 @@ export const parseTask = (
           case 36:
             parseType36(match, results, subtasks, taskDistance, errors);
             break;
+          case 40:
+            parseType40(match, results, subtasks);
+            break;
           default:
             parseDefault(
               match,
@@ -592,6 +595,112 @@ const parseType36 = (match, results, subtasks, taskDistance, errors) => {
   parseTask(ref(match), subtasks, results, errors, taskDistance, seriesCount);
 };
 
+const parseType40 = (match, results, subtasks) => {
+  const seriesCount = match.match(/^[0-9]+/);
+
+  results.value.push([seriesCount, 3, undefined]);
+  subtasks.value.push({
+    match: "Полуприсед с весом",
+    type: 40,
+    resultsCount: 3,
+    distance: null,
+    timeType: null,
+  });
+
+  results.value.push([seriesCount, 3, undefined]);
+  subtasks.value.push({
+    match: "поднятие с весом на стопах",
+    type: 40,
+    resultsCount: 3,
+    distance: null,
+    timeType: null,
+  });
+
+  results.value.push([seriesCount, 3, undefined]);
+  subtasks.value.push({
+    match: "выпрыгивание с полуприседа с весом",
+    type: 40,
+    resultsCount: 3,
+    distance: null,
+    timeType: null,
+  });
+
+  results.value.push([seriesCount, 3, undefined]);
+  subtasks.value.push({
+    match:
+      "зашагивание на платформу с весом с выпрыгиванием вверх на левой ноге",
+    type: 40,
+    resultsCount: 3,
+    distance: null,
+    timeType: null,
+  });
+
+  results.value.push([seriesCount, 3, undefined]);
+  subtasks.value.push({
+    match:
+      "зашагивание на платформу с весом с выпрыгиванием вверх на правой ноге",
+    type: 40,
+    resultsCount: 3,
+    distance: null,
+    timeType: null,
+  });
+
+  results.value.push([seriesCount, 3]);
+  subtasks.value.push({
+    match: "пистолетик на левой ноге",
+    type: 40,
+    resultsCount: 2,
+    distance: null,
+    timeType: null,
+  });
+
+  results.value.push([seriesCount, 3]);
+  subtasks.value.push({
+    match: "пистолетик на правой ноге",
+    type: 40,
+    resultsCount: 2,
+    distance: null,
+    timeType: null,
+  });
+
+  results.value.push([seriesCount, 7]);
+  subtasks.value.push({
+    match: "прыжок через барьер",
+    type: 40,
+    resultsCount: 2,
+    distance: null,
+    timeType: null,
+  });
+
+  results.value.push([seriesCount, 3, undefined]);
+  subtasks.value.push({
+    match: "выпрыгивание с весом из положения стоя",
+    type: 40,
+    resultsCount: 3,
+    distance: null,
+    timeType: null,
+  });
+
+  results.value.push([seriesCount, 3, undefined]);
+  subtasks.value.push({
+    match: "бросок веса вперёд из полуприседа",
+    type: 40,
+    resultsCount: 3,
+    distance: null,
+    timeType: null,
+  });
+
+  results.value.push([seriesCount, 3]);
+  subtasks.value.push({
+    match:
+      "прыжок из полного приседа на платформу с выпрыгиванием на ней вверх из полуприседа",
+    type: 40,
+    resultsCount: 2,
+    distance: null,
+    timeType: null,
+  });
+};
+
 const parseDefault = (
   match,
   template,
@@ -616,17 +725,29 @@ const parseDefault = (
       distance
     ) * globalSeriesCount;
 
+  const sameSubtaskIndex = subtasks.value.findIndex((subtask) => {
+    return subtask.type === template.type && subtask.distance === distance;
+  });
+
   const hint = globalSeriesCount > 1 ? FILL_ALL_SERIES : null;
 
-  results.value.push(Array(resultsCount));
-  subtasks.value.push({
-    match: matchBeginning,
-    type: template.type,
-    resultsCount,
-    distance,
-    timeType,
-    hint,
-  });
+  if (~sameSubtaskIndex && globalSeriesCount === 1) {
+    results.value[sameSubtaskIndex].push(Array(resultsCount));
+    subtasks.value[sameSubtaskIndex].timeType = null;
+    subtasks.value[sameSubtaskIndex].resultsCount += resultsCount;
+    subtasks.value.push(subtasks.value.splice(sameSubtaskIndex, 1)[0]);
+    results.value.push(results.value.splice(sameSubtaskIndex, 1)[0]);
+  } else {
+    results.value.push(Array(resultsCount));
+    subtasks.value.push({
+      match: matchBeginning,
+      type: template.type,
+      resultsCount,
+      distance,
+      timeType,
+      hint,
+    });
+  }
 
   const seriesCount = +getSeriesCount(match)?.match(/^[0-9]+/)[0] || 1;
   taskDistance.value += seriesCount * distance * globalSeriesCount;

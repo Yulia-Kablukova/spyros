@@ -36,6 +36,7 @@ export const getReportData = (
         break;
       case 22:
       case 30:
+      case 40:
         addType22ReportData(subtasks, results, index);
         break;
       case 27:
@@ -427,9 +428,15 @@ const addDefaultTypeReportData = (subtasks, results, index) => {
       series[0].length
     )}(ср.)=${getAverage(results.value[index])}\n`;
   } else {
-    report.value += `${subtasks.value[index].match}(ср.)=${getAverage(
-      results.value[index]
-    )}\n`;
+    if (subtasks.value[index + 1]?.type === 2) {
+      buffer.value += `${subtasks.value[index].match}(ср.)=${getAverage(
+        results.value[index]
+      )}\n`;
+    } else {
+      report.value += `${subtasks.value[index].match}(ср.)=${getAverage(
+        results.value[index]
+      )}\n`;
+    }
   }
 };
 
