@@ -6,6 +6,7 @@ import ReportResult from "@/components/generator/sections/ReportResultIndex.vue"
 import ErrorPopupIndex from "@/components/generator/popups/ErrorPopupIndex.vue";
 import { parseTask } from "@/utils/report/parseTask";
 import { getReportData } from "@/utils/report/getReportData";
+import BirthdayPopupIndex from "@/components/generator/popups/BirthdayPopupIndex";
 
 const task = ref("");
 const taskDistance = ref(0);
@@ -67,6 +68,11 @@ const handleGetReport = () => {
 const handleErrorPopupClose = () => {
   errors.value.invalidTask = null;
 };
+
+const isShowBirthdayPopup = ref(true);
+const handleBirthdayPopupClose = () => {
+  isShowBirthdayPopup.value = false;
+};
 </script>
 
 <template>
@@ -114,6 +120,11 @@ const handleErrorPopupClose = () => {
       v-if="errors.invalidTask"
       :invalid-task="errors.invalidTask"
       @close="handleErrorPopupClose"
+    />
+
+    <birthday-popup-index
+      v-if="isShowBirthdayPopup"
+      @close="handleBirthdayPopupClose"
     />
   </div>
 </template>
