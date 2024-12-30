@@ -24,7 +24,6 @@ export const parseTask = (
     for (const index in templates.value) {
       const template = templates.value[index];
       const matches = taskCopy.match(template.regexp);
-
       if (matches) {
         const match = matches[0];
         taskCopy = taskCopy.slice(match.length);
@@ -261,33 +260,36 @@ const parseType12 = (
 };
 
 const parseType20 = (match, results, subtasks, type, taskDistance) => {
+  const seriesCount = match.match(/[0-9]+х/) ? +match.match(/^[0-9]+/) : 1;
+  const seriesIndex = seriesCount > 1 ? 0 : -1;
+
   let rest = match.match(/\(через [0-9]+ м\(до 22\)\)/);
 
-  rest = rest[0].slice(7, -1);
+  if (rest) {
+    rest = rest[0].slice(7, -1);
+    const restDistance = getDistance(rest);
 
-  const seriesCount = +match.match(/^[0-9]+/);
-  const restDistance = getDistance(rest);
-
-  results.value.push(Array(seriesCount - 1));
-  subtasks.value.push({
-    match: rest,
-    type: 11,
-    resultsCount: seriesCount - 1,
-    distance: restDistance,
-    timeType: null,
-  });
-  taskDistance.value += (seriesCount - 1) * restDistance;
+    results.value.push(Array(seriesCount - 1));
+    subtasks.value.push({
+      match: rest,
+      type: 11,
+      resultsCount: seriesCount - 1,
+      distance: restDistance,
+      timeType: null,
+    });
+    taskDistance.value += (seriesCount - 1) * restDistance;
+  }
 
   if (type === 20) {
-    const subseriesCount = +match.match(/[0-9]+/g)[1];
-    const subdistance = +match.match(/[0-9]+/g)[3];
+    const subseriesCount = +match.match(/[0-9]+/g)[seriesIndex + 1];
+    const subdistance = +match.match(/[0-9]+/g)[seriesIndex + 3];
 
     taskDistance.value +=
       (seriesCount * (subseriesCount * 4 + 3.5) * subdistance) / 1000;
   }
 
   if (type === 21) {
-    const subdistance = +match.match(/[0-9]+/g)[1];
+    const subdistance = +match.match(/[0-9]+/g)[seriesIndex + 1];
 
     taskDistance.value += (seriesCount * subdistance) / 1000;
   }
