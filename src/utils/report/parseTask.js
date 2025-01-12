@@ -175,6 +175,11 @@ const parseType4 = (match, results, subtasks) => {
     timeType: null,
   });
 
+  if (match.match(/без веса/)) {
+    results.value.push([2, undefined, "без веса"]);
+    return;
+  }
+
   if (match.match(/с собственным весом/)) {
     results.value.push([3, undefined, "с собственным весом"]);
     return;
