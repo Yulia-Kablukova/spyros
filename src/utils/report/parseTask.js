@@ -603,6 +603,8 @@ const parseType36 = (match, results, subtasks, taskDistance, errors) => {
 };
 
 const parseType40 = (match, results, subtasks) => {
+  // TODO: simplify this
+
   const seriesCount = match.match(/^[0-9]+/);
 
   results.value.push([seriesCount, 3, undefined]);
@@ -614,98 +616,130 @@ const parseType40 = (match, results, subtasks) => {
     timeType: null,
   });
 
-  results.value.push([seriesCount, 3, undefined]);
-  subtasks.value.push({
-    match: "поднятие с весом на стопах",
-    type: 40,
-    resultsCount: 3,
-    distance: null,
-    timeType: null,
-  });
+  if (match.match(/поднятие с весом на стопах/)) {
+    results.value.push([seriesCount, 3, undefined]);
+    subtasks.value.push({
+      match: "поднятие с весом на стопах",
+      type: 40,
+      resultsCount: 3,
+      distance: null,
+      timeType: null,
+    });
+  }
 
-  results.value.push([seriesCount, 3, undefined]);
-  subtasks.value.push({
-    match: "выпрыгивание с полуприседа с весом",
-    type: 40,
-    resultsCount: 3,
-    distance: null,
-    timeType: null,
-  });
+  if (match.match(/выпрыгивание с полуприседа с весом/)) {
+    results.value.push([seriesCount, 3, undefined]);
+    subtasks.value.push({
+      match: "выпрыгивание с полуприседа с весом",
+      type: 40,
+      resultsCount: 3,
+      distance: null,
+      timeType: null,
+    });
+  }
 
-  results.value.push([seriesCount, 3, undefined]);
-  subtasks.value.push({
-    match:
-      "зашагивание на платформу с весом с выпрыгиванием вверх на левой ноге",
-    type: 40,
-    resultsCount: 3,
-    distance: null,
-    timeType: null,
-  });
+  if (match.match(/зашагивание на платформу с весом с выпрыгиванием вверх на левой ноге/)) {
+    results.value.push([seriesCount, 3, undefined]);
+    subtasks.value.push({
+      match:
+        "зашагивание на платформу с весом с выпрыгиванием вверх на левой ноге",
+      type: 40,
+      resultsCount: 3,
+      distance: null,
+      timeType: null,
+    });
+  }
 
-  results.value.push([seriesCount, 3, undefined]);
-  subtasks.value.push({
-    match:
-      "зашагивание на платформу с весом с выпрыгиванием вверх на правой ноге",
-    type: 40,
-    resultsCount: 3,
-    distance: null,
-    timeType: null,
-  });
+  if (match.match(/зашагивание на платформу с весом с выпрыгиванием вверх на правой ноге/)) {
+    results.value.push([seriesCount, 3, undefined]);
+    subtasks.value.push({
+      match:
+        "зашагивание на платформу с весом с выпрыгиванием вверх на правой ноге",
+      type: 40,
+      resultsCount: 3,
+      distance: null,
+      timeType: null,
+    });
+  }
 
-  results.value.push([seriesCount, 3]);
-  subtasks.value.push({
-    match: "пистолетик на левой ноге",
-    type: 40,
-    resultsCount: 2,
-    distance: null,
-    timeType: null,
-  });
+  if (match.match(/пистолетик на левой ноге/)) {
+    results.value.push([seriesCount, 3]);
+    subtasks.value.push({
+      match: "пистолетик на левой ноге",
+      type: 40,
+      resultsCount: 2,
+      distance: null,
+      timeType: null,
+    });
+  }
 
-  results.value.push([seriesCount, 3]);
-  subtasks.value.push({
-    match: "пистолетик на правой ноге",
-    type: 40,
-    resultsCount: 2,
-    distance: null,
-    timeType: null,
-  });
+  if (match.match(/пистолетик на правой ноге/)) {
+    results.value.push([seriesCount, 3]);
+    subtasks.value.push({
+      match: "пистолетик на правой ноге",
+      type: 40,
+      resultsCount: 2,
+      distance: null,
+      timeType: null,
+    });
+  }
 
-  results.value.push([seriesCount, 7]);
-  subtasks.value.push({
-    match: "прыжок через барьер",
-    type: 40,
-    resultsCount: 2,
-    distance: null,
-    timeType: null,
-  });
+  if (match.match(/прыжок через барьер/)) {
+    results.value.push([seriesCount, 7]);
+    subtasks.value.push({
+      match: "прыжок через барьер",
+      type: 40,
+      resultsCount: 2,
+      distance: null,
+      timeType: null,
+    });
+  }
 
-  results.value.push([seriesCount, 3, undefined]);
-  subtasks.value.push({
-    match: "выпрыгивание с весом из положения стоя",
-    type: 40,
-    resultsCount: 3,
-    distance: null,
-    timeType: null,
-  });
+  if (match.match(/выпрыгивание с весом из положения стоя/)) {
+    results.value.push([seriesCount, 3, undefined]);
+    subtasks.value.push({
+      match: "выпрыгивание с весом из положения стоя",
+      type: 40,
+      resultsCount: 3,
+      distance: null,
+      timeType: null,
+    });
+  }
 
-  results.value.push([seriesCount, 3, undefined]);
-  subtasks.value.push({
-    match: "бросок веса вперёд из полуприседа",
-    type: 40,
-    resultsCount: 3,
-    distance: null,
-    timeType: null,
-  });
+  if (match.match(/бросок веса вперёд из полуприседа/)) {
+    results.value.push([seriesCount, 3, undefined]);
+    subtasks.value.push({
+      match: "бросок веса вперёд из полуприседа",
+      type: 40,
+      resultsCount: 3,
+      distance: null,
+      timeType: null,
+    });
+  }
 
-  results.value.push([seriesCount, 3]);
-  subtasks.value.push({
-    match:
-      "прыжок из полного приседа на платформу с выпрыгиванием на ней вверх из полуприседа",
-    type: 40,
-    resultsCount: 2,
-    distance: null,
-    timeType: null,
-  });
+  if (match.match(/прыжок из полного приседа на платформу с выпрыгиванием на ней вверх из полуприседа/)) {
+    results.value.push([seriesCount, 3]);
+    subtasks.value.push({
+      match:
+        "прыжок из полного приседа на платформу с выпрыгиванием на ней вверх из полуприседа",
+      type: 40,
+      resultsCount: 2,
+      distance: null,
+      timeType: null,
+    });
+  }
+
+  if (match.match(/прыжок из полуприседа на платформу с выпрыгиванием на ней вверх из полуприседа/)) {
+    results.value.push([seriesCount, 3]);
+    subtasks.value.push({
+      match:
+        "прыжок из полуприседа на платформу с выпрыгиванием на ней вверх из полуприседа",
+      type: 40,
+      resultsCount: 2,
+      distance: null,
+      timeType: null,
+    });
+  }
 };
 
 const parseDefault = (
