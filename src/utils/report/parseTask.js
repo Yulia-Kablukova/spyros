@@ -489,14 +489,14 @@ const parseType30 = (match, results, subtasks) => {
 };
 
 const parseType33 = (match, results, subtasks, taskDistance) => {
-  const matchBeginning = match.match(/^[0-9]+ км\(/)[0];
+  const matchBeginning = match.match(/^[0-9]+(,[0-9]+)? км\(/)[0];
   const matchEnding = ")(пульс)";
 
   const fartlekParts = match
     .slice(matchBeginning.length, match.length - matchEnding.length)
     .split("/");
 
-  const totalDistance = +match.match(/^[0-9]+/)[0];
+  const totalDistance = +match.match(/^[0-9]+(,[0-9]+)?/)[0].replace(",", ".");
   const seriesCount =
     totalDistance /
     (getDistance(fartlekParts[0]) + getDistance(fartlekParts[1]));
@@ -526,7 +526,7 @@ const parseType33 = (match, results, subtasks, taskDistance) => {
 };
 
 const parseType34 = (match, results, subtasks, taskDistance) => {
-  const matchBeginning = match.match(/^[0-9]+ км\(/)[0];
+  const matchBeginning = match.match(/^[0-9]+(,[0-9]+)? км\(/)[0];
   const matchEnding = ")(пульс)";
 
   const fartlekParts = match
@@ -560,15 +560,15 @@ const parseType34 = (match, results, subtasks, taskDistance) => {
 const parseType35 = (match, results, subtasks, taskDistance, errors) => {
   const matchBeginning = match.match(/^[0-9]+х([0-9]+ км)?/)[0];
   const matchEnding = match.match(/\(через [0-9]+ м\(до 22\)\)/g).pop();
+  const pulseLength = match.match(/\(пульс( после [0-9]+ серии)?\)/) ? match.match(/\(пульс( после [0-9]+ серии)?\)/)[0].length : 0
 
-  match = match.slice(
+  const innerMatch = match.slice(
     matchBeginning.length + 1,
-    match.length - matchEnding.length - 1
+    match.length - matchEnding.length - pulseLength - 1
   );
-
   const seriesCount = +matchBeginning.match(/^[0-9]+/)[0];
 
-  parseTask(ref(match), subtasks, results, errors, taskDistance, seriesCount);
+  parseTask(ref(innerMatch), subtasks, results, errors, taskDistance, seriesCount);
 
   const restMatch = matchEnding.slice(7, matchEnding.length - 1);
   const restDistance = getDistance(restMatch);
@@ -584,6 +584,17 @@ const parseType35 = (match, results, subtasks, taskDistance, errors) => {
     hint: BETWEEN_SERIES,
   });
   taskDistance.value += restDistance * restResultsCount;
+
+  if (match.match(/\(пульс( после [0-9]+ серии)?\)/)) {
+    results.value.push(Array(3));
+    subtasks.value.push({
+      match: "пульс",
+      type: 2,
+      resultsCount: 3,
+      distance: null,
+      timeType: null,
+    });
+  }
 };
 
 const parseType36 = (match, results, subtasks, taskDistance, errors) => {
