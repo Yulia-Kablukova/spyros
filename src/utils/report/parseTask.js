@@ -5,7 +5,7 @@ import {
   CUTOFFS_5_KM,
   TOTAL_TIME,
 } from "../../consts/report/timeTypes";
-import { BETWEEN_SERIES, FILL_ALL_SERIES } from "@/consts/report/hints";
+import { BETWEEN_SERIES, FILL_ALL_SERIES, IN_SERIES_AND_BETWEEN_SERIES } from "@/consts/report/hints";
 
 const templates = ref(templatesRef);
 
@@ -574,15 +574,30 @@ const parseType35 = (match, results, subtasks, taskDistance, errors) => {
   const restDistance = getDistance(restMatch);
   const restResultsCount = seriesCount - 1;
 
-  results.value.push(Array(restResultsCount));
-  subtasks.value.push({
-    match: restMatch,
-    type: 11,
-    resultsCount: restResultsCount,
-    distance: restDistance,
-    timeType: null,
-    hint: BETWEEN_SERIES,
+  const sameSubtaskIndex = subtasks.value.findIndex((subtask) => {
+    return (
+      (subtask.type === 11 || subtask.type === 12) &&
+      subtask.distance === restDistance
+    );
   });
+
+  if (~sameSubtaskIndex) {
+    results.value[sameSubtaskIndex].push(Array(restResultsCount));
+    subtasks.value[sameSubtaskIndex].resultsCount += restResultsCount;
+    subtasks.value[sameSubtaskIndex].hint = IN_SERIES_AND_BETWEEN_SERIES;
+    subtasks.value.push(subtasks.value.splice(sameSubtaskIndex, 1)[0]);
+    results.value.push(results.value.splice(sameSubtaskIndex, 1)[0]);
+  } else {
+    results.value.push(Array(restResultsCount));
+    subtasks.value.push({
+      match: restMatch,
+      type: 11,
+      resultsCount: restResultsCount,
+      distance: restDistance,
+      timeType: null,
+      hint: BETWEEN_SERIES,
+    });
+  }
   taskDistance.value += restDistance * restResultsCount;
 
   if (match.match(/\(пульс( после [0-9]+ серии)?\)/)) {
@@ -767,7 +782,7 @@ const parseDefault = (
 
   const distance = getDistance(matchBeginning);
 
-  const timeType = getTimeType(template.type, matchBeginning, distance);
+  const timeType = (globalSeriesCount > 1) ? null : getTimeType(template.type, matchBeginning, distance);
 
   const resultsCount =
     getResultsCount(
