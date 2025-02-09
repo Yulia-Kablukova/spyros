@@ -98,38 +98,56 @@ const handleTimeTypeSelect = (subtask, index, timeType) => {
         </div>
       </div>
 
-      <div v-if="subtask.type === 2" class="results__result-inputs">
+      <div
+        v-if="subtask.type === 2"
+        class="results__result-inputs"
+      >
         <input
           v-for="(result, resultIndex) in props.results[index]"
           :key="`${index}-${resultIndex}`"
           v-model="props.results[index][resultIndex]"
-        />
+        >
       </div>
 
-      <div v-else-if="subtask.type === 3" class="results__result-inputs">
-        <input v-model="props.results[index][0]" placeholder="3" />
+      <div
+        v-else-if="subtask.type === 3"
+        class="results__result-inputs"
+      >
+        <input
+          v-model="props.results[index][0]"
+          placeholder="3"
+        >
 
         <span>x</span>
 
-        <input v-model="props.results[index][1]" placeholder="20" />
+        <input
+          v-model="props.results[index][1]"
+          placeholder="20"
+        >
       </div>
 
       <div
         v-else-if="[4, 22, 30, 40].includes(subtask.type)"
         class="results__result-inputs"
       >
-        <input v-model="props.results[index][0]" placeholder="3" />
+        <input
+          v-model="props.results[index][0]"
+          placeholder="3"
+        >
 
         <span>x</span>
 
-        <input v-model="props.results[index][1]" placeholder="20" />
+        <input
+          v-model="props.results[index][1]"
+          placeholder="20"
+        >
 
         <input
           v-if="props.results[index].length > 2"
           v-model="props.results[index][2]"
           placeholder="10 кг"
           class="results__result-input--width"
-        />
+        >
       </div>
 
       <div v-else>
@@ -153,9 +171,9 @@ const handleTimeTypeSelect = (subtask, index, timeType) => {
             v-model="props.results[index][resultIndex]"
             v-maska
             :data-maska="subtask.timeType?.value === 1 ? '#:##' : '00:00:##.#'"
-            data-maska-tokens="0:[0-9]:optional|::::optional"
+            data-maska-tokens="0:\d:optional|::::optional"
             data-maska-reversed
-          />
+          >
         </div>
       </div>
     </div>

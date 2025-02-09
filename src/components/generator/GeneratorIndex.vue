@@ -35,7 +35,7 @@ const getTaskDistance = computed(() => {
 
 const handleResultsFill = () => {
   resetResults();
-  parseTask(task, subtasks, results, errors, taskDistance);
+  parseTask(task.value, subtasks, results, errors, taskDistance);
 };
 
 const resetResults = () => {
@@ -77,43 +77,62 @@ const handleBirthdayPopupClose = () => {
 
 <template>
   <div class="content">
-    <h1 class="generator__heading">Генератор отчетов</h1>
+    <h1 class="generator__heading">
+      Генератор отчетов
+    </h1>
 
     <p class="generator__description">
       Инструмент для атоматизации создания отчетов по результатам тренировки.
-      <br />При возникновении ошибок пишите в тг: djull_zzz
+      <br>При возникновении ошибок пишите в тг: djull_zzz
     </p>
 
-    <textarea v-model="task" placeholder="Введите задание" />
+    <textarea
+      v-model="task"
+      placeholder="Введите задание"
+    />
 
     <div class="generator__task-options">
-      <button @click="handleResultsFill">Заполнить результаты</button>
+      <button @click="handleResultsFill">
+        Заполнить результаты
+      </button>
 
       <span class="generator__distance">Объем: {{ getTaskDistance }} км</span>
     </div>
 
     <div v-if="subtasks.length">
-      <results-index :subtasks="subtasks" :results="results" />
+      <results-index
+        :subtasks="subtasks"
+        :results="results"
+      />
 
       <div class="generator__daily-report-checkbox-container">
         <input
           id="daily-report-checkbox"
           v-model="dailyReportData.isIncluded"
           type="checkbox"
-        />
+        >
 
         <label for="daily-report-checkbox">
           Внести данные для ежедневного отчета
         </label>
       </div>
 
-      <daily-report v-if="dailyReportData.isIncluded" :data="dailyReportData" />
+      <daily-report
+        v-if="dailyReportData.isIncluded"
+        :data="dailyReportData"
+      />
 
-      <button class="generator__get-report-button" @click="handleGetReport">
+      <button
+        class="generator__get-report-button"
+        @click="handleGetReport"
+      >
         Получить отчет
       </button>
 
-      <report-result v-if="report" :data="report" />
+      <report-result
+        v-if="report"
+        :data="report"
+      />
     </div>
 
     <error-popup-index

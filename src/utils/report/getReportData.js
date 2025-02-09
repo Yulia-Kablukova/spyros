@@ -309,8 +309,8 @@ const addType33ReportData = (subtasks, results, index) => {
 
   fartlekSubtasks.value.forEach(({ match }, index) => {
     buffer.value += `${match
-      .replace(/\(до [0-9]+\)/, "")
-      .replace(/-с\.к [0-9]+ км/, "")}(ср.)=${getAverage(
+      .replace(/\(до \d+\)/, "")
+      .replace(/-с\.к \d+ км/, "")}(ср.)=${getAverage(
       fartlekResults.value[index]
     )}\n`;
   });
@@ -370,8 +370,8 @@ const addType34ReportData = (subtasks, results, index) => {
     .filter(({ results }) => results.length > 1)
     .forEach(({ match, results }) => {
       buffer.value += `${match
-        .replace(/\(до [0-9]+\)/, "")
-        .replace(/-с\.к [0-9]+ км/, "")}(ср.)=${getAverage(results)}\n`;
+        .replace(/\(до \d+\)/, "")
+        .replace(/-с\.к \d+ км/, "")}(ср.)=${getAverage(results)}\n`;
     });
 
   fartlekSubtasks.value = [];
@@ -384,7 +384,7 @@ const addDefaultTypeReportData = (subtasks, results, index) => {
     return;
   }
 
-  const series = subtasks.value[index].match.match(/^[0-9]+х/);
+  const series = subtasks.value[index].match.match(/^\d+х/);
 
   if (series) {
     report.value += `${subtasks.value[index].match.slice(series[0].length)}: `;
@@ -571,7 +571,7 @@ const getAverage = (results) => {
       let factor = 1;
 
       result
-        .match(/[0-9]+(\.[0-9]+)*/g)
+        .match(/\d+(\.\d+)*/g)
         .reverse()
         .forEach((el) => {
           totalSeconds += parseFloat(el) * factor;
@@ -635,7 +635,7 @@ const getAccumulatedTimeInSeconds = (cutoffs) => {
     let factor = 1;
 
     cutoff
-      .match(/[0-9]+(\.[0-9]+)*/g)
+      .match(/\d+(\.\d+)*/g)
       .reverse()
       .forEach((el) => {
         cutoffInSeconds += parseFloat(el) * factor;
@@ -651,7 +651,7 @@ const getPace = (time, distance) => {
   let factor = 1;
 
   time
-    .match(/[0-9]+(\.[0-9]+)*/g)
+    .match(/\d+(\.\d+)*/g)
     .reverse()
     .forEach((el) => {
       totalSeconds += parseFloat(el) * factor;
