@@ -35,14 +35,12 @@ const getTaskDistance = computed(() => {
 
 const handleResultsFill = () => {
   resetResults();
-  parseTask(task.value, subtasks, results, errors, taskDistance);
+  parseTask(task.value, subtasks, taskDistance);
 };
 
 const resetResults = () => {
   report.value = "";
   subtasks.value = [];
-  results.value = [];
-  errors.value.invalidTask = null;
   taskDistance.value = 0;
   dailyReportData.value = {
     isIncluded: false,
@@ -82,8 +80,12 @@ const handleBirthdayPopupClose = () => {
     </h1>
 
     <p class="generator__description">
-      Инструмент для атоматизации создания отчетов по результатам тренировки.
-      <br>При возникновении ошибок пишите в тг: djull_zzz
+      Инструмент для атоматизации написания отчетов по результатам тренировки.
+    </p>
+
+    <p class="generator__warning">
+      Сервис работает в тестовом режиме. Может распознавать любые тренировки, но выдавать ошибки в непривычных местах.
+      <br>Просьба просматрировать отчет перед отправкой. При любых неполадках пишите в тг: djull_zzz
     </p>
 
     <textarea
@@ -156,7 +158,14 @@ const handleBirthdayPopupClose = () => {
 
   &__description {
     margin-top: 30px;
+    margin-bottom: 10px;
+  }
+
+  &__warning {
     margin-bottom: 30px;
+    padding: 20px;
+    background-color: rgba(130, 204, 250, 0.37);
+    border-radius: 5px;
   }
 
   &__task-options {
