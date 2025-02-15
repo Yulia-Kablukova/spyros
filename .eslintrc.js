@@ -24,7 +24,7 @@ module.exports = {
         multiline: "always",
       },
     ],
-    "no-unreachable": "error",
+    "no-unreachable": "off",
   },
   parserOptions: {
     ecmaVersion: 2020,

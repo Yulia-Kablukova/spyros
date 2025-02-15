@@ -7,7 +7,7 @@ const buffer = ref("");
 const fartlekSubtasks = ref([]);
 const fartlekResults = ref([]);
 
-export const getReportData = (
+export const getReport = (
   subtasks,
   results,
   task,
@@ -242,7 +242,9 @@ const addType33ReportData = (subtasks, results, index) => {
     getTotalTime(fartlekResults.value[1]),
   ]);
 
-  report.value += `${totalDistance.toString().replace(".", ",")} км: ${totalTime.replace(".", ",")}(`;
+  report.value += `${totalDistance
+    .toString()
+    .replace(".", ",")} км: ${totalTime.replace(".", ",")}(`;
 
   let currentMergedTime = "00,0";
   let previousMergedTime = "00,0";
@@ -334,7 +336,9 @@ const addType34ReportData = (subtasks, results, index) => {
 
   const totalTime = getTotalTime(fartlekResults.value);
 
-  report.value += `${totalDistance.toString().replace(".", ",")} км: ${totalTime.replace(".", ",")}(`;
+  report.value += `${totalDistance
+    .toString()
+    .replace(".", ",")} км: ${totalTime.replace(".", ",")}(`;
 
   fartlekResults.value.forEach((result, index) => {
     report.value += result.replace(".", ",");

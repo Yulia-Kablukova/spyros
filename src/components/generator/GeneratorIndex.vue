@@ -5,7 +5,7 @@ import DailyReport from "@/components/generator/sections/DailyReportIndex.vue";
 import ReportResult from "@/components/generator/sections/ReportResultIndex.vue";
 import ErrorPopupIndex from "@/components/generator/popups/ErrorPopupIndex.vue";
 import { parseTask } from "@/utils/report/parseTask";
-import { getReportData } from "@/utils/report/getReportData";
+import { getReport } from "@/utils/report/getReport";
 import BirthdayPopupIndex from "@/components/generator/popups/BirthdayPopupIndex";
 
 const task = ref("");
@@ -54,7 +54,7 @@ const resetResults = () => {
 };
 
 const handleGetReport = () => {
-  report.value = getReportData(
+  report.value = getReport(
     subtasks,
     results,
     task,
@@ -71,70 +71,58 @@ const isShowBirthdayPopup = ref(true);
 const handleBirthdayPopupClose = () => {
   isShowBirthdayPopup.value = false;
 };
+
+// проверить templateType - шаблоны отдельно
+// if results.length
+// if rest
+// if pulseResults.length
 </script>
 
 <template>
   <div class="content">
-    <h1 class="generator__heading">
-      Генератор отчетов
-    </h1>
+    <h1 class="generator__heading">Генератор отчетов</h1>
 
     <p class="generator__description">
       Инструмент для атоматизации написания отчетов по результатам тренировки.
     </p>
 
     <p class="generator__warning">
-      Сервис работает в тестовом режиме. Может распознавать любые тренировки, но выдавать ошибки в непривычных местах.
-      <br>Просьба просматрировать отчет перед отправкой. При любых неполадках пишите в тг: djull_zzz
+      Сервис работает в тестовом режиме. Может распознавать любые тренировки, но
+      выдавать ошибки в непривычных местах.
+      <br />Просьба просматрировать отчет перед отправкой. При любых неполадках
+      пишите в тг: djull_zzz
     </p>
 
-    <textarea
-      v-model="task"
-      placeholder="Введите задание"
-    />
+    <textarea v-model="task" placeholder="Введите задание" />
 
     <div class="generator__task-options">
-      <button @click="handleResultsFill">
-        Заполнить результаты
-      </button>
+      <button @click="handleResultsFill">Заполнить результаты</button>
 
       <span class="generator__distance">Объем: {{ getTaskDistance }} км</span>
     </div>
 
     <div v-if="subtasks.length">
-      <results-index
-        :subtasks="subtasks"
-        :results="results"
-      />
+      <results-index :subtasks="subtasks" :results="results" />
 
       <div class="generator__daily-report-checkbox-container">
         <input
           id="daily-report-checkbox"
           v-model="dailyReportData.isIncluded"
           type="checkbox"
-        >
+        />
 
         <label for="daily-report-checkbox">
           Внести данные для ежедневного отчета
         </label>
       </div>
 
-      <daily-report
-        v-if="dailyReportData.isIncluded"
-        :data="dailyReportData"
-      />
+      <daily-report v-if="dailyReportData.isIncluded" :data="dailyReportData" />
 
-      <button
-        class="generator__get-report-button"
-        @click="handleGetReport"
-      >
+      <button class="generator__get-report-button" @click="handleGetReport">
         Получить отчет
       </button>
 
-      <report-result
-        v-if="report"
-        :data="report"
-      />
+      <report-result v-if="report" :data="report" />
     </div>
 
     <error-popup-index
