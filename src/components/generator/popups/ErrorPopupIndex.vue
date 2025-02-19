@@ -2,6 +2,7 @@
 import WindowClose from "vue-material-design-icons/WindowClose.vue";
 import { onMounted, onUnmounted } from "vue";
 
+// eslint-disable-next-line no-unused-vars
 const props = defineProps({
   invalidTask: {
     type: String,

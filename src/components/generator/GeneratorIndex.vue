@@ -11,8 +11,8 @@ import BirthdayPopupIndex from "@/components/generator/popups/BirthdayPopupIndex
 const task = ref("");
 const taskDistance = ref(0);
 const subtasks = ref([]);
-const results = ref([]);
 const report = ref("");
+const isFillResults = ref(false);
 
 const dailyReportData = ref({
   isIncluded: false,
@@ -36,6 +36,7 @@ const getTaskDistance = computed(() => {
 const handleResultsFill = () => {
   resetResults();
   parseTask(task.value, subtasks, taskDistance);
+  isFillResults.value = true;
 };
 
 const resetResults = () => {
@@ -54,13 +55,7 @@ const resetResults = () => {
 };
 
 const handleGetReport = () => {
-  report.value = getReport(
-    subtasks,
-    results,
-    task,
-    dailyReportData,
-    taskDistance
-  );
+  report.value = getReport(subtasks, task, dailyReportData, taskDistance);
 };
 
 const handleErrorPopupClose = () => {
@@ -101,8 +96,8 @@ const handleBirthdayPopupClose = () => {
       <span class="generator__distance">Объем: {{ getTaskDistance }} км</span>
     </div>
 
-    <div v-if="subtasks.length">
-      <results-index :subtasks="subtasks" :results="results" />
+    <div v-if="isFillResults">
+      <results-index :subtasks="subtasks" />
 
       <div class="generator__daily-report-checkbox-container">
         <input

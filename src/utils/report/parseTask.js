@@ -1,19 +1,10 @@
-import { templates } from "../../consts/report/tasksTemplates";
-import {
-  CUTOFFS_1_KM,
-  CUTOFFS_5_KM,
-  TOTAL_TIME,
-} from "../../consts/report/timeTypes";
-import {
-  BETWEEN_SERIES,
-  FILL_ALL_SERIES,
-  IN_SERIES_AND_BETWEEN_SERIES,
-} from "@/consts/report/hints";
+import { templates } from "@/consts/report/tasksTemplates";
+import { TOTAL_TIME } from "@/consts/report/resultsTypes";
 import { getTemplateSubtask } from "@/utils/report/templatesParsers";
 
 export const parseTask = (task, subtasks, taskDistance) => {
-  console.log(getSubtasks(task, taskDistance));
-  console.log(taskDistance.value);
+  subtasks.value = getSubtasks(task, taskDistance);
+  console.log(subtasks.value);
   taskDistance.value = Math.round(taskDistance.value * 2) / 2;
 };
 
@@ -50,11 +41,8 @@ const getSubtasks = (task, taskDistance, parentSeriesCount = 1) => {
         subtasks: [],
         results: [],
         pulseResults: [],
-        resultsType: null,
+        resultsType: TOTAL_TIME,
       };
-
-      // объединять одинаковые отрезки (?) и трусцу
-      // устанавливать resultsType
 
       let filteredSplit = remakeFartlek(split);
 
@@ -84,11 +72,15 @@ const getSubtasks = (task, taskDistance, parentSeriesCount = 1) => {
           0,
           filteredSplit.length - rest[0].length
         );
-        subtask.rest = {
-          distance: getRestDistance(rest[0]),
-          results: Array(subtask.seriesCount - 1),
-        };
-        taskDistance.value += (subtask.seriesCount - 1) * subtask.rest.distance;
+
+        if (rest[0].match(/\(через \d+ м\(до 22\)\)/)) {
+          subtask.rest = {
+            distance: getRestDistance(rest[0]),
+            results: Array(subtask.seriesCount - 1),
+          };
+          taskDistance.value +=
+            (subtask.seriesCount - 1) * subtask.rest.distance;
+        }
       }
 
       const timeLimit = filteredSplit.match(
@@ -189,7 +181,6 @@ const remakeFartlek = (split) => {
 };
 
 const getRestDistance = (rest) => {
-  // TODO: добавить проверку на в конце.. или просто на мин и сек
   const distanceMatch = rest.match(/\d+ м\(до 22\)/);
   return distanceMatch ? getDistance(distanceMatch[0]) : 0;
 };

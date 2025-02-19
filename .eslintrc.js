@@ -25,6 +25,9 @@ module.exports = {
       },
     ],
     "no-unreachable": "off",
+    "vue/singleline-html-element-content-newline": "off",
+    "vue/max-attributes-per-line": "off",
+    "vue/html-self-closing": "off",
   },
   parserOptions: {
     ecmaVersion: 2020,

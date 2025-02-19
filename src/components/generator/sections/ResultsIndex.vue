@@ -6,7 +6,7 @@ import {
   CUTOFFS_1_KM,
   CUTOFFS_5_KM,
   TOTAL_TIME,
-} from "@/consts/report/timeTypes";
+} from "@/consts/report/resultsTypes";
 
 const props = defineProps({
   subtasks: {
@@ -14,16 +14,10 @@ const props = defineProps({
     required: true,
     default: () => [],
   },
-
-  results: {
-    type: Array,
-    required: true,
-    default: () => [],
-  },
 });
 
-const getFormattedMatch = (match) => {
-  return match[0].toUpperCase() + match.slice(1);
+const getFormattedTask = (task) => {
+  return task[0].toUpperCase() + task.slice(1);
 };
 
 const getTimeTypes = (subtask) => {
@@ -75,7 +69,7 @@ const handleTimeTypeSelect = (subtask, index, timeType) => {
 
 <template>
   <div class="results__wrapper">
-    <p class="results__description">
+    <p v-if="subtasks.length" class="results__description">
       <span>
         Формат ввода временных отсечек: 2:09:56.0 (с десятыми долями секунды).
       </span>
@@ -91,66 +85,53 @@ const handleTimeTypeSelect = (subtask, index, timeType) => {
       class="results__result-container"
     >
       <div>
-        <div>{{ getFormattedMatch(subtask.match) }}</div>
+        <div>{{ subtask.task }}</div>
 
         <div class="results__hint">
           {{ subtask.hint }}
         </div>
       </div>
 
-      <div
-        v-if="subtask.type === 2"
-        class="results__result-inputs"
-      >
-        <input
-          v-for="(result, resultIndex) in props.results[index]"
-          :key="`${index}-${resultIndex}`"
-          v-model="props.results[index][resultIndex]"
-        >
+      <div v-if="subtask.templateType">разбить на разные типы</div>
+
+      <div v-else>
+        <div v-if="subtask.pulseResults.length" class="results__result-inputs">
+          <input
+            v-for="(result, resultIndex) in subtask.pulseResults"
+            :key="`${index}-${resultIndex}`"
+            v-model="subtask.pulseResults[resultIndex]"
+          />
+        </div>
       </div>
 
-      <div
-        v-else-if="subtask.type === 3"
-        class="results__result-inputs"
-      >
-        <input
-          v-model="props.results[index][0]"
-          placeholder="3"
-        >
+      <!--
+      <div v-else-if="subtask.type === 3" class="results__result-inputs">
+        <input v-model="props.results[index][0]" placeholder="3" />
 
         <span>x</span>
 
-        <input
-          v-model="props.results[index][1]"
-          placeholder="20"
-        >
+        <input v-model="props.results[index][1]" placeholder="20" />
       </div>
 
       <div
         v-else-if="[4, 22, 30, 40].includes(subtask.type)"
         class="results__result-inputs"
       >
-        <input
-          v-model="props.results[index][0]"
-          placeholder="3"
-        >
+        <input v-model="props.results[index][0]" placeholder="3" />
 
         <span>x</span>
 
-        <input
-          v-model="props.results[index][1]"
-          placeholder="20"
-        >
+        <input v-model="props.results[index][1]" placeholder="20" />
 
         <input
           v-if="props.results[index].length > 2"
           v-model="props.results[index][2]"
           placeholder="10 кг"
-          class="results__result-input--width"
-        >
-      </div>
+          class="results__result-input&#45;&#45;width"
+        />
+      </div>-->
 
-      <div v-else>
+      <!--      <div v-else>
         <custom-select
           v-if="getTimeTypes(subtask).length > 1"
           :value="subtask.timeType"
@@ -162,7 +143,7 @@ const handleTimeTypeSelect = (subtask, index, timeType) => {
         <div
           class="results__result-inputs"
           :class="{
-            'results__result-inputs--column': subtask.timeType?.value === 2,
+            'results__result-inputs&#45;&#45;column': subtask.timeType?.value === 2,
           }"
         >
           <input
@@ -173,9 +154,9 @@ const handleTimeTypeSelect = (subtask, index, timeType) => {
             :data-maska="subtask.timeType?.value === 1 ? '#:##' : '00:00:##.#'"
             data-maska-tokens="0:\d:optional|::::optional"
             data-maska-reversed
-          >
+          />
         </div>
-      </div>
+      </div>-->
     </div>
   </div>
 </template>
