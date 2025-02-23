@@ -8,17 +8,28 @@ export const parseTask = (task, subtasks, taskDistance) => {
   taskDistance.value = Math.round(taskDistance.value * 2) / 2;
 };
 
-const getSubtasks = (task, taskDistance, parentSeriesCount = 1) => {
+const getSubtasks = (
+  task,
+  taskDistance,
+  parentSeriesCount = 1,
+  parentIndex = 0
+) => {
   const taskSplitsArray = splitTask(task.trim().replaceAll("\n", ""));
 
-  return taskSplitsArray
-    .map((split) => {
+  const subtasks = taskSplitsArray
+    .map((split, index) => {
       // TODO: добавить try catch и при ошибке записывать ошибку и продолжать работу
       // так же добавить обработку в getReport
       const template = templates.find(({ regexp }) => split.match(regexp));
 
       if (template) {
-        return getTemplateSubtask(split, template.type, taskDistance);
+        const subtask = getTemplateSubtask(split, template.type, taskDistance);
+        return subtask
+          ? {
+              ...subtask,
+              id: `${parentIndex}-${index}`,
+            }
+          : null;
       }
 
       if (
@@ -31,8 +42,9 @@ const getSubtasks = (task, taskDistance, parentSeriesCount = 1) => {
       }
 
       const subtask = {
+        id: `${parentIndex}-${index}`,
         templateType: null,
-        task: split,
+        task: null,
         seriesCount: parentSeriesCount,
         distance: 0,
         timeLimit: null,
@@ -83,6 +95,8 @@ const getSubtasks = (task, taskDistance, parentSeriesCount = 1) => {
         }
       }
 
+      subtask.task = filteredSplit;
+
       const timeLimit = filteredSplit.match(
         /\((\d+:)?\d+(,\d+)?(-(\d+:)?\d+(,\d+)?)?( или быстрее)?\)$/
       );
@@ -100,7 +114,7 @@ const getSubtasks = (task, taskDistance, parentSeriesCount = 1) => {
           0,
           filteredSplit.length - pulseZone[0].length
         );
-        subtask.pulseZone = pulseZone;
+        subtask.pulseZone = pulseZone[0];
       }
 
       const distance = filteredSplit.match(/^\d+(,\d+)? к?м/);
@@ -121,11 +135,27 @@ const getSubtasks = (task, taskDistance, parentSeriesCount = 1) => {
         subtask.subtasks = getSubtasks(
           filteredSplit,
           taskDistance,
-          subtask.seriesCount
+          subtask.seriesCount,
+          subtask.id
         );
       } else {
         subtask.results = Array(subtask.seriesCount);
         taskDistance.value += subtask.seriesCount * subtask.distance;
+      }
+
+      return subtask;
+    })
+    .filter((subtask) => subtask);
+
+  return subtasks
+    .map((subtask, index) => {
+      if (
+        subtask.pulseZone === "(до 22)" &&
+        index > 0 &&
+        subtask.distance === subtasks[index - 1].rest?.distance
+      ) {
+        subtasks[index - 1].rest.results.push(undefined);
+        return null;
       }
 
       return subtask;

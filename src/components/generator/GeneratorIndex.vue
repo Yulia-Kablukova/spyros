@@ -1,8 +1,8 @@
 <script setup>
 import { ref, computed } from "vue";
-import ResultsIndex from "@/components/generator/sections/ResultsIndex.vue";
-import DailyReport from "@/components/generator/sections/DailyReportIndex.vue";
-import ReportResult from "@/components/generator/sections/ReportResultIndex.vue";
+import ResultsIndex from "@/components/generator/sections/results/ResultsIndex.vue";
+import DailyReportResults from "@/components/generator/sections/results/DailyReportResults.vue";
+import ReportIndex from "@/components/generator/sections/report/ReportIndex.vue";
 import ErrorPopupIndex from "@/components/generator/popups/ErrorPopupIndex.vue";
 import { parseTask } from "@/utils/report/parseTask";
 import { getReport } from "@/utils/report/getReport";
@@ -66,11 +66,6 @@ const isShowBirthdayPopup = ref(true);
 const handleBirthdayPopupClose = () => {
   isShowBirthdayPopup.value = false;
 };
-
-// проверить templateType - шаблоны отдельно
-// if results.length
-// if rest
-// if pulseResults.length
 </script>
 
 <template>
@@ -111,13 +106,16 @@ const handleBirthdayPopupClose = () => {
         </label>
       </div>
 
-      <daily-report v-if="dailyReportData.isIncluded" :data="dailyReportData" />
+      <daily-report-results
+        v-if="dailyReportData.isIncluded"
+        :data="dailyReportData"
+      />
 
       <button class="generator__get-report-button" @click="handleGetReport">
         Получить отчет
       </button>
 
-      <report-result v-if="report" :data="report" />
+      <report-index v-if="report" :data="report" />
     </div>
 
     <error-popup-index

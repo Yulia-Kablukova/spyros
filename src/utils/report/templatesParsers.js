@@ -147,7 +147,6 @@ const parseType13 = (split, taskDistance) => {
 
   return {
     ...emptySubtask,
-    templateType: 13,
     seriesCount,
     rest: {
       distance: rest,
@@ -162,7 +161,6 @@ const parseType14 = (split, taskDistance) => {
 
   return {
     ...emptySubtask,
-    templateType: 14,
     seriesCount,
     rest: {
       distance: rest,
@@ -175,55 +173,55 @@ const parseType20 = (split) => {
   const seriesCount = split.match(/^\d+/);
   const exercises = [
     {
-      task: "полуприсед с весом",
+      task: "Полуприсед с весом",
       results: [seriesCount, 3, undefined],
     },
     {
-      task: "поднятие с весом на стопах",
+      task: "Поднятие с весом на стопах",
       results: [seriesCount, 3, undefined],
     },
     {
-      task: "выпрыгивание с полуприседа с весом",
+      task: "Выпрыгивание с полуприседа с весом",
       results: [seriesCount, 3, undefined],
     },
     {
-      task: "зашагивание на платформу с весом с выпрыгиванием вверх на левой ноге",
+      task: "Зашагивание на платформу с весом с выпрыгиванием вверх на левой ноге",
       results: [seriesCount, 3, undefined],
     },
     {
-      task: "зашагивание на платформу с весом с выпрыгиванием вверх на правой ноге",
+      task: "Зашагивание на платформу с весом с выпрыгиванием вверх на правой ноге",
       results: [seriesCount, 3, undefined],
     },
     {
-      task: "пистолетик на левой ноге",
+      task: "Пистолетик на левой ноге",
       results: [seriesCount, 3],
     },
     {
-      task: "пистолетик на правой ноге",
+      task: "Пистолетик на правой ноге",
       results: [seriesCount, 3],
     },
     {
-      task: "прыжок через барьер",
+      task: "Прыжок через барьер",
       results: [seriesCount, 7],
     },
     {
-      task: "выпрыгивание с весом из положения стоя",
+      task: "Выпрыгивание с весом из положения стоя",
       results: [seriesCount, 3, undefined],
     },
     {
-      task: "бросок веса вперёд из полуприседа",
+      task: "Бросок веса вперёд из полуприседа",
       results: [seriesCount, 3, undefined],
     },
     {
-      task: "прыжок из полного приседа на платформу с выпрыгиванием на ней вверх из полуприседа",
+      task: "Прыжок из полного приседа на платформу с выпрыгиванием на ней вверх из полуприседа",
       results: [seriesCount, 3],
     },
     {
-      task: "прыжок из полуприседа на платформу с выпрыгиванием на ней вверх из полуприседа",
+      task: "Прыжок из полуприседа на платформу с выпрыгиванием на ней вверх из полуприседа",
       results: [seriesCount, 3],
     },
     {
-      task: "полный присед с весом",
+      task: "Полный присед с весом",
       results: [seriesCount, 3, undefined],
     },
   ];
@@ -231,7 +229,9 @@ const parseType20 = (split) => {
   const subtasks = split.split(",").map((el) => {
     return {
       ...emptySubtask,
-      ...exercises.find(({ task }) => el.includes(task)),
+      ...exercises.find(({ task }) =>
+        el.toLowerCase().includes(task.toLowerCase())
+      ),
     };
   });
 
@@ -247,7 +247,6 @@ const parseType23 = (taskDistance) => {
 
   return {
     ...emptySubtask,
-    templateType: 23,
     task: "500 м",
     distance: 0.5,
     results: [undefined],

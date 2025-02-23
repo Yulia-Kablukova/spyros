@@ -5,7 +5,7 @@
       :class="{ 'custom-select--opened': isOpened }"
       @click="isOpened = !isOpened"
     >
-      {{ props.value.title }}
+      {{ props.modelValue.title }}
     </div>
 
     <div
@@ -27,7 +27,7 @@
 import { ref } from "vue";
 
 const props = defineProps({
-  value: {
+  modelValue: {
     type: Object,
     required: true,
     default: () => {},
@@ -40,13 +40,13 @@ const props = defineProps({
   },
 });
 
-const emits = defineEmits(["input"]);
+const emits = defineEmits(["update:model-value"]);
 
 const isOpened = ref(false);
 
 const handleSelect = (option) => {
   isOpened.value = false;
-  emits("input", option);
+  emits("update:model-value", option);
 };
 
 const handleClose = () => {

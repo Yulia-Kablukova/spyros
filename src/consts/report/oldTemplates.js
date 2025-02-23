@@ -298,40 +298,6 @@ const getTimeType = (templateType, match, distance) => {
   return null;
 };
 
-const addType1ReportData = (subtasks, results, index) => {
-  const warmUpCoolDownIndex = subtasks.value.findIndex((el, elIndex) => {
-    return el.type === 1 && elIndex !== index;
-  });
-
-  if (~warmUpCoolDownIndex) {
-    report.value += warmUpCoolDownIndex > index ? `Р=` : `З=`;
-  } else if (report.value) {
-    report.value += `З=`;
-  } else {
-    report.value += `Б=`;
-  }
-
-  if (subtasks.value[index].timeType.value === AVERAGE_PACE.value) {
-    report.value += `${results.value[index][0]}\n`;
-  } else {
-    report.value += `${getPace(
-      getTotalTime(results.value[index]),
-      subtasks.value[index].distance
-    )}\n`;
-  }
-};
-
-const addType2ReportData = (subtasks, results, index) => {
-  report.value = report.value.slice(0, -1);
-
-  report.value += `(${results.value[index][0]}-${results.value[index][1]}-${results.value[index][2]})\n`;
-
-  if (buffer.value) {
-    report.value += buffer.value;
-    buffer.value = "";
-  }
-};
-
 const addType3ReportData = (subtasks, results, index) => {
   if (
     subtasks.value[index - 1]?.type === 3 ||
@@ -761,52 +727,6 @@ const addCutoffs = (subtasks, results, index) => {
   report.value += ")\n";
 };
 
-const addDailyReportData = (task, dailyReportData, taskDistance) => {
-  if (!dailyReportData.value.isIncluded) {
-    return;
-  }
-
-  const dailyReportBeginning = `${getDateFormatted(
-    dailyReportData.value.date
-  )}\n\n${dailyReportData.value.time}\n\n${task.value}\n\n`;
-
-  report.value = dailyReportBeginning + report.value + "\n";
-
-  if (dailyReportData.value.comment) {
-    report.value += `${dailyReportData.value.comment}\n\n`;
-  }
-
-  if (
-    dailyReportData.value.states[0] &&
-    dailyReportData.value.states[1] &&
-    dailyReportData.value.states[2]
-  ) {
-    report.value += `${dailyReportData.value.states[0]}-${dailyReportData.value.states[1]}-${dailyReportData.value.states[2]}\n\n`;
-  }
-
-  if (dailyReportData.value.sleep) {
-    report.value += `${dailyReportData.value.sleep}\n\n`;
-  }
-
-  if (dailyReportData.value.weights[0] && dailyReportData.value.weights[1]) {
-    report.value += `${dailyReportData.value.weights[0]}; ${dailyReportData.value.weights[1]}\n\n`;
-  }
-
-  if (dailyReportData.value.recovery) {
-    report.value += `${dailyReportData.value.recovery}\n\n`;
-  }
-
-  report.value += `${taskDistance.value.toString().replace(".", ",")} км`;
-};
-
-const getDateFormatted = (date) => {
-  const daysOfWeek = ["Вс", "Пн", "Вт", "Ср", "Чт", "Пт", "Сб"];
-  const dayNumber = moment(date, "DD.MM.YYYY").day();
-  const dateFormatted = moment(date, "DD.MM.YYYY").format("DD.MM.YYYY");
-
-  return `${dateFormatted}(${daysOfWeek[dayNumber]})`;
-};
-
 const getAverage = (results) => {
   const averageInSeconds =
     results.reduce((sum, result) => {
@@ -838,77 +758,10 @@ const getAverage = (results) => {
   return `${resultMinutes}:${leadingZero}${resultSeconds}`;
 };
 
-const getTotalTime = (cutoffs) => {
-  const resultInSeconds = getAccumulatedTimeInSeconds(cutoffs);
-
-  const resultHours = (resultInSeconds / 3600) >> 0;
-  const resultMinutes = (
-    ((resultInSeconds - resultHours * 3600) / 60) >>
-    0
-  ).toString();
-  const resultSeconds = (
-    resultInSeconds -
-    resultMinutes * 60 -
-    resultHours * 3600
-  )
-    .toFixed(1)
-    .toString();
-
-  const minutesLeadingZero = resultMinutes.length < 2 ? "0" : "";
-  const secondsLeadingZero = resultSeconds.length < 4 ? "0" : "";
-
-  let result = "";
-
-  if (resultHours) {
-    result += `${resultHours}:${minutesLeadingZero}`;
-  }
-
-  if (resultMinutes) {
-    result += `${resultMinutes}:${secondsLeadingZero}`;
-  }
-
-  result += resultSeconds;
-
-  return result;
-};
-
-const getAccumulatedTimeInSeconds = (cutoffs) => {
-  return cutoffs.reduce((sum, cutoff) => {
-    let cutoffInSeconds = 0;
-    let factor = 1;
-
-    cutoff
-      .match(/\d+(\.\d+)*/g)
-      .reverse()
-      .forEach((el) => {
-        cutoffInSeconds += parseFloat(el) * factor;
-        factor *= 60;
-      });
-
-    return sum + cutoffInSeconds;
-  }, 0);
-};
-
-const getPace = (time, distance) => {
-  let totalSeconds = 0;
-  let factor = 1;
-
-  time
-    .match(/\d+(\.\d+)*/g)
-    .reverse()
-    .forEach((el) => {
-      totalSeconds += parseFloat(el) * factor;
-      factor *= 60;
-    });
-
-  const paceInSeconds = Math.round(totalSeconds / distance);
-  const resultMinutes = (paceInSeconds / 60) >> 0;
-  const resultSeconds = paceInSeconds % 60;
-  const leadingZero = resultSeconds.toString().length < 2 ? "0" : "";
-
-  return `${resultMinutes}:${leadingZero}${resultSeconds}`;
-};
-
 const getFormattedMatch = (match) => {
   return match[0].toUpperCase() + match.slice(1);
+};
+
+const getFormattedTask = (task) => {
+  return task[0].toUpperCase() + task.slice(1);
 };
