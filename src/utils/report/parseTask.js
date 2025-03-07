@@ -45,7 +45,8 @@ const getSubtasks = (
         id: `${parentIndex}-${index}`,
         templateType: null,
         task: null,
-        seriesCount: parentSeriesCount,
+        seriesCount: 1,
+        totalSeriesCount: parentSeriesCount,
         distance: 0,
         timeLimit: null,
         pulseZone: null,
@@ -54,6 +55,7 @@ const getSubtasks = (
         results: [],
         pulseResults: [],
         resultsType: TOTAL_TIME,
+        saveCutoffs: false,
       };
 
       let filteredSplit = remakeFartlek(split);
@@ -73,7 +75,8 @@ const getSubtasks = (
           seriesCount[0].length,
           filteredSplit.length
         );
-        subtask.seriesCount *= +seriesCount[0].match(/\d+/)[0];
+        subtask.seriesCount = +seriesCount[0].match(/\d+/)[0];
+        subtask.totalSeriesCount *= subtask.seriesCount;
       }
 
       const rest = filteredSplit.match(
@@ -88,10 +91,10 @@ const getSubtasks = (
         if (rest[0].match(/\(через \d+ м\(до 22\)\)/)) {
           subtask.rest = {
             distance: getRestDistance(rest[0]),
-            results: Array(subtask.seriesCount - 1),
+            results: Array(subtask.totalSeriesCount - 1),
           };
           taskDistance.value +=
-            (subtask.seriesCount - 1) * subtask.rest.distance;
+            subtask.rest.results.length * subtask.rest.distance;
         }
       }
 
@@ -135,12 +138,12 @@ const getSubtasks = (
         subtask.subtasks = getSubtasks(
           filteredSplit,
           taskDistance,
-          subtask.seriesCount,
+          subtask.totalSeriesCount,
           subtask.id
         );
       } else {
-        subtask.results = Array(subtask.seriesCount);
-        taskDistance.value += subtask.seriesCount * subtask.distance;
+        subtask.results = Array(subtask.totalSeriesCount).fill(Array(1));
+        taskDistance.value += subtask.totalSeriesCount * subtask.distance;
       }
 
       return subtask;

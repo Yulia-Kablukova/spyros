@@ -43,19 +43,20 @@ const emptySubtask = {
   results: [],
   pulseResults: [],
   resultsType: null,
+  saveCutoffs: false,
 };
 
 const getSeriesDistanceAndRest = (split) => {
-  const seriesCountMatches = split.match(/^[0-9]+х/);
+  const seriesCountMatches = split.match(/^\d+х/);
   const seriesCount = seriesCountMatches
-    ? +seriesCountMatches[0].match(/^[0-9]+/)[0]
+    ? +seriesCountMatches[0].match(/^\d+/)[0]
     : 1;
 
   if (seriesCountMatches) {
     split = split.slice(seriesCountMatches[0].length);
   }
 
-  let distance = +split.match(/^[0-9]+(,[0-9]?)?/)[0].replace(",", ".");
+  let distance = +split.match(/^\d+(,\d)?/)[0].replace(",", ".");
 
   if (split.match(/ м/)) {
     distance /= 1000;
@@ -249,7 +250,7 @@ const parseType23 = (taskDistance) => {
     ...emptySubtask,
     task: "500 м",
     distance: 0.5,
-    results: [undefined],
+    results: [[undefined]],
     pulseResults: Array(3),
   };
 };

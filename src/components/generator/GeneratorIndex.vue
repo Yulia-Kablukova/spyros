@@ -5,8 +5,9 @@ import DailyReportResults from "@/components/generator/sections/results/DailyRep
 import ReportIndex from "@/components/generator/sections/report/ReportIndex.vue";
 import ErrorPopupIndex from "@/components/generator/popups/ErrorPopupIndex.vue";
 import { parseTask } from "@/utils/report/parseTask";
-import { getReport } from "@/utils/report/getReport";
+import { getReport, getSubtaskReportData } from "@/utils/report/getReport";
 import BirthdayPopupIndex from "@/components/generator/popups/BirthdayPopupIndex";
+import { TOTAL_TIME } from "@/consts/report/resultsTypes";
 
 const task = ref("");
 const taskDistance = ref(0);
@@ -28,6 +29,26 @@ const dailyReportData = ref({
 const errors = ref({
   invalidTask: null,
 });
+/*
+console.log(
+  getSubtaskReportData({
+    id: 16546,
+    templateType: null,
+    task: "400 м-с.у.(1:12)",
+    seriesCount: 2,
+    distance: 0.4,
+    timeLimit: "(1:12)",
+    pulseZone: "(до 27)",
+    rest: {
+      distance: 0.2,
+      results: ["1:15,7"],
+    },
+    subtasks: [],
+    results: [["1:12,0"], ["1:10,0"]],
+    pulseResults: [],
+    resultsType: TOTAL_TIME,
+  })
+);*/
 
 const getTaskDistance = computed(() => {
   return taskDistance.value.toString().replace(".", ",");
@@ -77,10 +98,8 @@ const handleBirthdayPopupClose = () => {
     </p>
 
     <p class="generator__warning">
-      Сервис работает в тестовом режиме. Может распознавать любые тренировки, но
-      выдавать ошибки в непривычных местах.
-      <br />Просьба просматрировать отчет перед отправкой. При любых неполадках
-      пишите в тг: djull_zzz
+      Сервис работает в тестовом режиме. Проверяйте отчет перед отправкой.
+      <br />При любых неполадках пишите в тг: djull_zzz
     </p>
 
     <textarea v-model="task" placeholder="Введите задание" />
@@ -94,7 +113,7 @@ const handleBirthdayPopupClose = () => {
     <div v-if="isFillResults">
       <results-index :subtasks="subtasks" />
 
-      <div class="generator__daily-report-checkbox-container">
+      <div class="generator__daily-report-checkbox">
         <input
           id="daily-report-checkbox"
           v-model="dailyReportData.isIncluded"
@@ -165,7 +184,7 @@ const handleBirthdayPopupClose = () => {
     margin-bottom: 30px;
   }
 
-  &__daily-report-checkbox-container {
+  &__daily-report-checkbox {
     margin-top: 30px;
     display: flex;
     align-items: center;
@@ -199,7 +218,7 @@ const handleBirthdayPopupClose = () => {
       align-items: center;
     }
 
-    &__daily-report-checkbox-container {
+    &__daily-report-checkbox {
       margin-top: 20px;
     }
   }

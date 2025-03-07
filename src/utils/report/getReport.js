@@ -9,26 +9,60 @@ export const getReport = (subtasks, task, dailyReportData, taskDistance) => {
 
   subtasks.value.forEach((subtask, index) => {
     if (subtask.templateType) {
-      addTemplateReportData(subtask);
-    } else if (subtask.pulseZone === "(до 22)") {
+      addTemplateReportData(subtask, index, subtasks.value);
+    } else if (subtask.pulseZone === "(до 22)" && subtask.distance >= 1) {
       addRecoveryReportData(subtask, index, subtasks.value);
+      report.value += "\n";
     } else {
       addGeneralReportData(subtask);
+      report.value += "\n";
     }
   });
+  report.value += "\n";
 
   addDailyReportData(task, dailyReportData, taskDistance);
 
   return report.value.trim();
 };
 
-const addTemplateReportData = (subtask) => {
-  console.log(1);
+const addTemplateReportData = (subtask, index, subtasks) => {
+  if ([1, 2, 3, 4, 5].includes(subtask.templateType)) {
+    const prevSubtask = index > 0 ? subtasks[index - 1] : null;
+
+    if ([1, 2, 3, 4, 5].includes(prevSubtask?.templateType)) {
+      report.value += `+${subtask.task.toLowerCase()}`;
+    } else {
+      report.value += subtask.task;
+    }
+
+    if (subtask.templateType === 5) {
+      report.value += `(${subtask.results[2]})`;
+    }
+
+    report.value += `(`;
+    if (subtask.results[0] > 1) {
+      report.value += `${subtask.results[0]}х`;
+    }
+    report.value += `${subtask.results[1]})`;
+  }
+
+  if (subtask.templateType === 20) {
+    subtask.subtasks.forEach(({ task, results }, index) => {
+      report.value += index === 0 ? task : `, ${task.toLowerCase()}`;
+      if (results.length === 3) {
+        report.value += `(${results[2]})`;
+      }
+    });
+  }
 };
 
-const addRecoveryReportData = (subtask, index, subtasks) => {
-  const warmUpCoolDownIndex = subtasks.findIndex(({ pulseZone, id }) => {
-    return pulseZone === "(до 22)" && id !== subtask.id;
+const addRecoveryReportData = (
+  { id, resultsType, results, distance, pulseResults },
+  index,
+  subtasks
+) => {
+  const warmUpCoolDownIndex = subtasks.findIndex((subtask) => {
+    return subtask.pulseZone === "(до 22)" && subtask.id !== id;
   });
 
   if (~warmUpCoolDownIndex) {
@@ -39,22 +73,51 @@ const addRecoveryReportData = (subtask, index, subtasks) => {
     report.value += `Б=`;
   }
 
-  if (subtask.resultsType.value === AVERAGE_PACE.value) {
-    report.value += subtask.results[0];
+  if (resultsType.value === AVERAGE_PACE.value) {
+    report.value += results[0];
   } else {
-    report.value += getPace(getTotalTime(subtask.results), subtask.distance);
+    report.value += getPace(getTotalTime(results), distance);
   }
 
-  if (subtask.pulseResults.length) {
-    report.value += `(${subtask.pulseResults[0]}-${subtask.pulseResults[1]}-${subtask.pulseResults[2]})`;
+  if (pulseResults.length) {
+    report.value += `(${pulseResults[0]}-${pulseResults[1]}-${pulseResults[2]})`;
+  }
+};
+
+const addGeneralReportData = ({ distance, results, subtasks, rest }) => {
+  if (results.length) {
+    // указать дистацию, двоеточие, пробел
+    // перечислить все результаты
+    // мб одна серия, но нужны отсечки (по 5 км или по 1 км)
+    // посчитать среднее (если > 1 км, то добавить средний темп)
   }
 
-  report.value += "\n";
+  if (!distance && !results.length) {
+    // парсим все сабтаски по очереди
+  }
+
+  if (distance && !results.length) {
+    report.value += `${getDistanceText(distance)}: `;
+    // для каждой серии:
+    // 1) общее время всех подтасок
+    // 2) скобка открывается
+    // 3) перечисление всех результатов рекурсивно (отдельный метод чисто для перечисления, с отдыхом и суммированием по 5 км)
+    // 4) скобка закрывается, точка с запятой и пробел, если не последняя серия
+    // пульс, если надо
+    // средний темп или среднее время таски
+    // средние по всем подтаскам (не забыть отдыхи)
+  }
+
+  if (rest) {
+    // посчитать среднее
+  }
+
+  // пульс
+
+  // если в averages seriesCount === 1 и это не темп, то считать среднее не нужно
 };
 
-const addGeneralReportData = (subtask) => {
-  console.log(3);
-};
+const getGeneralRecursiveReportData = () => {};
 
 const addDailyReportData = (task, dailyReportData, taskDistance) => {
   if (!dailyReportData.value.isIncluded) {
@@ -89,9 +152,15 @@ const addDailyReportData = (task, dailyReportData, taskDistance) => {
 
   if (dailyReportData.value.recovery) {
     report.value += `${dailyReportData.value.recovery}\n\n`;
+  } else {
+    report.value += "-\n\n";
   }
 
-  report.value += `${taskDistance.value.toString().replace(".", ",")} км`;
+  if (taskDistance.value) {
+    report.value += `${taskDistance.value.toString().replace(".", ",")} км`;
+  } else {
+    report.value += "-";
+  }
 };
 
 const getDateFormatted = (date) => {
@@ -171,4 +240,135 @@ const getAccumulatedTimeInSeconds = (cutoffs) => {
 
     return sum + cutoffInSeconds;
   }, 0);
+};
+
+const getDistanceText = (task) => {
+  const match = task.match(/^(\d+х)?\d+(,\d)? (км)?(м)?/);
+  return match ? match[0] : null;
+};
+
+export const getSubtaskReportData = (subtask) => {
+  const { cutoffs, averages } = getEnumerationData(subtask);
+  let report = "";
+
+  const isCountBy5km = subtask.distance > 5 && !hasRest(subtask);
+  const cutoffsBy5km = [];
+  let mergedDistance = 0;
+
+  cutoffs.forEach(({ result, distance }, index) => {
+    if (index) {
+      report += "; ";
+    }
+    report += result;
+
+    if (isCountBy5km) {
+      mergedDistance += distance;
+      if (mergedDistance % 5 === 0) {
+        cutoffsBy5km.push({ index, mergedDistance });
+
+        let timeBy5km = null;
+        if (mergedDistance === 5) {
+          timeBy5km = getTotalTime(cutoffs.slice(0, index));
+        } else {
+          const prev5km = cutoffsBy5km.find(
+            (cutoff) => mergedDistance - cutoff.mergedDistance === 5
+          );
+          if (prev5km) {
+            timeBy5km = getTotalTime(cutoffs.slice(prev5km.index + 1, index));
+          }
+        }
+        if (timeBy5km) {
+          report += `(${timeBy5km})`;
+        }
+
+        if (mergedDistance % 10 === 0) {
+          let timeBy10km = null;
+          if (mergedDistance === 10) {
+            timeBy10km = getTotalTime(cutoffs.slice(0, index));
+          } else {
+            const prev10km = cutoffsBy5km.find(
+              (cutoff) => mergedDistance - cutoff.mergedDistance === 10
+            );
+            if (prev10km) {
+              timeBy10km = getTotalTime(
+                cutoffs.slice(prev10km.index + 1, index)
+              );
+            }
+          }
+          if (timeBy10km) {
+            report += `(${timeBy10km})`;
+          }
+        }
+      }
+    }
+  });
+
+  return { report, averages };
+};
+
+const hasRest = ({ rest, subtasks }) => {
+  return !!rest || subtasks.some(hasRest);
+};
+
+const getEnumerationData = (
+  { results, subtasks, seriesCount, distance, timeLimit, rest, saveCutoffs },
+  startIndex
+) => {
+  if (results.length) {
+    const reportCutoffs = Number.isInteger(startIndex)
+      ? results.slice(startIndex, startIndex + seriesCount)
+      : results;
+    const formattedCutoffs = [];
+
+    reportCutoffs.forEach((result) => {
+      if (saveCutoffs) {
+        formattedCutoffs.push(...result);
+      } else {
+        formattedCutoffs.push(getTotalTime(result));
+      }
+    });
+
+    const restAverages = rest
+      ? [
+          {
+            type: "time",
+            distance: rest.distance,
+            timeLimit: "(до 22)",
+            seriesCount: rest.results.length,
+            totalTime: getAccumulatedTimeInSeconds(rest.results),
+          },
+        ]
+      : [];
+
+    return {
+      cutoffs: formattedCutoffs.map((cutoff) => ({
+        result: cutoff,
+        distance,
+      })),
+      averages: [
+        {
+          type: "time",
+          distance,
+          timeLimit,
+          seriesCount,
+          totalTime: getAccumulatedTimeInSeconds(formattedCutoffs),
+        },
+        ...restAverages,
+      ],
+    };
+  }
+
+  const cutoffs = [];
+  const averages = [];
+  for (let index = 0; index < seriesCount; index++) {
+    subtasks.forEach((subtask) => {
+      const subtaskEnumeration = getSubtaskReportData(
+        subtask,
+        index * subtask.seriesCount
+      );
+      cutoffs.push(...subtaskEnumeration.cutoffs);
+      averages.push(...subtaskEnumeration.averages);
+    });
+  }
+  return { cutoffs, averages };
 };
