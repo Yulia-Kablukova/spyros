@@ -6,57 +6,96 @@ const report = ref("");
 
 export const getReport = (subtasks, task, dailyReportData, taskDistance) => {
   report.value = "";
+  const reportData = [];
 
   subtasks.value.forEach((subtask, index) => {
     if (subtask.templateType) {
-      addTemplateReportData(subtask, index, subtasks.value);
+      reportData.push(getTemplateReportData(subtask, index, subtasks.value));
     } else if (subtask.pulseZone === "(до 22)" && subtask.distance >= 1) {
-      addRecoveryReportData(subtask, index, subtasks.value);
-      report.value += "\n";
+      reportData.push(getRecoveryReportData(subtask, index, subtasks.value));
     } else {
-      addGeneralReportData(subtask);
-      report.value += "\n";
+      reportData.push(getGeneralReportData(subtask));
     }
   });
-  report.value += "\n";
+  console.log(reportData);
+  // если в averages seriesCount === 1 и это не темп, то считать среднее не нужно
+
+  reportData.forEach((data) => {
+    report.value += `${data.report}`;
+    if (!data.noNewLine) {
+      report.value += `\n`;
+    }
+    if (data.averages) {
+      data.averages.forEach(
+        ({
+          type,
+          distance,
+          distanceText,
+          timeLimit,
+          seriesCount,
+          totalTime,
+        }) => {
+          if (type === "time") {
+            report.value += `${distanceText}${timeLimit}(ср.)=${getTotalTime(
+              totalTime / seriesCount / distance
+            )}\n`;
+          } else if (type === "pace") {
+            report.value += `1 км${timeLimit}(ср.)=${getPace(
+              totalTime,
+              distance
+            )}\n`;
+          }
+        }
+      );
+    }
+  });
 
   addDailyReportData(task, dailyReportData, taskDistance);
 
   return report.value.trim();
 };
 
-const addTemplateReportData = (subtask, index, subtasks) => {
+const getTemplateReportData = (subtask, index, subtasks) => {
+  let report = "";
+
   if ([1, 2, 3, 4, 5].includes(subtask.templateType)) {
     const prevSubtask = index > 0 ? subtasks[index - 1] : null;
 
     if ([1, 2, 3, 4, 5].includes(prevSubtask?.templateType)) {
-      report.value += `+${subtask.task.toLowerCase()}`;
+      report += `+${subtask.task.toLowerCase()}`;
     } else {
-      report.value += subtask.task;
+      report += subtask.task;
     }
 
     if (subtask.templateType === 5) {
-      report.value += `(${subtask.results[2]})`;
+      report += `(${subtask.results[2]})`;
     }
 
-    report.value += `(`;
+    report += `(`;
     if (subtask.results[0] > 1) {
-      report.value += `${subtask.results[0]}х`;
+      report += `${subtask.results[0]}х`;
     }
-    report.value += `${subtask.results[1]})`;
+    report += `${subtask.results[1]})`;
   }
 
   if (subtask.templateType === 20) {
     subtask.subtasks.forEach(({ task, results }, index) => {
-      report.value += index === 0 ? task : `, ${task.toLowerCase()}`;
+      report += index === 0 ? task : `, ${task.toLowerCase()}`;
       if (results.length === 3) {
-        report.value += `(${results[2]})`;
+        report += `(${results[2]})`;
       }
     });
   }
+
+  return {
+    report,
+    noNewLine:
+      subtask.templateType !== 20 &&
+      [1, 2, 3, 4, 5].includes(subtasks[index + 1]?.templateType),
+  };
 };
 
-const addRecoveryReportData = (
+const getRecoveryReportData = (
   { id, resultsType, results, distance, pulseResults },
   index,
   subtasks
@@ -64,60 +103,86 @@ const addRecoveryReportData = (
   const warmUpCoolDownIndex = subtasks.findIndex((subtask) => {
     return subtask.pulseZone === "(до 22)" && subtask.id !== id;
   });
+  let report = "";
 
   if (~warmUpCoolDownIndex) {
-    report.value += warmUpCoolDownIndex > index ? `Р=` : `З=`;
-  } else if (report.value) {
-    report.value += `З=`;
+    report += warmUpCoolDownIndex > index ? `Р=` : `З=`;
+  } else if (report) {
+    report += `З=`;
   } else {
-    report.value += `Б=`;
+    report += `Б=`;
   }
 
   if (resultsType.value === AVERAGE_PACE.value) {
-    report.value += results[0];
+    report += results[0][0];
   } else {
-    report.value += getPace(getTotalTime(results), distance);
+    report += getPace(getTotalTime(results[0]), distance);
   }
 
   if (pulseResults.length) {
-    report.value += `(${pulseResults[0]}-${pulseResults[1]}-${pulseResults[2]})`;
+    report += `(${pulseResults[0]}-${pulseResults[1]}-${pulseResults[2]})`;
   }
+
+  return { report };
 };
 
-const addGeneralReportData = ({ distance, results, subtasks, rest }) => {
-  if (results.length) {
-    // указать дистацию, двоеточие, пробел
-    // перечислить все результаты
-    // мб одна серия, но нужны отсечки (по 5 км или по 1 км)
-    // посчитать среднее (если > 1 км, то добавить средний темп)
+const getGeneralReportData = (subtask) => {
+  let report = "";
+  const averages = [];
+
+  if (subtask.results.length) {
+    const data = getSubtaskReportData(subtask);
+    report += `${getDistanceText(subtask)}: ${data.report}`;
+    averages.push(...data.averages);
   }
 
-  if (!distance && !results.length) {
-    // парсим все сабтаски по очереди
+  if (!subtask.distance && subtask.subtasks.length) {
+    subtask.subtasks.forEach((task) => {
+      const data = getGeneralReportData(task);
+      report += data.report;
+      averages.push(...data.averages);
+    });
   }
 
-  if (distance && !results.length) {
-    report.value += `${getDistanceText(distance)}: `;
-    // для каждой серии:
-    // 1) общее время всех подтасок
-    // 2) скобка открывается
-    // 3) перечисление всех результатов рекурсивно (отдельный метод чисто для перечисления, с отдыхом и суммированием по 5 км)
-    // 4) скобка закрывается, точка с запятой и пробел, если не последняя серия
-    // пульс, если надо
-    // средний темп или среднее время таски
-    // средние по всем подтаскам (не забыть отдыхи)
+  if (subtask.distance && subtask.subtasks.length) {
+    const totalTimeResults = [];
+    report += `${getDistanceText(subtask)}: `;
+
+    for (let index = 0; index < subtask.seriesCount; index++) {
+      if (index) {
+        report += `; `;
+      }
+      const data = getSubtaskReportData(subtask, index);
+      report += `${data.totalTime}(${data.report})`;
+      averages.push(...data.averages);
+      totalTimeResults.push(data.totalTime);
+    }
+
+    averages.push({
+      type: "time",
+      distanceText: getDistanceText(subtask),
+      timeLimit: subtask.timeLimit,
+      seriesCount: subtask.seriesCount,
+      totalTime: getAccumulatedTimeInSeconds(totalTimeResults),
+    });
+
+    if (subtask.rest) {
+      averages.push({
+        type: "time",
+        distanceText: `${subtask.rest.distance * 1000} м`,
+        timeLimit: "(до 22)",
+        seriesCount: subtask.rest.results.length,
+        totalTime: getAccumulatedTimeInSeconds(subtask.rest.results),
+      });
+    }
   }
 
-  if (rest) {
-    // посчитать среднее
+  if (subtask.pulseResults.length) {
+    report += `(${subtask.pulseResults[0]}-${subtask.pulseResults[1]}-${subtask.pulseResults[2]})`;
   }
 
-  // пульс
-
-  // если в averages seriesCount === 1 и это не темп, то считать среднее не нужно
+  return { report, averages };
 };
-
-const getGeneralRecursiveReportData = () => {};
 
 const addDailyReportData = (task, dailyReportData, taskDistance) => {
   if (!dailyReportData.value.isIncluded) {
@@ -242,13 +307,17 @@ const getAccumulatedTimeInSeconds = (cutoffs) => {
   }, 0);
 };
 
-const getDistanceText = (task) => {
+const getDistanceText = ({ task }) => {
   const match = task.match(/^(\d+х)?\d+(,\d)? (км)?(м)?/);
   return match ? match[0] : null;
 };
 
-export const getSubtaskReportData = (subtask) => {
-  const { cutoffs, averages } = getEnumerationData(subtask);
+export const getSubtaskReportData = (subtask, seriesIndex) => {
+  const { cutoffs, averages } = getEnumerationData(
+    subtask,
+    undefined,
+    seriesIndex
+  );
   let report = "";
 
   const isCountBy5km = subtask.distance > 5 && !hasRest(subtask);
@@ -268,13 +337,19 @@ export const getSubtaskReportData = (subtask) => {
 
         let timeBy5km = null;
         if (mergedDistance === 5) {
-          timeBy5km = getTotalTime(cutoffs.slice(0, index));
+          timeBy5km = getTotalTime(
+            cutoffs.slice(0, index).map(({ result }) => result)
+          );
         } else {
           const prev5km = cutoffsBy5km.find(
             (cutoff) => mergedDistance - cutoff.mergedDistance === 5
           );
           if (prev5km) {
-            timeBy5km = getTotalTime(cutoffs.slice(prev5km.index + 1, index));
+            timeBy5km = getTotalTime(
+              cutoffs
+                .slice(prev5km.index + 1, index)
+                .map(({ result }) => result)
+            );
           }
         }
         if (timeBy5km) {
@@ -284,14 +359,18 @@ export const getSubtaskReportData = (subtask) => {
         if (mergedDistance % 10 === 0) {
           let timeBy10km = null;
           if (mergedDistance === 10) {
-            timeBy10km = getTotalTime(cutoffs.slice(0, index));
+            timeBy10km = getTotalTime(
+              cutoffs.slice(0, index).map(({ result }) => result)
+            );
           } else {
             const prev10km = cutoffsBy5km.find(
               (cutoff) => mergedDistance - cutoff.mergedDistance === 10
             );
             if (prev10km) {
               timeBy10km = getTotalTime(
-                cutoffs.slice(prev10km.index + 1, index)
+                cutoffs
+                  .slice(prev10km.index + 1, index)
+                  .map(({ result }) => result)
               );
             }
           }
@@ -303,7 +382,18 @@ export const getSubtaskReportData = (subtask) => {
     }
   });
 
-  return { report, averages };
+  const totalTime = getTotalTime(cutoffs.map(({ result }) => result));
+
+  if (subtask.distance > 1) {
+    averages.push({
+      type: "pace",
+      distance: subtask.distance,
+      timeLimit: subtask.timeLimit,
+      totalTime,
+    });
+  }
+
+  return { report, averages, totalTime };
 };
 
 const hasRest = ({ rest, subtasks }) => {
@@ -311,8 +401,18 @@ const hasRest = ({ rest, subtasks }) => {
 };
 
 const getEnumerationData = (
-  { results, subtasks, seriesCount, distance, timeLimit, rest, saveCutoffs },
-  startIndex
+  {
+    task,
+    results,
+    subtasks,
+    seriesCount,
+    distance,
+    timeLimit,
+    rest,
+    saveCutoffs,
+  },
+  startIndex,
+  seriesIndex
 ) => {
   if (results.length) {
     const reportCutoffs = Number.isInteger(startIndex)
@@ -332,7 +432,7 @@ const getEnumerationData = (
       ? [
           {
             type: "time",
-            distance: rest.distance,
+            distanceText: `${rest.distance * 1000} м`,
             timeLimit: "(до 22)",
             seriesCount: rest.results.length,
             totalTime: getAccumulatedTimeInSeconds(rest.results),
@@ -342,13 +442,13 @@ const getEnumerationData = (
 
     return {
       cutoffs: formattedCutoffs.map((cutoff) => ({
-        result: cutoff,
+        result: cutoff.replace(".", ","),
         distance,
       })),
       averages: [
         {
           type: "time",
-          distance,
+          distanceText: getDistanceText({ task }),
           timeLimit,
           seriesCount,
           totalTime: getAccumulatedTimeInSeconds(formattedCutoffs),
@@ -360,15 +460,35 @@ const getEnumerationData = (
 
   const cutoffs = [];
   const averages = [];
-  for (let index = 0; index < seriesCount; index++) {
+  if (seriesIndex) {
     subtasks.forEach((subtask) => {
-      const subtaskEnumeration = getSubtaskReportData(
+      const subtaskEnumeration = getEnumerationData(
         subtask,
-        index * subtask.seriesCount
+        seriesIndex * subtask.seriesCount
       );
       cutoffs.push(...subtaskEnumeration.cutoffs);
       averages.push(...subtaskEnumeration.averages);
     });
+  } else {
+    for (let index = 0; index < seriesCount; index++) {
+      subtasks.forEach((subtask) => {
+        const subtaskEnumeration = getEnumerationData(
+          subtask,
+          index * subtask.seriesCount
+        );
+        cutoffs.push(...subtaskEnumeration.cutoffs);
+        averages.push(...subtaskEnumeration.averages);
+      });
+    }
+    if (rest) {
+      averages.push({
+        type: "time",
+        distanceText: `${rest.distance * 1000} м`,
+        timeLimit: "(до 22)",
+        seriesCount: rest.results.length,
+        totalTime: getAccumulatedTimeInSeconds(rest.results),
+      });
+    }
   }
   return { cutoffs, averages };
 };

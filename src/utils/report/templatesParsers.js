@@ -160,14 +160,16 @@ const parseType14 = (split, taskDistance) => {
   const { distance, seriesCount, rest } = getSeriesDistanceAndRest(split);
   taskDistance.value += distance * seriesCount + rest * (seriesCount - 1);
 
-  return {
-    ...emptySubtask,
-    seriesCount,
-    rest: {
-      distance: rest,
-      results: Array(seriesCount - 1),
-    },
-  };
+  return rest
+    ? {
+        ...emptySubtask,
+        seriesCount,
+        rest: {
+          distance: rest,
+          results: Array(seriesCount - 1),
+        },
+      }
+    : null;
 };
 
 const parseType20 = (split) => {

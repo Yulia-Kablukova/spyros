@@ -460,38 +460,3 @@ const addCutoffs = (subtasks, results, index) => {
 
   report.value += ")\n";
 };
-
-const getAverage = (results) => {
-  const averageInSeconds =
-    results.reduce((sum, result) => {
-      let totalSeconds = 0;
-      let factor = 1;
-
-      result
-        .match(/\d+(\.\d+)*/g)
-        .reverse()
-        .forEach((el) => {
-          totalSeconds += parseFloat(el) * factor;
-          factor *= 60;
-        });
-
-      return sum + totalSeconds;
-    }, 0) / results.length;
-
-  const resultMinutes = (averageInSeconds / 60) >> 0;
-  const resultSeconds = (averageInSeconds - resultMinutes * 60)
-    .toFixed(1)
-    .toString()
-    .replace(".", ",");
-  const leadingZero = resultSeconds.length < 4 ? "0" : "";
-
-  if (!resultMinutes) {
-    return resultSeconds;
-  }
-
-  return `${resultMinutes}:${leadingZero}${resultSeconds}`;
-};
-
-const capitalize = (str) => {
-  return str[0].toUpperCase() + str.slice(1);
-};
