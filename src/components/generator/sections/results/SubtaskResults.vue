@@ -41,19 +41,19 @@ const getResultsTypes = computed(() => {
 const showSaveCutoffs = computed(() => {
   const { resultsType, pulseZone } = props.subtask;
   return (
-    [CUTOFFS_1_KM.value, CUTOFFS_5_KM.value].includes(resultsType.value) &&
+    [CUTOFFS_1_KM.value, CUTOFFS_5_KM.value].includes(resultsType?.value) &&
     pulseZone !== "(до 22)"
   );
 });
 
 const getCutoffsDistance = computed(() => {
-  return props.subtask.resultsType.value === CUTOFFS_5_KM.value ? 5 : 1;
+  return props.subtask.resultsType?.value === CUTOFFS_5_KM.value ? 5 : 1;
 });
 
 const getCutoffPlaceholder = (index) => {
-  const { resultsType, seriesCount } = props.subtask;
+  const { resultsType, totalSeriesCount } = props.subtask;
 
-  return resultsType.value === CUTOFFS_1_KM.value && seriesCount === 1
+  return resultsType?.value === CUTOFFS_1_KM.value && totalSeriesCount === 1
     ? `${index + 1} км`
     : null;
 };
@@ -110,7 +110,7 @@ const handleResultsTypeChange = (value) => {
               :key="`results-${subtask.id}-${resultIndex}`"
               class="subtask__result-inputs"
             >
-              <span v-if="result.length > 1 && subtask.seriesCount > 1">
+              <span v-if="result.length > 1 && subtask.totalSeriesCount > 1">
                 {{ resultIndex + 1 }} отрезок:
               </span>
               <input

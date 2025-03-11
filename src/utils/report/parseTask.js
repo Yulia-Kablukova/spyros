@@ -142,8 +142,10 @@ const getSubtasks = (
           subtask.id
         );
       } else {
-        subtask.results = Array(subtask.totalSeriesCount).fill(Array(1));
         taskDistance.value += subtask.totalSeriesCount * subtask.distance;
+        subtask.results = Array(subtask.totalSeriesCount)
+          .fill(undefined)
+          .map(() => Array(1));
       }
 
       return subtask;
