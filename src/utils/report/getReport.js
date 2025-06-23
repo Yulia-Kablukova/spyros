@@ -17,15 +17,39 @@ export const getReport = (subtasks, task, dailyReportData, taskDistance) => {
       reportData.push(getGeneralReportData(subtask));
     }
   });
-  console.log(reportData);
 
   const extraAverages = [];
 
   reportData.forEach(({ averages }, index) => {
-    if (!averages || index === reportData.length - 1) {
-      return;
-    }
-    averages.forEach((average, averageIndex) => {
+    averages?.forEach((average, averageIndex) => {
+      if (averageIndex < averages.length - 1) {
+        for (
+          let innerIndex = averageIndex + 1;
+          innerIndex < averages.length;
+          innerIndex++
+        ) {
+          const { type, distance, timeLimit } = averages[innerIndex];
+          if (
+            type === "time" &&
+            type === average.type &&
+            distance === average.distance &&
+            timeLimit === average.timeLimit
+          ) {
+            reportData[index].averages[innerIndex].seriesCount +=
+              average.seriesCount;
+            reportData[index].averages[innerIndex].totalTime +=
+              average.totalTime;
+            reportData[index].averages[averageIndex] = null;
+            break;
+          }
+        }
+      }
+      if (
+        !reportData[index].averages[averageIndex] ||
+        index === reportData.length - 1
+      ) {
+        return;
+      }
       for (
         let innerIndex = index + 1;
         innerIndex < reportData.length;
@@ -45,9 +69,10 @@ export const getReport = (subtasks, task, dailyReportData, taskDistance) => {
             distance === average.distance &&
             timeLimit === average.timeLimit
           ) {
-            console.log(1);
-            reportData[innerIndex].seriesCount += average.seriesCount;
-            reportData[innerIndex].totalTime += average.totalTime;
+            reportData[innerIndex].averages[innerAverageIndex].seriesCount +=
+              average.seriesCount;
+            reportData[innerIndex].averages[innerAverageIndex].totalTime +=
+              average.totalTime;
             reportData[index].averages[averageIndex] = null;
           }
 
@@ -89,19 +114,26 @@ export const getReport = (subtasks, task, dailyReportData, taskDistance) => {
       }
     });
   });
-
+  console.log(reportData);
   reportData = reportData.map((data) => ({
     ...data,
     averages: data.averages?.filter(
       (average) =>
-        average && !(average.seriesCount === 1 && average.type === "time")
+        average &&
+        !(
+          average.seriesCount === 1 &&
+          average.type === "time" &&
+          !average.isRest
+        )
     ),
   }));
 
   reportData.forEach((data) => {
-    report.value += `${data.report}`;
-    if (!data.noNewLine) {
-      report.value += `\n`;
+    if (data.report) {
+      report.value += `${data.report}`;
+      if (!data.noNewLine) {
+        report.value += `\n`;
+      }
     }
     if (data.averages) {
       data.averages.forEach(
@@ -114,9 +146,9 @@ export const getReport = (subtasks, task, dailyReportData, taskDistance) => {
           totalTime,
         }) => {
           if (type === "time") {
-            report.value += `${distanceText}${timeLimit}(ср.)=${getTimeFormatted(
-              totalTime / seriesCount / distance
-            )}\n`;
+            report.value += `${distanceText}${
+              timeLimit || ""
+            }(ср.)=${getTimeFormatted(totalTime / seriesCount)}\n`;
           } else if (type === "pace") {
             report.value += `1 км${timeLimit || ""}(ср.)=${getPace(
               totalTime,
@@ -185,7 +217,7 @@ const getRecoveryReportData = (
 
   if (~warmUpCoolDownIndex) {
     report += warmUpCoolDownIndex > index ? `Р=` : `З=`;
-  } else if (report) {
+  } else if (index) {
     report += `З=`;
   } else {
     report += `Б=`;
@@ -218,17 +250,13 @@ const getGeneralReportData = (subtask) => {
       report += `${getDistanceText(subtask)}: ${data.report}`;
     }
     averages.push(...data.averages);
-  }
-
-  if (!subtask.distance && subtask.subtasks.length) {
+  } else if (!subtask.distance && subtask.subtasks.length) {
     subtask.subtasks.forEach((task) => {
       const data = getGeneralReportData(task);
       report += data.report;
       averages.push(...data.averages);
     });
-  }
-
-  if (subtask.distance && subtask.subtasks.length) {
+  } else if (subtask.distance && subtask.subtasks.length) {
     const totalTimeResults = [];
     report += `${getDistanceText(subtask)}: `;
 
@@ -249,6 +277,7 @@ const getGeneralReportData = (subtask) => {
       timeLimit: subtask.timeLimit,
       seriesCount: subtask.seriesCount,
       totalTime: getAccumulatedTimeInSeconds(totalTimeResults),
+      isRest: false,
     });
 
     if (subtask.rest) {
@@ -259,8 +288,19 @@ const getGeneralReportData = (subtask) => {
         timeLimit: "(до 22)",
         seriesCount: subtask.rest.results.length,
         totalTime: getAccumulatedTimeInSeconds(subtask.rest.results),
+        isRest: true,
       });
     }
+  } else if (subtask.rest) {
+    averages.push({
+      type: "time",
+      distance: subtask.rest.distance,
+      distanceText: `${subtask.rest.distance * 1000} м`,
+      timeLimit: "(до 22)",
+      seriesCount: subtask.rest.results.length,
+      totalTime: getAccumulatedTimeInSeconds(subtask.rest.results),
+      isRest: true,
+    });
   }
 
   if (subtask.pulseResults.length) {
@@ -279,7 +319,9 @@ const addDailyReportData = (task, dailyReportData, taskDistance) => {
     dailyReportData.value.date
   )}\n\n${dailyReportData.value.time}\n\n${task.value}\n\n`;
 
-  report.value = dailyReportBeginning + report.value + "\n";
+  report.value = report.value
+    ? dailyReportBeginning + report.value + "\n"
+    : dailyReportBeginning;
 
   if (dailyReportData.value.comment) {
     report.value += `${dailyReportData.value.comment}\n\n`;
@@ -350,20 +392,15 @@ const getTotalTime = (cutoffs) => {
 const getTimeFormatted = (resultInSeconds) => {
   const resultHours = (resultInSeconds / 3600) >> 0;
 
-  const resultMinutes = (
-    ((resultInSeconds - resultHours * 3600) / 60) >>
-    0
-  ).toString();
+  const resultMinutes = ((resultInSeconds - resultHours * 3600) / 60) >> 0;
+
   const resultSeconds = (
     resultInSeconds -
     resultMinutes * 60 -
     resultHours * 3600
-  )
-    .toFixed(1)
-    .toString();
-
-  const minutesLeadingZero = resultMinutes.length < 2 ? "0" : "";
-  const secondsLeadingZero = resultSeconds.length < 4 ? "0" : "";
+  ).toFixed(1);
+  const minutesLeadingZero = resultMinutes.toString().length < 2 ? "0" : "";
+  const secondsLeadingZero = resultSeconds.toString().length < 4 ? "0" : "";
 
   let result = "";
 
@@ -479,8 +516,9 @@ export const getSubtaskReportData = (subtask, seriesIndex) => {
     averages.push({
       type: "pace",
       distance: subtask.distance,
-      timeLimit: subtask.timeLimit,
+      timeLimit: subtask.timeLimit || subtask.pulseZone,
       totalTime,
+      isRest: false,
     });
   }
 
@@ -499,6 +537,7 @@ const getEnumerationData = (
     seriesCount,
     distance,
     timeLimit,
+    pulseZone,
     rest,
     resultsType,
     saveCutoffs,
@@ -529,6 +568,7 @@ const getEnumerationData = (
             timeLimit: "(до 22)",
             seriesCount: rest.results.length,
             totalTime: getAccumulatedTimeInSeconds(rest.results),
+            isRest: true,
           },
         ]
       : [];
@@ -554,9 +594,10 @@ const getEnumerationData = (
           type: "time",
           distance: distance,
           distanceText: getDistanceText({ task }),
-          timeLimit,
+          timeLimit: timeLimit || pulseZone,
           seriesCount,
           totalTime: getAccumulatedTimeInSeconds(formattedCutoffs),
+          isRest: false,
         },
         ...restAverages,
       ],
@@ -593,6 +634,7 @@ const getEnumerationData = (
         timeLimit: "(до 22)",
         seriesCount: rest.results.length,
         totalTime: getAccumulatedTimeInSeconds(rest.results),
+        isRest: true,
       });
     }
   }

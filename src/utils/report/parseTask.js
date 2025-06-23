@@ -134,7 +134,10 @@ const getSubtasks = (
         filteredSplit = filteredSplit.substring(1, filteredSplit.length - 1);
       }
 
-      if (filteredSplit.match(/\+/)) {
+      if (
+        filteredSplit.match(/\+/) &&
+        filteredSplit !== "100 м-спринт(близко к max)+300 м-с.у."
+      ) {
         subtask.subtasks = getSubtasks(
           filteredSplit,
           taskDistance,

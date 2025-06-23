@@ -50,6 +50,20 @@ const getCutoffsDistance = computed(() => {
   return props.subtask.resultsType?.value === CUTOFFS_5_KM.value ? 5 : 1;
 });
 
+const getSubtaskLabel = computed(() => {
+  const { task, totalSeriesCount } = props.subtask;
+  const distance = task.match(/^(\d+х)?\d+(,\d)? (км)?(м)?/)[0];
+  let label = "";
+
+  if (totalSeriesCount > 1) {
+    label += `${totalSeriesCount}х`;
+  }
+
+  label += distance;
+
+  return label;
+});
+
 const getCutoffPlaceholder = (index) => {
   const { resultsType, totalSeriesCount } = props.subtask;
 
@@ -143,6 +157,9 @@ const handleResultsTypeChange = (value) => {
       </div>
 
       <div v-if="subtask.subtasks.length" class="subtask__container">
+        <div v-if="subtask.distance" class="subtask__label">
+          {{ getSubtaskLabel }}:
+        </div>
         <subtask-results
           v-for="(seriesSubtask, subtaskIndex) in subtask.subtasks"
           :key="`subtask-${subtask.id}-${subtaskIndex}`"
@@ -195,6 +212,10 @@ const handleResultsTypeChange = (value) => {
     > span {
       font-weight: 500;
     }
+  }
+
+  &__label {
+    color: #717171;
   }
 
   &__result-inputs {
