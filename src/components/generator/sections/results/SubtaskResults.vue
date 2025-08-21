@@ -64,6 +64,13 @@ const getSubtaskLabel = computed(() => {
   return label;
 });
 
+const getTaskText = computed(() => {
+  const { task, timeLimit, pulseZone } = props.subtask;
+  const match = task.match(/^(\d+х)?\d+(,\d)? (км)?(м)?/);
+
+  return match ? `${match[0]}${timeLimit || pulseZone || ""}` : task;
+});
+
 const getCutoffPlaceholder = (index) => {
   const { resultsType, totalSeriesCount } = props.subtask;
 
@@ -103,7 +110,7 @@ const handleResultsTypeChange = (value) => {
 
     <div v-else class="subtask__container">
       <div v-if="subtask.results.length" class="subtask__container">
-        <div>{{ subtask.task }}</div>
+        <div>{{ getTaskText }}</div>
         <div>
           <custom-select
             v-if="getResultsTypes.length > 1"

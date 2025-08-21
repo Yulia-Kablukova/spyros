@@ -17,7 +17,7 @@ export const getReport = (subtasks, task, dailyReportData, taskDistance) => {
       reportData.push(getGeneralReportData(subtask));
     }
   });
-
+  console.log(reportData);
   const extraAverages = [];
 
   reportData.forEach(({ averages }, index) => {
@@ -114,7 +114,7 @@ export const getReport = (subtasks, task, dailyReportData, taskDistance) => {
       }
     });
   });
-  console.log(reportData);
+
   reportData = reportData.map((data) => ({
     ...data,
     averages: data.averages?.filter(
@@ -127,6 +127,7 @@ export const getReport = (subtasks, task, dailyReportData, taskDistance) => {
         )
     ),
   }));
+  console.log(reportData);
 
   reportData.forEach((data) => {
     if (data.report) {
@@ -247,14 +248,51 @@ const getGeneralReportData = (subtask) => {
         data.report
       })`;
     } else {
-      report += `${getDistanceText(subtask)}: ${data.report}`;
+      report += `${getDistanceText(subtask)}${subtask.timeLimit || ""}: ${
+        data.report
+      }`;
     }
     averages.push(...data.averages);
   } else if (!subtask.distance && subtask.subtasks.length) {
-    subtask.subtasks.forEach((task) => {
+    subtask.subtasks.forEach((task, index) => {
       const data = getGeneralReportData(task);
       report += data.report;
+      if (index < subtask.subtasks.length - 1) {
+        report += "\n";
+      }
+
       averages.push(...data.averages);
+
+      const distanceAveragesMap = averages.reduce((result, average) => {
+        return {
+          ...result,
+          [average.distance]: result[average.distance]
+            ? [...result[average.distance], average]
+            : [average],
+        };
+      }, {});
+
+      const extraAveragesArray = Object.values(distanceAveragesMap).filter(
+        (el) => el.length > 1
+      );
+
+      extraAveragesArray.forEach((el) => {
+        averages.push({
+          type: "time",
+          distance: el[0].distance,
+          distanceText: el[0].distanceText,
+          timeLimit: null,
+          seriesCount: el.reduce(
+            (result, { seriesCount }) => result + seriesCount,
+            0
+          ),
+          totalTime: el.reduce(
+            (result, { totalTime }) => result + totalTime,
+            0
+          ),
+          isRest: false,
+        });
+      });
     });
   } else if (subtask.distance && subtask.subtasks.length) {
     const totalTimeResults = [];
@@ -275,7 +313,7 @@ const getGeneralReportData = (subtask) => {
       distance: subtask.distance,
       distanceText: getDistanceText(subtask),
       timeLimit: subtask.timeLimit,
-      seriesCount: subtask.seriesCount,
+      seriesCount: subtask.totalSeriesCount,
       totalTime: getAccumulatedTimeInSeconds(totalTimeResults),
       isRest: false,
     });
@@ -534,7 +572,7 @@ const getEnumerationData = (
     task,
     results,
     subtasks,
-    seriesCount,
+    totalSeriesCount,
     distance,
     timeLimit,
     pulseZone,
@@ -547,7 +585,7 @@ const getEnumerationData = (
 ) => {
   if (results.length) {
     const reportCutoffs = Number.isInteger(startIndex)
-      ? results.slice(startIndex, startIndex + seriesCount)
+      ? results.slice(startIndex, startIndex + totalSeriesCount)
       : results;
     const formattedCutoffs = [];
 
@@ -595,7 +633,7 @@ const getEnumerationData = (
           distance: distance,
           distanceText: getDistanceText({ task }),
           timeLimit: timeLimit || pulseZone,
-          seriesCount,
+          seriesCount: totalSeriesCount,
           totalTime: getAccumulatedTimeInSeconds(formattedCutoffs),
           isRest: false,
         },
@@ -616,7 +654,7 @@ const getEnumerationData = (
       averages.push(...subtaskEnumeration.averages);
     });
   } else {
-    for (let index = 0; index < seriesCount; index++) {
+    for (let index = 0; index < totalSeriesCount; index++) {
       subtasks.forEach((subtask) => {
         const subtaskEnumeration = getEnumerationData(
           subtask,
