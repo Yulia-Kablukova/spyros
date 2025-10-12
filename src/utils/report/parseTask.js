@@ -559,7 +559,11 @@ const parseType34 = (match, results, subtasks, taskDistance) => {
 
 const parseType35 = (match, results, subtasks, taskDistance, errors) => {
   const matchBeginning = match.match(/^[0-9]+х([0-9]+ км)?/)[0];
-  const matchEnding = match.match(/\(через [0-9]+ м\(до 22\)\)/g).pop();
+  const matchEnding = match
+    .match(
+      /\(через [0-9]+ м\(до 22\)(\((([0-9]+:)?[0-9]+-)?([0-9]+:)?[0-9]+\))?\)/g
+    )
+    .pop();
   const pulseLength = match.match(/\(пульс( после [0-9]+ серии)?\)/)
     ? match.match(/\(пульс( после [0-9]+ серии)?\)/)[0].length
     : 0;
