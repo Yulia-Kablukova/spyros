@@ -68,7 +68,9 @@ const getTaskText = computed(() => {
   const { task, timeLimit, pulseZone } = props.subtask;
   const match = task.match(/^(\d+х)?\d+(,\d)? (км)?(м)?/);
 
-  return match ? `${match[0]}${timeLimit || pulseZone || ""}` : task;
+  return match && (timeLimit || pulseZone)
+    ? `${match[0]}${timeLimit || pulseZone}`
+    : task;
 });
 
 const getCutoffPlaceholder = (index) => {

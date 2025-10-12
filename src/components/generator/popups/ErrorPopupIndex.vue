@@ -39,7 +39,10 @@ onUnmounted(() => {
 
       <p>Не удалось распознать "{{ invalidTask }}".</p>
 
-      <p>Сообщить об ошибке можно в тг: djull_zzz</p>
+      <p>
+        Сообщить об ошибке можно в тг:
+        <a href="https://t.me/djull_zzz" target="_blank">djull_zzz</a>
+      </p>
     </div>
   </div>
 </template>

@@ -99,7 +99,8 @@ const handleBirthdayPopupClose = () => {
 
     <p class="generator__warning">
       Сервис работает в тестовом режиме. Проверяйте отчет перед отправкой.
-      <br />При любых неполадках пишите в тг: djull_zzz
+      <br />При любых неполадках пишите в тг:
+      <a href="https://t.me/djull_zzz" target="_blank">djull_zzz</a>
     </p>
 
     <textarea v-model="task" placeholder="Введите задание" />

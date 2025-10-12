@@ -60,7 +60,9 @@ const getSubtasks = (
 
       let filteredSplit = remakeFartlek(split);
 
-      const pulse = filteredSplit.match(/\(пульс( после \d раза)?\)$/);
+      const pulse = filteredSplit.match(
+        /\(пульс( после \d (раза)?(серии)?)?\)$/
+      );
       if (pulse) {
         filteredSplit = filteredSplit.substring(
           0,
