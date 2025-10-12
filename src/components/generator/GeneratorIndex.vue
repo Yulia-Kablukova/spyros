@@ -13,6 +13,7 @@ const taskDistance = ref(0);
 const subtasks = ref([]);
 const results = ref([]);
 const report = ref("");
+const showResults = ref(false);
 
 const dailyReportData = ref({
   isIncluded: false,
@@ -36,6 +37,9 @@ const getTaskDistance = computed(() => {
 const handleResultsFill = () => {
   resetResults();
   parseTask(task, subtasks, results, errors, taskDistance);
+  if (!errors.value.invalidTask) {
+    showResults.value = true;
+  }
 };
 
 const resetResults = () => {
@@ -44,6 +48,7 @@ const resetResults = () => {
   results.value = [];
   errors.value.invalidTask = null;
   taskDistance.value = 0;
+  showResults.value = false;
   dailyReportData.value = {
     isIncluded: false,
     date: new Date(),
@@ -81,7 +86,8 @@ const handleBirthdayPopupClose = () => {
 
     <p class="generator__description">
       Инструмент для атоматизации создания отчетов по результатам тренировки.
-      <br />При возникновении ошибок пишите в тг: djull_zzz
+      <br />При возникновении ошибок пишите в тг:
+      <a href="https://t.me/djull_zzz" target="_blank">djull_zzz</a>
     </p>
 
     <textarea v-model="task" placeholder="Введите задание" />
@@ -92,8 +98,12 @@ const handleBirthdayPopupClose = () => {
       <span class="generator__distance">Объем: {{ getTaskDistance }} км</span>
     </div>
 
-    <div v-if="subtasks.length">
-      <results-index :subtasks="subtasks" :results="results" />
+    <div v-if="showResults">
+      <results-index
+        v-if="subtasks.length"
+        :subtasks="subtasks"
+        :results="results"
+      />
 
       <div class="generator__daily-report-checkbox-container">
         <input

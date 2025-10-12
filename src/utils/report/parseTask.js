@@ -5,7 +5,11 @@ import {
   CUTOFFS_5_KM,
   TOTAL_TIME,
 } from "../../consts/report/timeTypes";
-import { BETWEEN_SERIES, FILL_ALL_SERIES, IN_SERIES_AND_BETWEEN_SERIES } from "@/consts/report/hints";
+import {
+  BETWEEN_SERIES,
+  FILL_ALL_SERIES,
+  IN_SERIES_AND_BETWEEN_SERIES,
+} from "@/consts/report/hints";
 
 const templates = ref(templatesRef);
 
@@ -17,8 +21,12 @@ export const parseTask = (
   taskDistance,
   globalSeriesCount = 1
 ) => {
-  task.value = task.value.trim();
-  let taskCopy = task.value.replaceAll("\n", "");
+  task.value = task.value
+    .trim()
+    .replaceAll("\n", "")
+    .replaceAll('"', "")
+    .replaceAll("          ", "");
+  let taskCopy = task.value;
 
   while (taskCopy.length && !errors.value.invalidTask) {
     for (const index in templates.value) {
@@ -155,15 +163,6 @@ const parseType3 = (results, subtasks) => {
     distance: null,
     timeType: null,
   });
-
-  results.value.push([1, undefined]);
-  subtasks.value.push({
-    match: "стато-динамика",
-    type: 3,
-    resultsCount: 2,
-    distance: null,
-    timeType: null,
-  });
 };
 
 const parseType4 = (match, results, subtasks) => {
@@ -268,7 +267,9 @@ const parseType20 = (match, results, subtasks, type, taskDistance) => {
   const seriesCount = match.match(/[0-9]+х/) ? +match.match(/^[0-9]+/) : 1;
   const seriesIndex = seriesCount > 1 ? 0 : -1;
 
-  let rest = match.match(/\(через [0-9]+ м\(до 22\)\)/);
+  let rest = match.match(
+    /\(через [0-9]+ м\(до 22\)(\(([0-9]+:)?[0-9]+(,[0-9]+)?(-([0-9]+:)?[0-9]+(,[0-9]+)?)?\))?\)/
+  );
 
   if (rest) {
     rest = rest[0].slice(7, -1);
@@ -286,11 +287,10 @@ const parseType20 = (match, results, subtasks, type, taskDistance) => {
   }
 
   if (type === 20) {
-    const subseriesCount = +match.match(/[0-9]+/g)[seriesIndex + 1];
-    const subdistance = +match.match(/[0-9]+/g)[seriesIndex + 3];
+    // const subseriesCount = +match.match(/[0-9]+/g)[seriesIndex + 1];
+    const subdistance = +match.match(/[0-9]+/g)[seriesIndex + 2];
 
-    taskDistance.value +=
-      (seriesCount * (subseriesCount * 4 + 3.5) * subdistance) / 1000;
+    taskDistance.value += (seriesCount * 11.5 * subdistance) / 1000;
   }
 
   if (type === 21) {
@@ -560,7 +560,9 @@ const parseType34 = (match, results, subtasks, taskDistance) => {
 const parseType35 = (match, results, subtasks, taskDistance, errors) => {
   const matchBeginning = match.match(/^[0-9]+х([0-9]+ км)?/)[0];
   const matchEnding = match.match(/\(через [0-9]+ м\(до 22\)\)/g).pop();
-  const pulseLength = match.match(/\(пульс( после [0-9]+ серии)?\)/) ? match.match(/\(пульс( после [0-9]+ серии)?\)/)[0].length : 0
+  const pulseLength = match.match(/\(пульс( после [0-9]+ серии)?\)/)
+    ? match.match(/\(пульс( после [0-9]+ серии)?\)/)[0].length
+    : 0;
 
   const innerMatch = match.slice(
     matchBeginning.length + 1,
@@ -568,7 +570,14 @@ const parseType35 = (match, results, subtasks, taskDistance, errors) => {
   );
   const seriesCount = +matchBeginning.match(/^[0-9]+/)[0];
 
-  parseTask(ref(innerMatch), subtasks, results, errors, taskDistance, seriesCount);
+  parseTask(
+    ref(innerMatch),
+    subtasks,
+    results,
+    errors,
+    taskDistance,
+    seriesCount
+  );
 
   const restMatch = matchEnding.slice(7, matchEnding.length - 1);
   const restDistance = getDistance(restMatch);
@@ -664,7 +673,11 @@ const parseType40 = (match, results, subtasks) => {
     });
   }
 
-  if (match.match(/зашагивание на платформу с весом с выпрыгиванием вверх на левой ноге/)) {
+  if (
+    match.match(
+      /зашагивание на платформу с весом с выпрыгиванием вверх на левой ноге/
+    )
+  ) {
     results.value.push([seriesCount, 3, undefined]);
     subtasks.value.push({
       match:
@@ -676,7 +689,11 @@ const parseType40 = (match, results, subtasks) => {
     });
   }
 
-  if (match.match(/зашагивание на платформу с весом с выпрыгиванием вверх на правой ноге/)) {
+  if (
+    match.match(
+      /зашагивание на платформу с весом с выпрыгиванием вверх на правой ноге/
+    )
+  ) {
     results.value.push([seriesCount, 3, undefined]);
     subtasks.value.push({
       match:
@@ -743,7 +760,11 @@ const parseType40 = (match, results, subtasks) => {
     });
   }
 
-  if (match.match(/прыжок из полного приседа на платформу с выпрыгиванием на ней вверх из полуприседа/)) {
+  if (
+    match.match(
+      /прыжок из полного приседа на платформу с выпрыгиванием на ней вверх из полуприседа/
+    )
+  ) {
     results.value.push([seriesCount, 3]);
     subtasks.value.push({
       match:
@@ -755,7 +776,11 @@ const parseType40 = (match, results, subtasks) => {
     });
   }
 
-  if (match.match(/прыжок из полуприседа на платформу с выпрыгиванием на ней вверх из полуприседа/)) {
+  if (
+    match.match(
+      /прыжок из полуприседа на платформу с выпрыгиванием на ней вверх из полуприседа/
+    )
+  ) {
     results.value.push([seriesCount, 3]);
     subtasks.value.push({
       match:
@@ -782,7 +807,10 @@ const parseDefault = (
 
   const distance = getDistance(matchBeginning);
 
-  const timeType = (globalSeriesCount > 1) ? null : getTimeType(template.type, matchBeginning, distance);
+  const timeType =
+    globalSeriesCount > 1
+      ? null
+      : getTimeType(template.type, matchBeginning, distance);
 
   const resultsCount =
     getResultsCount(
