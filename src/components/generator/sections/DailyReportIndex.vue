@@ -88,7 +88,7 @@ const props = defineProps({
     </div>
 
     <div class="daily-report__data-block">
-      <span>Массаж, баня</span>
+      <span>Массаж, баня, мфр</span>
 
       <input v-model="props.data.recovery" class="daily-report__input--width" />
     </div>

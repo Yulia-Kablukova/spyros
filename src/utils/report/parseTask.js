@@ -137,7 +137,7 @@ const parseType2 = (results, subtasks) => {
 };
 
 const parseType3 = (results, subtasks) => {
-  results.value.push([3, undefined]);
+  results.value.push([2, 10, undefined]);
   subtasks.value.push({
     match: "пресс",
     type: 3,
@@ -146,7 +146,7 @@ const parseType3 = (results, subtasks) => {
     timeType: null,
   });
 
-  results.value.push([3, undefined]);
+  results.value.push([2, 10]);
   subtasks.value.push({
     match: "спина",
     type: 3,
@@ -155,7 +155,7 @@ const parseType3 = (results, subtasks) => {
     timeType: null,
   });
 
-  results.value.push([3, undefined]);
+  results.value.push([2, 10, undefined]);
   subtasks.value.push({
     match: "руки",
     type: 3,
@@ -175,12 +175,12 @@ const parseType4 = (match, results, subtasks) => {
   });
 
   if (match.match(/без веса/)) {
-    results.value.push([2, undefined, "без веса"]);
+    results.value.push([2, 10, "без веса"]);
     return;
   }
 
   if (match.match(/с собственным весом/)) {
-    results.value.push([3, undefined, "с собственным весом"]);
+    results.value.push([2, undefined, "с собственным весом"]);
     return;
   }
 
@@ -194,7 +194,7 @@ const parseType4 = (match, results, subtasks) => {
     return;
   }
 
-  results.value.push([3, undefined, undefined]);
+  results.value.push([2, 10, undefined]);
 };
 
 const parseType11 = (
