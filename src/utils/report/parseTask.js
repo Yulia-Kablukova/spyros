@@ -21,12 +21,8 @@ export const parseTask = (
   taskDistance,
   globalSeriesCount = 1
 ) => {
-  task.value = task.value
-    .trim()
-    .replaceAll("\n", "")
-    .replaceAll('"', "")
-    .replaceAll("          ", "");
-  let taskCopy = task.value;
+  task.value = task.value.trim().replaceAll("\n", "").replaceAll('"', "");
+  let taskCopy = task.value.replaceAll("          ", "");
 
   while (taskCopy.length && !errors.value.invalidTask) {
     for (const index in templates.value) {
@@ -137,7 +133,7 @@ const parseType2 = (results, subtasks) => {
 };
 
 const parseType3 = (results, subtasks) => {
-  results.value.push([2, 10, undefined]);
+  results.value.push([2, 10, "10 кг"]);
   subtasks.value.push({
     match: "пресс",
     type: 3,
@@ -155,7 +151,7 @@ const parseType3 = (results, subtasks) => {
     timeType: null,
   });
 
-  results.value.push([2, 10, undefined]);
+  results.value.push([2, 10, "10 кг, 30 кг"]);
   subtasks.value.push({
     match: "руки",
     type: 3,
@@ -175,26 +171,11 @@ const parseType4 = (match, results, subtasks) => {
   });
 
   if (match.match(/без веса/)) {
-    results.value.push([2, 10, "без веса"]);
+    results.value.push([2, "5,10"]);
     return;
   }
 
-  if (match.match(/с собственным весом/)) {
-    results.value.push([2, undefined, "с собственным весом"]);
-    return;
-  }
-
-  if (match.match(/[0-9] сери./)) {
-    results.value.push([match.match(/[0-9]/), undefined, undefined]);
-    return;
-  }
-
-  if (match.match(/1х12 раз/)) {
-    results.value.push([1, 12, undefined]);
-    return;
-  }
-
-  results.value.push([2, 10, undefined]);
+  results.value.push([2, 10, "20 кг, 10 кг, 5 кг, 2 кг"]);
 };
 
 const parseType11 = (

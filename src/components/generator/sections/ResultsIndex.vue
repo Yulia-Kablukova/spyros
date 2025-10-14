@@ -191,7 +191,7 @@ const handleTimeTypeSelect = (subtask, index, timeType) => {
 
   &__result-input {
     &--width {
-      width: 300px;
+      width: 250px;
     }
   }
 

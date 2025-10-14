@@ -28,9 +28,14 @@ const handleCopyReport = () => {
 <template>
   <div>
     <div class="report-result">
-      <p class="report-result__text">
-        {{ props.data }}
-      </p>
+      <div>
+        <p class="report-result__elevation-info">
+          ! Добавь набор высоты, если требуется !
+        </p>
+        <p class="report-result__text">
+          {{ props.data }}
+        </p>
+      </div>
 
       <content-copy
         :size="20"
@@ -56,8 +61,13 @@ const handleCopyReport = () => {
     cursor: pointer;
   }
 
+  &__elevation-info {
+    color: #db8b56;
+  }
+
   &__text {
-    word-break: break-word;
+    margin-block-start: 20px;
+    white-space: pre-wrap;
   }
 
   &__notification {

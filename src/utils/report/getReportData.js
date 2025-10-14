@@ -54,6 +54,10 @@ export const getReportData = (
     }
   });
 
+  if (task.value.match(/стопы/i)) {
+    report.value += "Стопы\n";
+  }
+
   addDailyReportData(task, dailyReportData, taskDistance);
 
   return report.value.trim();
@@ -94,54 +98,30 @@ const addType2ReportData = (subtasks, results, index) => {
 };
 
 const addType3ReportData = (subtasks, results, index) => {
-  if (
-    subtasks.value[index - 1]?.type === 3 ||
-    subtasks.value[index - 1]?.type === 4
-  ) {
-    report.value += subtasks.value[index].match;
-  } else {
-    report.value += getFormattedMatch(subtasks.value[index].match);
+  const match = subtasks.value[index].match;
+
+  report.value += `${getFormattedMatch(match)}: ${results.value[index][0]}х${
+    results.value[index][1]
+  } раз`;
+
+  if (match.match(/пресс/i)) {
+    report.value += ` и 10 сек.(${results.value[index][2]})`;
+  } else if (match.match(/руки/i)) {
+    report.value += ` и 5 раз(${results.value[index][2]})`;
   }
 
-  report.value += `(`;
-  if (results.value[index][0] > 1) {
-    report.value += `${results.value[index][0]}х`;
-  }
-  report.value += `${results.value[index][1]})`;
-
-  if (
-    subtasks.value[index + 1]?.type === 3 ||
-    subtasks.value[index + 1]?.type === 4
-  ) {
-    report.value += `+`;
-  } else {
-    report.value += `\n`;
-  }
+  report.value += `\n`;
 };
 
 const addType4ReportData = (subtasks, results, index) => {
-  if (
-    subtasks.value[index - 1]?.type === 3 ||
-    subtasks.value[index - 1]?.type === 4
-  ) {
-    report.value += subtasks.value[index].match;
-  } else {
-    report.value += getFormattedMatch(subtasks.value[index].match);
-  }
-  report.value += `(${results.value[index][2]})(`;
+  const match = subtasks.value[index].match;
 
-  if (results.value[index][0] > 1) {
-    report.value += `${results.value[index][0]}х`;
-  }
-  report.value += `${results.value[index][1]})`;
+  report.value += getFormattedMatch(match);
 
-  if (
-    subtasks.value[index + 1]?.type === 3 ||
-    subtasks.value[index + 1]?.type === 4
-  ) {
-    report.value += `+`;
+  if (results.value[index].length < 3) {
+    report.value += `(без веса): ${results.value[index][0]}х${results.value[index][1]} раз и 30 сек.\n`;
   } else {
-    report.value += `\n`;
+    report.value += `: ${results.value[index][0]}х${results.value[index][1]} раз и 10 сек.(${results.value[index][2]})\n`;
   }
 };
 
@@ -242,7 +222,9 @@ const addType33ReportData = (subtasks, results, index) => {
     getTotalTime(fartlekResults.value[1]),
   ]);
 
-  report.value += `${totalDistance.toString().replace(".", ",")} км: ${totalTime.replace(".", ",")}(`;
+  report.value += `${totalDistance
+    .toString()
+    .replace(".", ",")} км: ${totalTime.replace(".", ",")}(`;
 
   let currentMergedTime = "00,0";
   let previousMergedTime = "00,0";
@@ -334,7 +316,9 @@ const addType34ReportData = (subtasks, results, index) => {
 
   const totalTime = getTotalTime(fartlekResults.value);
 
-  report.value += `${totalDistance.toString().replace(".", ",")} км: ${totalTime.replace(".", ",")}(`;
+  report.value += `${totalDistance
+    .toString()
+    .replace(".", ",")} км: ${totalTime.replace(".", ",")}(`;
 
   fartlekResults.value.forEach((result, index) => {
     report.value += result.replace(".", ",");
@@ -522,7 +506,7 @@ const addDailyReportData = (task, dailyReportData, taskDistance) => {
   if (!dailyReportData.value.isIncluded) {
     return;
   }
-
+  console.log(task.value);
   const dailyReportBeginning = `${getDateFormatted(
     dailyReportData.value.date
   )}\n\n${dailyReportData.value.time}\n\n${task.value}\n\n`;
