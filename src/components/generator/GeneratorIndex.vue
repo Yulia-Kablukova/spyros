@@ -123,7 +123,11 @@ const handleBirthdayPopupClose = () => {
         Получить отчет
       </button>
 
-      <report-result v-if="report" :data="report" />
+      <report-result
+        v-if="report"
+        :data="report"
+        :show-elevation-info="taskDistance > 0"
+      />
     </div>
 
     <error-popup-index

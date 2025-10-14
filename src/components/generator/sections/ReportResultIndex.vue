@@ -6,7 +6,10 @@ const props = defineProps({
   data: {
     type: String,
     required: true,
-    default: null,
+  },
+  showElevationInfo: {
+    type: Boolean,
+    required: true,
   },
 });
 
@@ -29,7 +32,7 @@ const handleCopyReport = () => {
   <div>
     <div class="report-result">
       <div>
-        <p class="report-result__elevation-info">
+        <p v-if="showElevationInfo" class="report-result__elevation-info">
           ! Добавь набор высоты, если требуется !
         </p>
         <p class="report-result__text">
@@ -63,10 +66,10 @@ const handleCopyReport = () => {
 
   &__elevation-info {
     color: #db8b56;
+    margin-block-end: 20px;
   }
 
   &__text {
-    margin-block-start: 20px;
     white-space: pre-wrap;
   }
 
