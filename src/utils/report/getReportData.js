@@ -506,7 +506,7 @@ const addDailyReportData = (task, dailyReportData, taskDistance) => {
   if (!dailyReportData.value.isIncluded) {
     return;
   }
-  console.log(task.value);
+
   const dailyReportBeginning = `${getDateFormatted(
     dailyReportData.value.date
   )}\n\n${dailyReportData.value.time}\n\n${task.value}\n\n`;
@@ -534,10 +534,12 @@ const addDailyReportData = (task, dailyReportData, taskDistance) => {
   }
 
   if (dailyReportData.value.recovery) {
-    report.value += `${dailyReportData.value.recovery}\n\n`;
+    report.value += `${dailyReportData.value.recovery}`;
   }
 
-  report.value += `${taskDistance.value.toString().replace(".", ",")} км`;
+  if (taskDistance.value) {
+    report.value += `\n\n${taskDistance.value.toString().replace(".", ",")} км`;
+  }
 };
 
 const getDateFormatted = (date) => {

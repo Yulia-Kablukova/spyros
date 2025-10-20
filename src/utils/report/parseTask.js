@@ -508,7 +508,7 @@ const parseType33 = (match, results, subtasks, taskDistance) => {
 
 const parseType34 = (match, results, subtasks, taskDistance) => {
   const matchBeginning = match.match(/^[0-9]+(,[0-9]+)? км\(/)[0];
-  const matchEnding = ")(пульс)";
+  const matchEnding = match.match(/\)\(пульс( после [0-9]+ раза)?\)/)[0];
 
   const fartlekParts = match
     .slice(matchBeginning.length, match.length - matchEnding.length)
@@ -902,7 +902,7 @@ const addDistance = (match, type, taskDistance) => {
   if (type === 9) {
     const seriesCount = match.match(/^[0-9]+/)[0];
 
-    taskDistance.value += (2 * seriesCount - 1) * 0.05;
+    taskDistance.value += (seriesCount + 1) * 0.05;
     return;
   }
 
