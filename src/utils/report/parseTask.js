@@ -170,12 +170,18 @@ const parseType4 = (match, results, subtasks) => {
     timeType: null,
   });
 
+  let seriesCount = 2;
+
+  if (match.match(/[0-9] сери./)) {
+    seriesCount = match.match(/\d/)[0];
+  }
+
   if (match.match(/без веса/)) {
-    results.value.push([2, "5,10"]);
+    results.value.push([seriesCount, "5,10"]);
     return;
   }
 
-  results.value.push([2, 10, "20 кг, 10 кг, 5 кг, 2 кг"]);
+  results.value.push([seriesCount, 10, "20 кг, 10 кг, 5 кг, 2 кг"]);
 };
 
 const parseType11 = (

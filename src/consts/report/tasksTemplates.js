@@ -22,7 +22,7 @@ export const templates = [
   {
     type: 4,
     regexp:
-      /^ноги(\(с собственным весом\))?(\([0-9] сери.\))?(\(без веса\))?(\(1х12 раз\))?/i,
+      /^ноги(\(с собственным весом\))?(\(без веса\))?(\([0-9] сери.\))?(\(1х12 раз\))?/i,
     resultsPerSeries: 3,
   },
   {
@@ -256,6 +256,16 @@ export const templates = [
   {
     type: 46,
     regexp: /^ходьба обратно/,
+    resultsPerSeries: 0,
+  },
+  {
+    type: 48,
+    regexp: /^апу/,
+    resultsPerSeries: 0,
+  },
+  {
+    type: 49,
+    regexp: /^плиометрика/,
     resultsPerSeries: 0,
   },
 ];
