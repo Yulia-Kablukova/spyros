@@ -540,11 +540,11 @@ const addDailyReportData = (task, dailyReportData, taskDistance) => {
   }
 
   if (dailyReportData.value.recovery) {
-    report.value += `${dailyReportData.value.recovery}`;
+    report.value += `${dailyReportData.value.recovery}\n\n`;
   }
 
   if (taskDistance.value) {
-    report.value += `\n\n${taskDistance.value.toString().replace(".", ",")} км`;
+    report.value += `${taskDistance.value.toString().replace(".", ",")} км`;
   }
 };
 

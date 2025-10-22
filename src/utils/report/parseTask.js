@@ -21,8 +21,8 @@ export const parseTask = (
   taskDistance,
   globalSeriesCount = 1
 ) => {
-  task.value = task.value.trim().replaceAll("\n", "").replaceAll('"', "");
-  let taskCopy = task.value.replaceAll("          ", "");
+  task.value = task.value.trim().replaceAll('"', "");
+  let taskCopy = task.value.replaceAll("\n", "").replaceAll("          ", "");
 
   while (taskCopy.length && !errors.value.invalidTask) {
     for (const index in templates.value) {
@@ -67,6 +67,7 @@ export const parseTask = (
             break;
           case 20:
           case 21:
+          case 50:
             parseType20(match, results, subtasks, template.type, taskDistance);
             break;
           case 22:
@@ -172,7 +173,7 @@ const parseType4 = (match, results, subtasks) => {
 
   let seriesCount = 2;
 
-  if (match.match(/[0-9] сери./)) {
+  if (match.match(/\d сери./)) {
     seriesCount = match.match(/\d/)[0];
   }
 
@@ -251,11 +252,11 @@ const parseType12 = (
 };
 
 const parseType20 = (match, results, subtasks, type, taskDistance) => {
-  const seriesCount = match.match(/[0-9]+х/) ? +match.match(/^[0-9]+/) : 1;
+  const seriesCount = match.match(/\d+х/) ? +match.match(/^\d+/) : 1;
   const seriesIndex = seriesCount > 1 ? 0 : -1;
 
   let rest = match.match(
-    /\(через [0-9]+ м\(до 22\)(\(([0-9]+:)?[0-9]+(,[0-9]+)?(-([0-9]+:)?[0-9]+(,[0-9]+)?)?\))?\)/
+    /\(через \d+ м\(до 22\)(\((\d+:)?\d+(,\d+)?(-(\d+:)?\d+(,\d+)?)?\))?\)/
   );
 
   if (rest) {
@@ -274,21 +275,24 @@ const parseType20 = (match, results, subtasks, type, taskDistance) => {
   }
 
   if (type === 20) {
-    // const subseriesCount = +match.match(/[0-9]+/g)[seriesIndex + 1];
-    const subdistance = +match.match(/[0-9]+/g)[seriesIndex + 2];
-
+    // const subseriesCount = +match.match(/\d+/g)[seriesIndex + 1];
+    const subdistance = +match.match(/\d+/g)[seriesIndex + 2];
     taskDistance.value += (seriesCount * 11.5 * subdistance) / 1000;
   }
 
   if (type === 21) {
-    const subdistance = +match.match(/[0-9]+/g)[seriesIndex + 1];
-
+    const subdistance = +match.match(/\d+/g)[seriesIndex + 1];
     taskDistance.value += (seriesCount * subdistance) / 1000;
+  }
+
+  if (type === 50) {
+    const subdistance = +match.match(/\d+/g)[seriesIndex + 2];
+    taskDistance.value += (seriesCount * 8 * subdistance) / 1000;
   }
 };
 
 const parseType22 = (match, results, subtasks) => {
-  const seriesCount = match.match(/^[0-9]+/);
+  const seriesCount = match.match(/^\d+/);
 
   results.value.push([seriesCount, 3, undefined]);
   subtasks.value.push({
@@ -409,7 +413,7 @@ const parseType27 = (match, results, subtasks, taskDistance) => {
 };
 
 const parseType30 = (match, results, subtasks) => {
-  const seriesCount = match.match(/^[0-9]+/);
+  const seriesCount = match.match(/^\d+/);
 
   results.value.push([seriesCount, 3, undefined]);
   subtasks.value.push({
@@ -476,14 +480,14 @@ const parseType30 = (match, results, subtasks) => {
 };
 
 const parseType33 = (match, results, subtasks, taskDistance) => {
-  const matchBeginning = match.match(/^[0-9]+(,[0-9]+)? км\(/)[0];
+  const matchBeginning = match.match(/^\d+(,\d+)? км\(/)[0];
   const matchEnding = ")(пульс)";
 
   const fartlekParts = match
     .slice(matchBeginning.length, match.length - matchEnding.length)
     .split("/");
 
-  const totalDistance = +match.match(/^[0-9]+(,[0-9]+)?/)[0].replace(",", ".");
+  const totalDistance = +match.match(/^\d+(,\d+)?/)[0].replace(",", ".");
   const seriesCount =
     totalDistance /
     (getDistance(fartlekParts[0]) + getDistance(fartlekParts[1]));
@@ -513,8 +517,8 @@ const parseType33 = (match, results, subtasks, taskDistance) => {
 };
 
 const parseType34 = (match, results, subtasks, taskDistance) => {
-  const matchBeginning = match.match(/^[0-9]+(,[0-9]+)? км\(/)[0];
-  const matchEnding = match.match(/\)\(пульс( после [0-9]+ раза)?\)/)[0];
+  const matchBeginning = match.match(/^\d+(,\d+)? км\(/)[0];
+  const matchEnding = match.match(/\)\(пульс( после \d+ раза)?\)/)[0];
 
   const fartlekParts = match
     .slice(matchBeginning.length, match.length - matchEnding.length)
@@ -541,25 +545,23 @@ const parseType34 = (match, results, subtasks, taskDistance) => {
     timeType: null,
   });
 
-  taskDistance.value += +match.match(/^[0-9]+/)[0];
+  taskDistance.value += +match.match(/^\d+/)[0];
 };
 
 const parseType35 = (match, results, subtasks, taskDistance, errors) => {
-  const matchBeginning = match.match(/^[0-9]+х([0-9]+ км)?/)[0];
+  const matchBeginning = match.match(/^\d+х(\d+ км)?/)[0];
   const matchEnding = match
-    .match(
-      /\(через [0-9]+ м\(до 22\)(\((([0-9]+:)?[0-9]+-)?([0-9]+:)?[0-9]+\))?\)/g
-    )
+    .match(/\(через \d+ м\(до 22\)(\(((\d+:)?\d+-)?(\d+:)?\d+\))?\)/g)
     .pop();
-  const pulseLength = match.match(/\(пульс( после [0-9]+ серии)?\)/)
-    ? match.match(/\(пульс( после [0-9]+ серии)?\)/)[0].length
+  const pulseLength = match.match(/\(пульс( после \d+ серии)?\)/)
+    ? match.match(/\(пульс( после \d+ серии)?\)/)[0].length
     : 0;
 
   const innerMatch = match.slice(
     matchBeginning.length + 1,
     match.length - matchEnding.length - pulseLength - 1
   );
-  const seriesCount = +matchBeginning.match(/^[0-9]+/)[0];
+  const seriesCount = +matchBeginning.match(/^\d+/)[0];
 
   parseTask(
     ref(innerMatch),
@@ -600,7 +602,7 @@ const parseType35 = (match, results, subtasks, taskDistance, errors) => {
   }
   taskDistance.value += restDistance * restResultsCount;
 
-  if (match.match(/\(пульс( после [0-9]+ серии)?\)/)) {
+  if (match.match(/\(пульс( после \d+ серии)?\)/)) {
     results.value.push(Array(3));
     subtasks.value.push({
       match: "пульс",
@@ -614,16 +616,14 @@ const parseType35 = (match, results, subtasks, taskDistance, errors) => {
 
 const parseType36 = (match, results, subtasks, taskDistance, errors) => {
   const matchBeginning = getSeriesCount(match);
-  const matchEnding = match
-    .match(/\(через [0-9]+(,[0-9]?)? мин\. отдыха\)/g)
-    .pop();
+  const matchEnding = match.match(/\(через \d+(,\d?)? мин\. отдыха\)/g).pop();
 
   match = match.slice(
     matchBeginning.length + 1,
     match.length - matchEnding.length - 1
   );
 
-  const seriesCount = +matchBeginning.match(/^[0-9]+/)[0];
+  const seriesCount = +matchBeginning.match(/^\d+/)[0];
 
   parseTask(ref(match), subtasks, results, errors, taskDistance, seriesCount);
 };
@@ -631,7 +631,7 @@ const parseType36 = (match, results, subtasks, taskDistance, errors) => {
 const parseType40 = (match, results, subtasks) => {
   // TODO: simplify this
 
-  const seriesCount = match.match(/^[0-9]+/);
+  const seriesCount = match.match(/^\d+/);
 
   results.value.push([seriesCount, 3, undefined]);
   subtasks.value.push({
@@ -792,9 +792,7 @@ const parseDefault = (
   taskDistance,
   globalSeriesCount
 ) => {
-  const matchBeginning = match.match(
-    /^([0-9]+х)?[0-9]+(,[0-9]?)? (км)?(м)?/
-  )[0];
+  const matchBeginning = match.match(/^(\d+х)?\d+(,\d?)? (км)?(м)?/)[0];
 
   const distance = getDistance(matchBeginning);
 
@@ -835,7 +833,7 @@ const parseDefault = (
     });
   }
 
-  const seriesCount = +getSeriesCount(match)?.match(/^[0-9]+/)[0] || 1;
+  const seriesCount = +getSeriesCount(match)?.match(/^\d+/)[0] || 1;
   taskDistance.value += seriesCount * distance * globalSeriesCount;
 };
 
@@ -851,7 +849,7 @@ const getResultsCount = (match, resultsPerSeries, timeType, distance) => {
   const seriesCount = getSeriesCount(match);
 
   if (seriesCount) {
-    return +match.match(/^[0-9]+/)[0] * resultsPerSeries;
+    return +match.match(/^\d+/)[0] * resultsPerSeries;
   }
 
   return resultsPerSeries;
@@ -864,7 +862,7 @@ const getDistance = (match) => {
     match = match.slice(seriesCount.length);
   }
 
-  const distance = +match.match(/^[0-9]+(,[0-9]?)?/)[0].replace(",", ".");
+  const distance = +match.match(/^\d+(,\d?)?/)[0].replace(",", ".");
 
   if (match.match(/ м/)) {
     return distance / 1000;
@@ -874,7 +872,7 @@ const getDistance = (match) => {
 };
 
 const getSeriesCount = (match) => {
-  const seriesCountMatches = match.match(/^[0-9]+х/);
+  const seriesCountMatches = match.match(/^\d+х/);
 
   return seriesCountMatches ? seriesCountMatches[0] : null;
 };
@@ -906,30 +904,29 @@ const addDistance = (match, type, taskDistance) => {
   }
 
   if (type === 9) {
-    const seriesCount = match.match(/^[0-9]+/)[0];
-
+    const seriesCount = +match.match(/^\d+/)[0];
     taskDistance.value += (seriesCount + 1) * 0.05;
     return;
   }
 
   if (type === 13) {
-    const seriesCount = match.match(/^[0-9]+/)[0];
+    const seriesCount = +match.match(/^\d+/)[0];
 
     taskDistance.value += (2 * seriesCount - 1) * 0.1;
     return;
   }
 
   if (type === 25 || type === 29 || type === 32) {
-    const seriesCount = match.match(/^[0-9]+/)[0];
-    const distance = match.match(/через [0-9]+/)[0].match(/[0-9]+/)[0];
+    const seriesCount = +match.match(/^\d+/)[0];
+    const distance = match.match(/через \d+/)[0].match(/\d+/)[0];
 
     taskDistance.value += ((2 * seriesCount - 1) * distance) / 1000;
     return;
   }
 
   if (type === 26) {
-    const seriesCount = match.match(/^[0-9]+/)[0];
-    const distance = match.match(/х[0-9]+/)[0].match(/[0-9]+/)[0];
+    const seriesCount = +match.match(/^\d+/)[0];
+    const distance = match.match(/х\d+/)[0].match(/\d+/)[0];
 
     taskDistance.value += (seriesCount * distance) / 1000;
   }
