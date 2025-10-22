@@ -57,6 +57,12 @@ export const getReportData = (
   if (task.value.match(/стопы/i)) {
     report.value += "Стопы\n";
   }
+  if (task.value.match(/апу/i)) {
+    report.value += "Апу\n";
+  }
+  if (task.value.match(/плиометрика/i)) {
+    report.value += "Плиометрика\n";
+  }
 
   addDailyReportData(task, dailyReportData, taskDistance);
 
