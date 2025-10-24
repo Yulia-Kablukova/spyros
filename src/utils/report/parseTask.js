@@ -178,7 +178,7 @@ const parseType4 = (match, results, subtasks) => {
   }
 
   if (match.match(/без веса/)) {
-    results.value.push([seriesCount, "5,10"]);
+    results.value.push([seriesCount, "5, 10"]);
     return;
   }
 

@@ -125,9 +125,19 @@ const addType4ReportData = (subtasks, results, index) => {
   report.value += getFormattedMatch(match);
 
   if (results.value[index].length < 3) {
-    report.value += `(без веса): ${results.value[index][0]}х${results.value[index][1]} раз и 30 сек.\n`;
+    report.value += `(без веса)`;
+  }
+
+  report.value += `: `;
+
+  if (+results.value[index][0] > 1) {
+    report.value += `${results.value[index][0]}х`;
+  }
+
+  if (results.value[index].length < 3) {
+    report.value += `${results.value[index][1]} раз, 20 сек., 30 сек.\n`;
   } else {
-    report.value += `: ${results.value[index][0]}х${results.value[index][1]} раз и 10 сек.(${results.value[index][2]})\n`;
+    report.value += `${results.value[index][1]} раз и 10 сек.(${results.value[index][2]})\n`;
   }
 };
 
