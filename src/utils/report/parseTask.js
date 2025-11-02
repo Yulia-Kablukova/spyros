@@ -287,7 +287,7 @@ const parseType20 = (match, results, subtasks, type, taskDistance) => {
 
   if (type === 50) {
     const subdistance = +match.match(/\d+/g)[seriesIndex + 2];
-    taskDistance.value += (seriesCount * 8 * subdistance) / 1000;
+    taskDistance.value += (seriesCount * 10 * subdistance) / 1000;
   }
 };
 
