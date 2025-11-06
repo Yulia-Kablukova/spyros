@@ -815,7 +815,7 @@ const parseDefault = (
 
   const hint = globalSeriesCount > 1 ? FILL_ALL_SERIES : null;
 
-  if (~sameSubtaskIndex && globalSeriesCount === 1 && distance < 1) {
+  if (~sameSubtaskIndex && globalSeriesCount === 1 && distance < 2) {
     results.value[sameSubtaskIndex].push(Array(resultsCount));
     subtasks.value[sameSubtaskIndex].timeType = null;
     subtasks.value[sameSubtaskIndex].resultsCount += resultsCount;

@@ -60,6 +60,9 @@ export const getReportData = (
   if (task.value.match(/апу/i)) {
     report.value += "Апу\n";
   }
+  if (task.value.match(/асмр/i)) {
+    report.value += "Асмр\n";
+  }
   if (task.value.match(/плиометрика/i)) {
     report.value += "Плиометрика\n";
   }
@@ -111,7 +114,7 @@ const addType3ReportData = (subtasks, results, index) => {
   } раз`;
 
   if (match.match(/пресс/i)) {
-    report.value += ` и 10 сек.(${results.value[index][2]})`;
+    report.value += `(${results.value[index][2]})`;
   } else if (match.match(/руки/i)) {
     report.value += ` и 5 раз(${results.value[index][2]})`;
   }
@@ -460,7 +463,7 @@ const addTimeTypeReportData = (subtasks, results, index) => {
     report.value += "\n";
   }
 
-  if (subtasks.value[index].distance > 1) {
+  if (subtasks.value[index].distance > 2) {
     if (subtasks.value[index + 1]?.type === 2) {
       buffer.value += `1 км(ср.)=${getPace(
         totalTime,
