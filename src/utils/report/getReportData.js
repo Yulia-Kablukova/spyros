@@ -30,6 +30,9 @@ export const getReportData = (
       case 4:
         addType4ReportData(subtasks, results, index);
         break;
+      case 51:
+        addType51ReportData(subtasks, results, index);
+        break;
       case 11:
       case 12:
         addType11ReportData(subtasks, results, index);
@@ -59,9 +62,6 @@ export const getReportData = (
   }
   if (task.value.match(/апу/i)) {
     report.value += "Апу\n";
-  }
-  if (task.value.match(/асмр/i)) {
-    report.value += "Асмр\n";
   }
   if (task.value.match(/плиометрика/i)) {
     report.value += "Плиометрика\n";
@@ -142,6 +142,14 @@ const addType4ReportData = (subtasks, results, index) => {
   } else {
     report.value += `${results.value[index][1]} раз и 10 сек.(${results.value[index][2]})\n`;
   }
+};
+
+const addType51ReportData = (subtasks, results, index) => {
+  const match = subtasks.value[index].match;
+
+  report.value += `${getFormattedMatch(match)}: ${results.value[index][0]}х${
+    results.value[index][1]
+  } раз(${results.value[index][2]})\n`;
 };
 
 const addType11ReportData = (subtasks, results, index) => {

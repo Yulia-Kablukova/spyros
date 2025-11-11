@@ -47,6 +47,9 @@ export const parseTask = (
           case 4:
             parseType4(match, results, subtasks);
             break;
+          case 51:
+            parseType51(match, results, subtasks);
+            break;
           case 11:
             parseType11(
               match,
@@ -183,6 +186,18 @@ const parseType4 = (match, results, subtasks) => {
   }
 
   results.value.push([seriesCount, 10, "20 кг, 10 кг, 5 кг, 2 кг"]);
+};
+
+const parseType51 = (match, results, subtasks) => {
+  subtasks.value.push({
+    match: "асмр",
+    type: 51,
+    resultsCount: 3,
+    distance: null,
+    timeType: null,
+  });
+
+  results.value.push([2, "4, 5, 6", "50 кг, 20 кг, 10 кг, 5 кг"]);
 };
 
 const parseType11 = (

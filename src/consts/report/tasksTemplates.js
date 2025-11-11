@@ -271,6 +271,6 @@ export const templates = [
   {
     type: 51,
     regexp: /^асмр/,
-    resultsPerSeries: 0,
+    resultsPerSeries: 3,
   },
 ];

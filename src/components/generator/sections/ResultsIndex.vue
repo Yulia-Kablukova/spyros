@@ -107,7 +107,7 @@ const handleTimeTypeSelect = (subtask, index, timeType) => {
       </div>
 
       <div
-        v-else-if="[3, 4, 22, 30, 40].includes(subtask.type)"
+        v-else-if="[3, 4, 22, 30, 40, 51].includes(subtask.type)"
         class="results__result-inputs"
       >
         <input v-model="props.results[index][0]" placeholder="3" />
