@@ -36,7 +36,12 @@ const getTaskDistance = computed(() => {
 
 const handleResultsFill = () => {
   resetResults();
-  parseTask(task, subtasks, results, errors, taskDistance);
+
+  try {
+    parseTask(task, subtasks, results, errors, taskDistance);
+  } catch {
+    errors.value.invalidTask = task.value;
+  }
   if (!errors.value.invalidTask) {
     showResults.value = true;
   }

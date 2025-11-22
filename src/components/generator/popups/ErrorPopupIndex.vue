@@ -1,6 +1,6 @@
 <script setup>
 import WindowClose from "vue-material-design-icons/WindowClose.vue";
-import { onMounted, onUnmounted } from "vue";
+import { computed, onMounted, onUnmounted } from "vue";
 
 const props = defineProps({
   invalidTask: {
@@ -11,6 +11,10 @@ const props = defineProps({
 });
 
 const emits = defineEmits(["close"]);
+
+const showFartlekReportTemplate = computed(() => {
+  return props.invalidTask.match(/2 км\(400 м\(до 27\)/);
+});
 
 function handleKeyDown(e) {
   if (e.keyCode === 27) {
@@ -36,9 +40,18 @@ onUnmounted(() => {
 
       <h1>Произошла ошибка</h1>
 
-      <p>Не удалось распознать "{{ invalidTask }}".</p>
+      <p v-if="showFartlekReportTemplate">
+        Такая тренировка пока не распознается.<br />Пример отчета:
+        <a href="https://t.me/c/1920921067/214" target="_blank">
+          https://t.me/c/1920921067/214
+        </a>
+      </p>
+      <p v-else>Не удалось распознать "{{ invalidTask }}".</p>
 
-      <p>Сообщить об ошибке можно в тг: djull_zzz</p>
+      <p v-if="!showFartlekReportTemplate">
+        Сообщить об ошибке можно в тг:
+        <a href="https://t.me/djull_zzz" target="_blank">djull_zzz</a>
+      </p>
     </div>
   </div>
 </template>
@@ -77,11 +90,22 @@ onUnmounted(() => {
     text-align: center;
     gap: 30px;
     width: 400px;
+    border-radius: 5px;
   }
 
   &__close-icon {
     align-self: flex-end;
     cursor: pointer;
+  }
+}
+
+@media only screen and (max-width: 600px) {
+  .generator {
+    &__popup-container {
+      width: 90%;
+      padding: 20px 20px 40px;
+      box-sizing: border-box;
+    }
   }
 }
 </style>
