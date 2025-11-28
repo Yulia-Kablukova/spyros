@@ -920,7 +920,11 @@ const addDistance = (match, type, taskDistance) => {
 
   if (type === 9) {
     const seriesCount = +match.match(/^\d+/)[0];
-    taskDistance.value += (seriesCount + 1) * 0.05;
+    if (match.match(/ускорения/)) {
+      taskDistance.value += (seriesCount + 1) * 0.05;
+    } else {
+      taskDistance.value += (seriesCount + 2) * 0.05;
+    }
     return;
   }
 
