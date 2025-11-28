@@ -22,7 +22,7 @@ export const parseTask = (
   globalSeriesCount = 1
 ) => {
   task.value = task.value.trim().replaceAll('"', "");
-  let taskCopy = task.value.replaceAll("\n", "").replaceAll("          ", "");
+  let taskCopy = task.value.replaceAll("\n", "").replaceAll(/  +/g, "");
 
   while (taskCopy.length && !errors.value.invalidTask) {
     for (const index in templates.value) {

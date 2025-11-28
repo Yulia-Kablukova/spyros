@@ -206,7 +206,7 @@ const handleTimeTypeSelect = (subtask, index, timeType) => {
   }
 }
 
-@media only screen and (max-width: 600px) {
+@media only screen and (max-width: 1150px) {
   .results {
     &__wrapper {
       gap: 15px;

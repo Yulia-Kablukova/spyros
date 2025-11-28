@@ -1,5 +1,7 @@
 <script setup>
+import { onMounted } from "vue";
 import ContentCopy from "vue-material-design-icons/ContentCopy.vue";
+
 import { copyToClipboard } from "@/utils/document-manipulation";
 
 const props = defineProps({
@@ -26,6 +28,10 @@ const handleCopyReport = () => {
       .classList.toggle("report-result__notification--show");
   }, 1500);
 };
+
+onMounted(() => {
+  handleCopyReport();
+});
 </script>
 
 <template>
@@ -90,7 +96,7 @@ const handleCopyReport = () => {
   }
 }
 
-@media only screen and (max-width: 600px) {
+@media only screen and (max-width: 1150px) {
   .report-result {
     padding: 20px 25px;
     position: relative;

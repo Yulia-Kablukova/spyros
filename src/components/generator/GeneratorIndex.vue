@@ -86,7 +86,7 @@ const handleBirthdayPopupClose = () => {
 </script>
 
 <template>
-  <div class="content">
+  <div class="generator">
     <h1 class="generator__heading">Генератор отчетов</h1>
 
     <p class="generator__description">
@@ -150,6 +150,13 @@ const handleBirthdayPopupClose = () => {
 
 <style scoped lang="scss">
 .generator {
+  flex: 1;
+  width: 100%;
+  max-width: 1080px;
+  display: flex;
+  flex-direction: column;
+  margin: auto auto 60px;
+
   &__heading {
     margin-top: 60px;
   }
@@ -167,7 +174,7 @@ const handleBirthdayPopupClose = () => {
   }
 
   &__distance {
-    width: 120px;
+    margin-right: 10px;
   }
 
   &__get-report-button {
@@ -192,8 +199,11 @@ const handleBirthdayPopupClose = () => {
   }
 }
 
-@media only screen and (max-width: 600px) {
+@media only screen and (max-width: 1150px) {
   .generator {
+    width: unset;
+    margin: auto 20px 60px 20px;
+
     &__heading {
       margin-top: 30px;
     }

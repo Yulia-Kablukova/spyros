@@ -13,8 +13,8 @@ function handleKeyDown(e) {
 onMounted(() => {
   if (
     ![
-      new Date("2024-12-08").toDateString(),
-      new Date("2024-12-09").toDateString(),
+      new Date("2025-12-08").toDateString(),
+      new Date("2025-12-09").toDateString(),
     ].includes(new Date().toDateString())
   ) {
     emits("close");
@@ -35,7 +35,7 @@ onUnmounted(() => {
     <div class="generator__popup-wrapper" @click="$emit('close')" />
 
     <div class="generator__popup-container">
-      <span>Генератору отчетов 1 год!</span>
+      <span>Генератору отчетов 2 года</span>
 
       <img
         src="/images/birthday-panda.png"
@@ -44,7 +44,7 @@ onUnmounted(() => {
       />
 
       <button class="generator__popup-button" @click="$emit('close')">
-        Спасибо, что ты есть
+        Спасибо, что ты есть!
       </button>
     </div>
   </div>
@@ -93,7 +93,7 @@ onUnmounted(() => {
   }
 }
 
-@media only screen and (max-width: 600px) {
+@media only screen and (max-width: 1150px) {
   .generator {
     &__popup-container {
       padding: 35px;

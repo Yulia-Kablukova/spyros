@@ -137,7 +137,7 @@ const props = defineProps({
   }
 }
 
-@media only screen and (max-width: 600px) {
+@media only screen and (max-width: 1150px) {
   .daily-report {
     &__wrapper {
       margin-top: 15px;
