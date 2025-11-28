@@ -50,8 +50,12 @@ footer {
 
 @media only screen and (max-width: 1150px) {
   footer {
-    padding: 20px 25px;
+    padding: 20px 10px;
     font-size: 13px;
+
+    .heart {
+      color: #717171;
+    }
   }
 }
 </style>
