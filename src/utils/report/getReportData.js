@@ -146,8 +146,10 @@ const addType4ReportData = (subtasks, results, index) => {
 
 const addType51ReportData = (subtasks, results, index) => {
   const match = subtasks.value[index].match;
+  const seriesCount =
+    +results.value[index][0] > 1 ? `${results.value[index][0]}х` : "";
 
-  report.value += `${getFormattedMatch(match)}: ${results.value[index][0]}х${
+  report.value += `${getFormattedMatch(match)}: ${seriesCount}${
     results.value[index][1]
   } раз(${results.value[index][2]})\n`;
 };

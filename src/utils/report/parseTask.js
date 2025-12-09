@@ -22,7 +22,10 @@ export const parseTask = (
   globalSeriesCount = 1
 ) => {
   task.value = task.value.trim().replaceAll('"', "");
-  let taskCopy = task.value.replaceAll("\n", "").replaceAll(/  +/g, "");
+  let taskCopy = task.value
+    .replaceAll("\n", "")
+    .replaceAll(/  +/g, "")
+    .replace("пано", "до 27");
 
   while (taskCopy.length && !errors.value.invalidTask) {
     for (const index in templates.value) {
@@ -197,7 +200,8 @@ const parseType51 = (match, results, subtasks) => {
     timeType: null,
   });
 
-  results.value.push([2, "4, 5, 6", "50 кг, 20 кг, 10 кг, 5 кг"]);
+  const seriesCount = match.match(/1 серия/) ? 1 : 2;
+  results.value.push([seriesCount, "4, 5, 6", "50 кг, 20 кг, 10 кг, 5 кг"]);
 };
 
 const parseType11 = (
@@ -893,7 +897,7 @@ const getSeriesCount = (match) => {
 };
 
 const getTimeType = (templateType, match, distance) => {
-  if (templateType === 1 || templateType === 19) {
+  if ([1, 19].includes(templateType)) {
     return TOTAL_TIME;
   }
 

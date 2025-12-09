@@ -270,7 +270,7 @@ export const templates = [
   },
   {
     type: 51,
-    regexp: /^асмр/,
+    regexp: /^асмр(\(1 серия\))?/,
     resultsPerSeries: 3,
   },
 ];
