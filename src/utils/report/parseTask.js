@@ -25,7 +25,7 @@ export const parseTask = (
   let taskCopy = task.value
     .replaceAll("\n", "")
     .replaceAll(/  +/g, "")
-    .replace("пано", "до 27");
+    .replace(/\(пано\)\(\d:\d+\)/, "-соревнования");
 
   while (taskCopy.length && !errors.value.invalidTask) {
     for (const index in templates.value) {
