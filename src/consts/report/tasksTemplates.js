@@ -273,4 +273,9 @@ export const templates = [
     regexp: /^асмр(\(1 серия\))?/,
     resultsPerSeries: 3,
   },
+  {
+    type: 52,
+    regexp: /^(\d+х)?\d+ м\(\d+ м-близко к max\+\d+ м-с\.к \d км\)/,
+    resultsPerSeries: 1,
+  },
 ];
