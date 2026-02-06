@@ -74,11 +74,9 @@ const getTaskText = computed(() => {
 });
 
 const getCutoffPlaceholder = (index) => {
-  const { resultsType, totalSeriesCount } = props.subtask;
+  const { resultsType } = props.subtask;
 
-  return resultsType?.value === CUTOFFS_1_KM.value && totalSeriesCount === 1
-    ? `${index + 1} км`
-    : null;
+  return resultsType?.value === CUTOFFS_1_KM.value ? `${index + 1} км` : null;
 };
 
 const getRestDistance = (distance) => {
@@ -153,12 +151,12 @@ const handleResultsTypeChange = (value) => {
 
           <div v-if="showSaveCutoffs" class="subtask__save-cutoffs-checkbox">
             <input
-              id="save-cutoffs-checkbox"
+              :id="`save-cutoffs-${subtask.id}`"
               v-model="subtask.saveCutoffs"
               type="checkbox"
             />
 
-            <label for="save-cutoffs-checkbox">
+            <label :for="`save-cutoffs-${subtask.id}`">
               Указать в отчете отсечки по {{ getCutoffsDistance }} км
             </label>
           </div>
@@ -266,7 +264,7 @@ const handleResultsTypeChange = (value) => {
   }
 }
 
-@media only screen and (max-width: 600px) {
+@media only screen and (max-width: 1150px) {
   .subtask {
     &__wrapper {
       gap: 15px;

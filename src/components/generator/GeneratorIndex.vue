@@ -55,6 +55,7 @@ const getTaskDistance = computed(() => {
 });
 
 const handleResultsFill = () => {
+  task.value = task.value.trim().replaceAll('"', "");
   resetResults();
   parseTask(task.value, subtasks, taskDistance);
   isFillResults.value = true;
@@ -75,6 +76,12 @@ const resetResults = () => {
   };
 };
 
+const hasResults = computed(() => {
+  return subtasks.value.some(
+    ({ results, subtasks, rest }) => results.length || subtasks.length || rest
+  );
+});
+
 const handleGetReport = () => {
   report.value = getReport(subtasks, task, dailyReportData, taskDistance);
 };
@@ -90,7 +97,7 @@ const handleBirthdayPopupClose = () => {
 </script>
 
 <template>
-  <div class="content">
+  <div class="generator">
     <h1 class="generator__heading">Генератор отчетов</h1>
 
     <p class="generator__description">
@@ -112,7 +119,7 @@ const handleBirthdayPopupClose = () => {
     </div>
 
     <div v-if="isFillResults">
-      <results-index :subtasks="subtasks" />
+      <results-index v-if="hasResults" :subtasks="subtasks" />
 
       <div class="generator__daily-report-checkbox">
         <input
@@ -153,6 +160,13 @@ const handleBirthdayPopupClose = () => {
 
 <style scoped lang="scss">
 .generator {
+  flex: 1;
+  width: 100%;
+  max-width: 1080px;
+  display: flex;
+  flex-direction: column;
+  margin: auto auto 80px;
+
   &__heading {
     margin-top: 60px;
   }
@@ -165,7 +179,7 @@ const handleBirthdayPopupClose = () => {
   &__warning {
     margin-bottom: 30px;
     padding: 20px;
-    background-color: rgba(130, 204, 250, 0.37);
+    background-color: rgba(130, 204, 250, 0.3);
     border-radius: 5px;
   }
 
@@ -177,7 +191,7 @@ const handleBirthdayPopupClose = () => {
   }
 
   &__distance {
-    width: 120px;
+    margin-right: 10px;
   }
 
   &__get-report-button {
@@ -202,8 +216,11 @@ const handleBirthdayPopupClose = () => {
   }
 }
 
-@media only screen and (max-width: 600px) {
+@media only screen and (max-width: 1150px) {
   .generator {
+    width: unset;
+    margin: auto 20px 60px 20px;
+
     &__heading {
       margin-top: 30px;
     }

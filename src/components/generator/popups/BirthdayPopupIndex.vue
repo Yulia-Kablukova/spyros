@@ -93,7 +93,7 @@ onUnmounted(() => {
   }
 }
 
-@media only screen and (max-width: 600px) {
+@media only screen and (max-width: 1150px) {
   .generator {
     &__popup-container {
       padding: 35px;

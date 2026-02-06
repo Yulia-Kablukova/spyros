@@ -8,11 +8,15 @@ const props = defineProps({
     default: () => [],
   },
 });
+
+const hasResults = ({ results, subtasks, rest }) => {
+  return results.length || subtasks.length || rest;
+};
 </script>
 
 <template>
   <div class="results__wrapper">
-    <p v-if="subtasks.length" class="results__description">
+    <p class="results__description">
       <span>
         Формат ввода временных отсечек: 2:09:56.0 (с десятыми долями секунды).
       </span>
@@ -22,11 +26,13 @@ const props = defineProps({
       </span>
     </p>
 
-    <subtask-results
-      v-for="subtask in props.subtasks"
-      :key="subtask.id"
-      :subtask="subtask"
-    />
+    <template v-for="subtask in subtasks">
+      <subtask-results
+        v-if="hasResults(subtask)"
+        :key="subtask.id"
+        :subtask="subtask"
+      />
+    </template>
   </div>
 </template>
 
@@ -44,7 +50,7 @@ const props = defineProps({
   }
 }
 
-@media only screen and (max-width: 600px) {
+@media only screen and (max-width: 1150px) {
   .results {
     &__wrapper {
       gap: 15px;

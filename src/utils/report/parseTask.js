@@ -14,7 +14,16 @@ const getSubtasks = (
   parentSeriesCount = 1,
   parentIndex = 0
 ) => {
-  const taskSplitsArray = splitTask(task.trim().replaceAll("\n", ""));
+  const taskSplitsArray = splitTask(
+    task
+      .replaceAll("\n", "")
+      .replaceAll(/  +/g, "")
+      .replaceAll(/ вкл\. [^+]* в любые моменты/g, "")
+      .replaceAll(
+        /м\(до 22\)\((\d+:)?\d+(,\d+)?(-(\d+:)?\d+(,\d+)?)?\)/g,
+        "м(до 22)"
+      )
+  );
 
   const subtasks = taskSplitsArray
     .map((split, index) => {
@@ -90,13 +99,16 @@ const getSubtasks = (
           filteredSplit.length - rest[0].length
         );
 
-        if (rest[0].match(/\(через \d+ м\(до 22\)\)/)) {
+        if (rest[0].match(/через \d+ м\(до 22\)/)) {
           subtask.rest = {
             distance: getRestDistance(rest[0]),
             results: Array(subtask.totalSeriesCount - 1),
           };
           taskDistance.value +=
             subtask.rest.results.length * subtask.rest.distance;
+        } else if (rest[0].match(/\(в конце \d+ м\(до 22\)\)/)) {
+          taskDistance.value +=
+            (subtask.totalSeriesCount - 1) * getRestDistance(rest[0]);
         }
       }
 
@@ -138,7 +150,7 @@ const getSubtasks = (
 
       if (
         filteredSplit.match(/\+/) &&
-        filteredSplit !== "100 м-спринт(близко к max)+300 м-с.у."
+        !filteredSplit.match(/\d м-спринт\(близко к max\)\+\d м-с\.у\./)
       ) {
         subtask.subtasks = getSubtasks(
           filteredSplit,
@@ -174,7 +186,7 @@ const getSubtasks = (
 };
 
 const splitTask = (initialTask) => {
-  const taskSplitsArray = initialTask.split("+");
+  const taskSplitsArray = initialTask.split(/\+| или /);
 
   for (let currentIndex = 0; currentIndex < taskSplitsArray.length; ) {
     if (

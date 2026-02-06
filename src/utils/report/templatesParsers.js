@@ -7,25 +7,30 @@ export const getTemplateSubtask = (split, templateType, taskDistance) => {
     case 3:
       return parseType3();
     case 4:
-      return parseType4();
-    case 5:
-      return parseType5(split);
+      return parseType4(split);
     case 9:
       return parseType9(split, taskDistance);
     case 10:
     case 11:
     case 12:
+    case 26:
       return parseType10(split, taskDistance);
     case 13:
-      return parseType13(split, taskDistance);
     case 14:
-      return parseType14(split, taskDistance);
     case 20:
+      return parseHillType(split, taskDistance, templateType);
     case 21:
     case 22:
-      return parseType20(split);
     case 23:
-      return parseType23(taskDistance);
+      return parseType21(split, taskDistance);
+    case 24:
+      return parseType24(split);
+    case 25:
+      return parseType25(split);
+    case 27:
+      return parseType27(taskDistance);
+    case 28:
+      return parseType28(taskDistance);
     default:
       return null;
   }
@@ -73,7 +78,7 @@ const parseType1 = () => {
     ...emptySubtask,
     templateType: 1,
     task: "Пресс",
-    results: [3, undefined],
+    results: [2, "10", "10 кг"],
   };
 };
 
@@ -82,7 +87,7 @@ const parseType2 = () => {
     ...emptySubtask,
     templateType: 2,
     task: "Спина",
-    results: [3, undefined],
+    results: [2, "10"],
   };
 };
 
@@ -91,33 +96,28 @@ const parseType3 = () => {
     ...emptySubtask,
     templateType: 3,
     task: "Руки",
-    results: [3, undefined],
+    results: [2, "10", "10 кг, 30 кг"],
   };
 };
 
-const parseType4 = () => {
+const parseType4 = (split) => {
+  let seriesCount = 2;
+
+  if (split.match(/\d сери./)) {
+    seriesCount = split.match(/\d/)[0];
+  }
+
+  const results = [seriesCount];
+
+  if (split.match(/без веса/)) {
+    results.push("5, 10");
+  } else {
+    results.push("10", "20 кг, 10 кг, 5 кг, 2 кг");
+  }
+
   return {
     ...emptySubtask,
     templateType: 4,
-    task: "Стато-динамика",
-    results: [3, undefined],
-  };
-};
-
-const parseType5 = (split) => {
-  const results = ["2", "8", undefined];
-
-  if (split.match(/\d сери./)) {
-    results[0] = split.match(/\d+/)[0];
-  }
-
-  if (split.match(/без веса/)) {
-    results[2] = "без веса";
-  }
-
-  return {
-    ...emptySubtask,
-    templateType: 5,
     task: "Ноги",
     results,
   };
@@ -135,124 +135,94 @@ const parseType10 = (split, taskDistance) => {
   return null;
 };
 
-const parseType13 = (split, taskDistance) => {
-  const values = split.match(/\d+/g);
-  const seriesCount = +values[0];
-  const subSeriesCount = +values[1];
-  const distance = +values[3] / 1000;
-  const rest = +values[values.length - 2] / 1000;
+const parseHillType = (split, taskDistance, templateType) => {
+  const seriesCount = split.match(/\d+х/) ? +split.match(/^\d+/) : 1;
+  const seriesIndex = seriesCount > 1 ? 0 : -1;
 
-  taskDistance.value +=
-    seriesCount * distance * (4 * subSeriesCount + 3.5) +
-    rest * (seriesCount - 1);
+  if (templateType === 13) {
+    const subdistance = +split.match(/\d+/g)[seriesIndex + 2];
+    taskDistance.value += (seriesCount * 11.5 * subdistance) / 1000;
+  }
+
+  if (templateType === 14) {
+    const subdistance = +split.match(/\d+/g)[seriesIndex + 1];
+    taskDistance.value += (seriesCount * subdistance) / 1000;
+  }
+
+  if (templateType === 20) {
+    const subdistance = +split.match(/\d+/g)[seriesIndex + 2];
+    taskDistance.value += (seriesCount * 10 * subdistance) / 1000;
+  }
+
+  const rest = split.match(/через \d+ м\(до 22\)/g);
+
+  if (!rest) {
+    return null;
+  }
+
+  const restDistance = rest[0].match(/\d+/g)[0] / 1000;
+  taskDistance.value += (seriesCount - 1) * restDistance;
 
   return {
     ...emptySubtask,
     seriesCount,
     rest: {
-      distance: rest,
+      distance: restDistance,
       results: Array(seriesCount - 1),
     },
   };
 };
 
-const parseType14 = (split, taskDistance) => {
-  const { distance, seriesCount, rest } = getSeriesDistanceAndRest(split);
-  taskDistance.value += distance * seriesCount + rest * (seriesCount - 1);
-
-  return rest
-    ? {
-        ...emptySubtask,
-        seriesCount,
-        rest: {
-          distance: rest,
-          results: Array(seriesCount - 1),
-        },
-      }
-    : null;
+const parseType21 = (split, taskDistance) => {
+  const seriesCount = +split.match(/^\d+/)[0];
+  const distance = split.match(/через \d+/)[0].match(/\d+/)[0];
+  taskDistance.value += ((2 * seriesCount - 1) * distance) / 1000;
+  return null;
 };
 
-const parseType20 = (split) => {
-  const seriesCount = split.match(/^\d+/);
-  const exercises = [
-    {
-      task: "Полуприсед с весом",
-      results: [seriesCount, 3, undefined],
-    },
-    {
-      task: "Поднятие с весом на стопах",
-      results: [seriesCount, 3, undefined],
-    },
-    {
-      task: "Выпрыгивание с полуприседа с весом",
-      results: [seriesCount, 3, undefined],
-    },
-    {
-      task: "Зашагивание на платформу с весом с выпрыгиванием вверх на левой ноге",
-      results: [seriesCount, 3, undefined],
-    },
-    {
-      task: "Зашагивание на платформу с весом с выпрыгиванием вверх на правой ноге",
-      results: [seriesCount, 3, undefined],
-    },
-    {
-      task: "Пистолетик на левой ноге",
-      results: [seriesCount, 3],
-    },
-    {
-      task: "Пистолетик на правой ноге",
-      results: [seriesCount, 3],
-    },
-    {
-      task: "Прыжок через барьер",
-      results: [seriesCount, 7],
-    },
-    {
-      task: "Выпрыгивание с весом из положения стоя",
-      results: [seriesCount, 3, undefined],
-    },
-    {
-      task: "Бросок веса вперёд из полуприседа",
-      results: [seriesCount, 3, undefined],
-    },
-    {
-      task: "Прыжок из полного приседа на платформу с выпрыгиванием на ней вверх из полуприседа",
-      results: [seriesCount, 3],
-    },
-    {
-      task: "Прыжок из полуприседа на платформу с выпрыгиванием на ней вверх из полуприседа",
-      results: [seriesCount, 3],
-    },
-    {
-      task: "Полный присед с весом",
-      results: [seriesCount, 3, undefined],
-    },
-  ];
-
-  const subtasks = split.split(",").map((el) => {
-    return {
-      ...emptySubtask,
-      ...exercises.find(({ task }) =>
-        el.toLowerCase().includes(task.toLowerCase())
-      ),
-    };
-  });
-
+const parseType24 = (split) => {
   return {
     ...emptySubtask,
-    templateType: 20,
-    subtasks,
+    templateType: 24,
+    task: getFormattedTask(split),
   };
 };
 
-const parseType23 = (taskDistance) => {
+const parseType25 = (split) => {
+  const seriesCount = split.match(/1 серия/) ? 1 : 2;
+
+  return {
+    ...emptySubtask,
+    templateType: 25,
+    task: "Асмр",
+    results: [seriesCount, "4, 5, 6", "50 кг, 20 кг, 10 кг, 5 кг"],
+  };
+};
+
+const parseType27 = (taskDistance) => {
   taskDistance.value += 0.5;
 
   return {
     ...emptySubtask,
-    task: "500 м",
+    task: "500 м(400 м(до 27)+100 м-с.у.)",
     distance: 0.5,
     results: [[undefined]],
     pulseResults: Array(3),
   };
+};
+
+const parseType28 = (taskDistance) => {
+  taskDistance.value += 1;
+
+  return {
+    ...emptySubtask,
+    task: "1 км(500 м(до 25)+400 м(до 27)+100 м-с.у.)",
+    distance: 1,
+    results: [[undefined]],
+    pulseResults: Array(3),
+  };
+};
+
+const getFormattedTask = (task) => {
+  return task[0].toUpperCase() + task.slice(1);
 };

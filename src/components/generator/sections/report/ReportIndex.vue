@@ -1,4 +1,5 @@
 <script setup>
+import { onMounted } from "vue";
 import ContentCopy from "vue-material-design-icons/ContentCopy.vue";
 import { copyToClipboard } from "@/utils/document-manipulation";
 
@@ -8,6 +9,10 @@ const props = defineProps({
     required: true,
     default: null,
   },
+});
+
+onMounted(() => {
+  handleCopyReport();
 });
 
 const handleCopyReport = () => {
@@ -57,7 +62,7 @@ const handleCopyReport = () => {
   }
 
   &__text {
-    word-break: break-word;
+    white-space: pre-wrap;
   }
 
   &__notification {
@@ -77,7 +82,7 @@ const handleCopyReport = () => {
   }
 }
 
-@media only screen and (max-width: 600px) {
+@media only screen and (max-width: 1150px) {
   .report-result {
     padding: 20px 25px;
     position: relative;

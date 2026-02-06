@@ -81,11 +81,22 @@ onUnmounted(() => {
     text-align: center;
     gap: 30px;
     width: 400px;
+    border-radius: 5px;
   }
 
   &__close-icon {
     align-self: flex-end;
     cursor: pointer;
+  }
+}
+
+@media only screen and (max-width: 1150px) {
+  .generator {
+    &__popup-container {
+      width: 95%;
+      padding: 20px 20px 40px;
+      box-sizing: border-box;
+    }
   }
 }
 </style>

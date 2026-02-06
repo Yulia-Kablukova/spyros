@@ -88,7 +88,7 @@ const props = defineProps({
     </div>
 
     <div class="daily-report__data-block">
-      <span>Массаж, баня</span>
+      <span>Массаж, баня, мфр</span>
 
       <input v-model="props.data.recovery" class="daily-report__input--width" />
     </div>
@@ -137,7 +137,7 @@ const props = defineProps({
   }
 }
 
-@media only screen and (max-width: 600px) {
+@media only screen and (max-width: 1150px) {
   .daily-report {
     &__wrapper {
       margin-top: 15px;

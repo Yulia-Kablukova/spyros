@@ -10,43 +10,21 @@ const props = defineProps({
 <template>
   <div>
     <div
-      v-if="[1, 2, 3, 4, 5].includes(subtask.templateType)"
+      v-if="[1, 2, 3, 4, 25].includes(subtask.templateType)"
       class="subtask__container"
     >
       <div>{{ subtask.task }}</div>
       <div class="subtask__result-inputs">
-        <input v-model="subtask.results[0]" placeholder="3" />
+        <input v-model="subtask.results[0]" placeholder="2" />
         <span>x</span>
-        <input v-model="subtask.results[1]" placeholder="20" />
+        <input v-model="subtask.results[1]" placeholder="10" />
 
         <input
-          v-if="subtask.templateType === 5"
+          v-if="subtask.results.length > 2"
           v-model="subtask.results[2]"
           placeholder="10 кг"
           class="subtask__result-input--width"
         />
-      </div>
-    </div>
-
-    <div v-else-if="subtask.templateType === 20" class="subtask__wrapper">
-      <div
-        v-for="exercise in subtask.subtasks"
-        :key="exercise.task"
-        class="subtask__container"
-      >
-        <div>{{ exercise.task }}</div>
-        <div class="subtask__result-inputs">
-          <input v-model="exercise.results[0]" placeholder="3" />
-          <span>x</span>
-          <input v-model="exercise.results[1]" placeholder="20" />
-
-          <input
-            v-if="exercise.results.length > 2"
-            v-model="exercise.results[2]"
-            placeholder="10 кг"
-            class="subtask__result-input--width"
-          />
-        </div>
       </div>
     </div>
   </div>
@@ -84,12 +62,12 @@ const props = defineProps({
 
   &__result-input {
     &--width {
-      width: 200px;
+      width: 300px;
     }
   }
 }
 
-@media only screen and (max-width: 600px) {
+@media only screen and (max-width: 1150px) {
   .subtask {
     &__wrapper {
       gap: 15px;
