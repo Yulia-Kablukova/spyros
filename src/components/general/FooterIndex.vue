@@ -1,22 +1,14 @@
 <script setup>
-import { computed } from "vue";
+/*import { computed } from "vue";
 
 const isMobile = computed(() => {
   return window.innerWidth <= 1150;
-});
+});*/
 </script>
 
 <template>
   <footer>
-    <div v-if="isMobile">
-      Сервис разработан по доброте душевной.
-      <br />
-      Поддержать финансово: +7 (983) 307-96-80 (Т-Банк).
-    </div>
-    <div v-else>
-      Сервис разработан по доброте душевной. Поддержать финансово: +7 (983)
-      307-96-80 (Т-Банк).
-    </div>
+    <div>Коплю на Белые ночи: +7 (983) 307-96-80 (Т-Банк).</div>
   </footer>
 </template>
 

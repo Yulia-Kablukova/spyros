@@ -5,9 +5,8 @@ import DailyReportResults from "@/components/generator/sections/results/DailyRep
 import ReportIndex from "@/components/generator/sections/report/ReportIndex.vue";
 import ErrorPopupIndex from "@/components/generator/popups/ErrorPopupIndex.vue";
 import { parseTask } from "@/utils/report/parseTask";
-import { getReport, getSubtaskReportData } from "@/utils/report/getReport";
+import { getReport } from "@/utils/report/getReport";
 import BirthdayPopupIndex from "@/components/generator/popups/BirthdayPopupIndex";
-import { TOTAL_TIME } from "@/consts/report/resultsTypes";
 
 const task = ref("");
 const taskDistance = ref(0);
@@ -29,33 +28,13 @@ const dailyReportData = ref({
 const errors = ref({
   invalidTask: null,
 });
-/*
-console.log(
-  getSubtaskReportData({
-    id: 16546,
-    templateType: null,
-    task: "400 м-с.у.(1:12)",
-    seriesCount: 2,
-    distance: 0.4,
-    timeLimit: "(1:12)",
-    pulseZone: "(до 27)",
-    rest: {
-      distance: 0.2,
-      results: ["1:15,7"],
-    },
-    subtasks: [],
-    results: [["1:12,0"], ["1:10,0"]],
-    pulseResults: [],
-    resultsType: TOTAL_TIME,
-  })
-);*/
 
 const getTaskDistance = computed(() => {
   return taskDistance.value.toString().replace(".", ",");
 });
 
 const handleResultsFill = () => {
-  task.value = task.value.trim().replaceAll('"', "");
+  task.value = task.value.trim().replaceAll('"', "").trim();
   resetResults();
   parseTask(task.value, subtasks, taskDistance);
   isFillResults.value = true;
@@ -142,7 +121,11 @@ const handleBirthdayPopupClose = () => {
         Получить отчет
       </button>
 
-      <report-index v-if="report" :data="report" />
+      <report-index
+        v-if="report"
+        :data="report"
+        :show-elevation-info="taskDistance > 0"
+      />
     </div>
 
     <error-popup-index

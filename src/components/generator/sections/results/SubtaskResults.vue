@@ -39,10 +39,11 @@ const getResultsTypes = computed(() => {
 });
 
 const showSaveCutoffs = computed(() => {
-  const { resultsType, pulseZone } = props.subtask;
+  const { resultsType, pulseZone, totalSeriesCount } = props.subtask;
   return (
     [CUTOFFS_1_KM.value, CUTOFFS_5_KM.value].includes(resultsType?.value) &&
-    pulseZone !== "(до 22)"
+    pulseZone !== "(до 22)" &&
+    totalSeriesCount === 1
   );
 });
 

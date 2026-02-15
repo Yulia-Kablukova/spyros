@@ -9,6 +9,10 @@ const props = defineProps({
     required: true,
     default: null,
   },
+  showElevationInfo: {
+    type: Boolean,
+    required: true,
+  },
 });
 
 onMounted(() => {
@@ -33,9 +37,14 @@ const handleCopyReport = () => {
 <template>
   <div>
     <div class="report-result">
-      <p class="report-result__text">
-        {{ props.data }}
-      </p>
+      <div>
+        <p v-if="showElevationInfo" class="report-result__elevation-info">
+          ! Добавь набор высоты, если требуется !
+        </p>
+        <p class="report-result__text">
+          {{ props.data }}
+        </p>
+      </div>
 
       <content-copy
         :size="20"
@@ -59,6 +68,11 @@ const handleCopyReport = () => {
 
   &__copy-icon {
     cursor: pointer;
+  }
+
+  &__elevation-info {
+    margin-block-end: 20px;
+    color: #db8b56;
   }
 
   &__text {

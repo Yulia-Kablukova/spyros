@@ -4,7 +4,6 @@ import { getTemplateSubtask } from "@/utils/report/templatesParsers";
 
 export const parseTask = (task, subtasks, taskDistance) => {
   subtasks.value = getSubtasks(task, taskDistance);
-  console.log(subtasks.value);
   taskDistance.value = Math.round(taskDistance.value * 2) / 2;
 };
 
@@ -19,6 +18,10 @@ const getSubtasks = (
       .replaceAll("\n", "")
       .replaceAll(/  +/g, "")
       .replaceAll(/ вкл\. [^+]* в любые моменты/g, "")
+      .replaceAll("(или день отдыха)", "")
+      .replaceAll(/лактат и /g, "")
+      .replaceAll(/ и лактат( после \d+ (и \d+ )?раза)?/g, "")
+      .replaceAll(/\(лактат( после \d+ (и \d+ )?раза)?\)/g, "")
       .replaceAll(
         /м\(до 22\)\((\d+:)?\d+(,\d+)?(-(\d+:)?\d+(,\d+)?)?\)/g,
         "м(до 22)"
@@ -113,9 +116,8 @@ const getSubtasks = (
       }
 
       subtask.task = filteredSplit;
-
       const timeLimit = filteredSplit.match(
-        /\((\d+:)?\d+(,\d+)?(-(\d+:)?\d+(,\d+)?)?( или быстрее)?\)$/
+        /(\((\d+:)?\d+(,\d+)?(-(\d+:)?\d+(,\d+)?)?( или быстрее)?\))$|(\(150 м-близко к max\+250 м-с\.к \d км\))$/
       );
       if (timeLimit) {
         filteredSplit = filteredSplit.substring(
@@ -150,7 +152,7 @@ const getSubtasks = (
 
       if (
         filteredSplit.match(/\+/) &&
-        !filteredSplit.match(/\d м-спринт\(близко к max\)\+\d м-с\.у\./)
+        !filteredSplit.match(/100 м-спринт\(близко к max\)\+300 м-с\.у\./)
       ) {
         subtask.subtasks = getSubtasks(
           filteredSplit,
@@ -188,7 +190,7 @@ const getSubtasks = (
 const splitTask = (initialTask) => {
   const taskSplitsArray = initialTask.split(/\+| или /);
 
-  for (let currentIndex = 0; currentIndex < taskSplitsArray.length; ) {
+  for (let currentIndex = 0; currentIndex < taskSplitsArray.length - 1; ) {
     if (
       taskSplitsArray[currentIndex].match(/\(/g)?.length ===
         taskSplitsArray[currentIndex].match(/\)/g)?.length ||
@@ -207,29 +209,47 @@ const splitTask = (initialTask) => {
 };
 
 const remakeFartlek = (split) => {
-  if (!split.match(/^\d+(,\d)? к?м\(.*\/.*\)/) || split.match(/\+/)) {
+  if (!split.match(/\d+(,\d)? к?м\(.*\/.*\)/) || split.match(/\+/)) {
     return split;
   }
 
-  const splitStart = split.match(/^\d+(,\d)? к?м\(/)[0];
-  const splitEnd = split.match(/\)(\(пульс( \(после .*\))?\))?$/)[0];
-  const splitCenter = split
-    .slice(splitStart.length, split.length - splitEnd.length)
-    .replace("/", "+");
+  const firstPart = split.match(/\(\d+(,\d+)? к?м.*\//)[0].slice(1, -1);
+  const secondPart = split.split("/")[1];
+  const closingIndex = findUnmatchedClosingIndex(secondPart);
+  const secondPartStart = secondPart.slice(0, closingIndex);
+  const secondPartEnd = secondPart.slice(closingIndex);
 
-  const totalDistance = getDistance(splitStart);
-  const firstPartDistance = getDistance(
-    split.match(/\(\d+(,\d+)? к?м/)[0].slice(1)
-  );
-  const secondPartDistance = getDistance(
-    split.match(/\/\d+(,\d+)? к?м/)[0].slice(1)
-  );
+  const totalDistance = getDistance(split.match(/\d+(,\d)? к?м\(/)[0]);
+  const firstPartDistance = getDistance(firstPart);
+  const secondPartDistance = getDistance(secondPartStart);
   const seriesCount = (
     totalDistance /
     (firstPartDistance + secondPartDistance)
   ).toFixed(0);
 
-  return `${splitStart}${seriesCount}х(${splitCenter})${splitEnd}`;
+  const splitStart = split.match(/[^(]+/)[0];
+
+  return `${splitStart}(${seriesCount}х(${firstPart}+${secondPartStart})${secondPartEnd}`;
+};
+
+const findUnmatchedClosingIndex = (str) => {
+  let balance = 0;
+
+  for (let i = 0; i < str.length; i++) {
+    const ch = str[i];
+
+    if (ch === "(") {
+      balance++;
+    } else if (ch === ")") {
+      balance--;
+
+      if (balance < 0) {
+        return i;
+      }
+    }
+  }
+
+  return -1;
 };
 
 const getRestDistance = (rest) => {
