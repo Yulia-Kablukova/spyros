@@ -127,7 +127,7 @@ export const getReport = (subtasks, task, dailyReportData, taskDistance) => {
   }
 
   if (
-    task.value.match(/(21)|(26) км\(7|9 км.*\+7|9 км.*\+7|8 км.*\)\(пульс\)/)
+    task.value.match(/(21|26) км\([79] км.*\+[79] км.*\+[78] км.*\)\(пульс\)/)
   ) {
     extraAverages.push({
       reportIndex: 2,

@@ -27,7 +27,9 @@ const getSubtasks = (
     );
 
   if (
-    formattedTask.match(/(21)|(26) км\(7|9 км.*\+7|9 км.*\+7|8 км.*\)\(пульс\)/)
+    formattedTask.match(
+      /(21|26) км\([79] км.*\+[79] км.*\+[78] км.*\)\(пульс\)/
+    )
   ) {
     formattedTask =
       formattedTask.slice(6, formattedTask.length - 8).replace("(до 22)", "") +
@@ -35,7 +37,7 @@ const getSubtasks = (
   }
 
   const taskSplitsArray = splitTask(formattedTask);
-
+  console.log(taskSplitsArray);
   const subtasks = taskSplitsArray
     .map((split, index) => {
       // TODO: добавить try catch и при ошибке записывать ошибку и продолжать работу
