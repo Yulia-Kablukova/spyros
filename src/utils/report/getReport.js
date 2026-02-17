@@ -640,7 +640,7 @@ const getEnumerationData = (
       ? results.slice(startIndex, startIndex + seriesCount)
       : results;
     const formattedCutoffs = [];
-    let cutoffDistance = resultsType.value === CUTOFFS_1_KM.value ? 1 : 5;
+    let cutoffDistance = resultsType?.value === CUTOFFS_1_KM.value ? 1 : 5;
 
     reportCutoffs.forEach((result) => {
       if (saveCutoffs === 5 && resultsType.value === CUTOFFS_1_KM.value) {
