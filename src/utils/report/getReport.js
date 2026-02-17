@@ -17,7 +17,7 @@ export const getReport = (subtasks, task, dailyReportData, taskDistance) => {
       reportData.push(getGeneralReportData(subtask));
     }
   });
-  console.log(reportData);
+
   const extraAverages = [];
 
   reportData.forEach(({ averages }, index) => {
@@ -123,6 +123,19 @@ export const getReport = (subtasks, task, dailyReportData, taskDistance) => {
       distanceText: "400 м(общее)",
       totalTime,
       seriesCount,
+    });
+  }
+
+  if (
+    task.value.match(/(21)|(26) км\(7|9 км.*\+7|9 км.*\+7|8 км.*\)\(пульс\)/)
+  ) {
+    extraAverages.push({
+      reportIndex: 2,
+      type: "pace",
+      distance: task.value.match(/\d+/)[0],
+      totalTime: getTotalTime(
+        reportData.map(({ averages }) => averages[1].totalTime)
+      ),
     });
   }
 
@@ -623,13 +636,19 @@ const getEnumerationData = (
   seriesIndex
 ) => {
   if (results.length) {
-    const reportCutoffs = Number.isInteger(startIndex)
+    let reportCutoffs = Number.isInteger(startIndex)
       ? results.slice(startIndex, startIndex + seriesCount)
       : results;
     const formattedCutoffs = [];
+    let cutoffDistance = resultsType.value === CUTOFFS_1_KM.value ? 1 : 5;
 
     reportCutoffs.forEach((result) => {
-      if (saveCutoffs) {
+      if (saveCutoffs === 5 && resultsType.value === CUTOFFS_1_KM.value) {
+        for (let i = 0; i < result.length; i += 5) {
+          formattedCutoffs.push(getTotalTime(result.slice(i, i + 5)));
+        }
+        cutoffDistance = 5;
+      } else if (saveCutoffs) {
         formattedCutoffs.push(...result);
       } else {
         formattedCutoffs.push(getTotalTime(result));
@@ -654,7 +673,6 @@ const getEnumerationData = (
       if (!saveCutoffs) {
         return distance;
       }
-      const cutoffDistance = resultsType.value === CUTOFFS_1_KM.value ? 1 : 5;
       if (index < formattedCutoffs.length - 1) {
         return cutoffDistance;
       }
@@ -693,7 +711,6 @@ const getEnumerationData = (
       averages.push(...subtaskEnumeration.averages);
     });
   } else {
-    console.log(1111);
     for (let index = 0; index < seriesCount; index++) {
       subtasks.forEach((subtask) => {
         const subtaskEnumeration = getEnumerationData(

@@ -48,7 +48,7 @@ const emptySubtask = {
   results: [],
   pulseResults: [],
   resultsType: null,
-  saveCutoffs: false,
+  saveCutoffs: 0,
 };
 
 const getSeriesDistanceAndRest = (split) => {

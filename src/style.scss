@@ -79,6 +79,11 @@ input {
        opacity: 0.9;
     }
   }
+
+  &[type="radio"] {
+    cursor: pointer;
+    accent-color: #404040;
+  }
 }
 
 input::placeholder {

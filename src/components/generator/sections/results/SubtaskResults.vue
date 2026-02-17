@@ -47,8 +47,8 @@ const showSaveCutoffs = computed(() => {
   );
 });
 
-const getCutoffsDistance = computed(() => {
-  return props.subtask.resultsType?.value === CUTOFFS_5_KM.value ? 5 : 1;
+const showSave1KmCutoffs = computed(() => {
+  return props.subtask.resultsType.value === CUTOFFS_1_KM.value;
 });
 
 const getSubtaskLabel = computed(() => {
@@ -150,15 +150,26 @@ const handleResultsTypeChange = (value) => {
             </div>
           </div>
 
-          <div v-if="showSaveCutoffs" class="subtask__save-cutoffs-checkbox">
-            <input
-              :id="`save-cutoffs-${subtask.id}`"
-              v-model="subtask.saveCutoffs"
-              type="checkbox"
-            />
+          <div v-if="showSaveCutoffs" class="subtask__save-cutoffs-container">
+            <label class="subtask__save-cutoffs-button">
+              <input v-model="subtask.saveCutoffs" :value="0" type="radio" />
+              Не указывать отсечки в отчете
+            </label>
 
-            <label :for="`save-cutoffs-${subtask.id}`">
-              Указать в отчете отсечки по {{ getCutoffsDistance }} км
+            <label
+              v-if="showSave1KmCutoffs"
+              class="subtask__save-cutoffs-button"
+            >
+              <input v-model="subtask.saveCutoffs" :value="1" type="radio" />
+              Отсечь по 1 км
+            </label>
+
+            <label
+              v-if="subtask.distance > 5"
+              class="subtask__save-cutoffs-button"
+            >
+              <input v-model="subtask.saveCutoffs" :value="5" type="radio" />
+              Отсечь по 5 км
             </label>
           </div>
         </div>
@@ -248,19 +259,22 @@ const handleResultsTypeChange = (value) => {
     color: #717171;
   }
 
-  &__save-cutoffs-checkbox {
+  &__save-cutoffs-container {
     margin-top: 30px;
     display: flex;
+    gap: 15px;
+  }
+
+  &__save-cutoffs-button {
+    display: flex;
     align-items: center;
+    cursor: pointer;
+    line-height: 1;
 
     > input {
       width: 24px;
       height: 24px;
       margin-right: 10px;
-    }
-
-    > label {
-      cursor: pointer;
     }
   }
 }
@@ -280,8 +294,10 @@ const handleResultsTypeChange = (value) => {
       line-height: 18px;
     }
 
-    &__save-cutoffs-checkbox {
+    &__save-cutoffs-container {
       margin-top: 20px;
+      flex-direction: column;
+      gap: 10px;
     }
   }
 }

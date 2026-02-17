@@ -16,7 +16,8 @@
     "moment": "^2.29.4",
     "sass": "^1.69.5",
     "vue": "^3.2.13",
-    "vue-material-design-icons": "^5.2.0"
+    "vue-material-design-icons": "^5.2.0",
+    "vue-router": "^4.6.4"
   },
   "devDependencies": {
     "@babel/core": "^7.12.16",

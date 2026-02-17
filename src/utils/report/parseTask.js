@@ -13,20 +13,28 @@ const getSubtasks = (
   parentSeriesCount = 1,
   parentIndex = 0
 ) => {
-  const taskSplitsArray = splitTask(
-    task
-      .replaceAll("\n", "")
-      .replaceAll(/  +/g, "")
-      .replaceAll(/ вкл\. [^+]* в любые моменты/g, "")
-      .replaceAll("(или день отдыха)", "")
-      .replaceAll(/лактат и /g, "")
-      .replaceAll(/ и лактат( после \d+ (и \d+ )?раза)?/g, "")
-      .replaceAll(/\(лактат( после \d+ (и \d+ )?раза)?\)/g, "")
-      .replaceAll(
-        /м\(до 22\)\((\d+:)?\d+(,\d+)?(-(\d+:)?\d+(,\d+)?)?\)/g,
-        "м(до 22)"
-      )
-  );
+  let formattedTask = task
+    .replaceAll("\n", "")
+    .replaceAll(/  +/g, "")
+    .replaceAll(/ вкл\. [^+]* в любые моменты/g, "")
+    .replaceAll("(или день отдыха)", "")
+    .replaceAll(/лактат и /g, "")
+    .replaceAll(/ и лактат( после \d+ (и \d+ )?раза)?/g, "")
+    .replaceAll(/\(лактат( после \d+ (и \d+ )?раза)?\)/g, "")
+    .replaceAll(
+      /м\(до 22\)\((\d+:)?\d+(,\d+)?(-(\d+:)?\d+(,\d+)?)?\)/g,
+      "м(до 22)"
+    );
+
+  if (
+    formattedTask.match(/(21)|(26) км\(7|9 км.*\+7|9 км.*\+7|8 км.*\)\(пульс\)/)
+  ) {
+    formattedTask = formattedTask
+      .slice(6, formattedTask.length - 8)
+      .replace("(до 22)", "");
+  }
+
+  const taskSplitsArray = splitTask(formattedTask);
 
   const subtasks = taskSplitsArray
     .map((split, index) => {
@@ -67,7 +75,7 @@ const getSubtasks = (
         results: [],
         pulseResults: [],
         resultsType: TOTAL_TIME,
-        saveCutoffs: false,
+        saveCutoffs: 0,
       };
 
       let filteredSplit = remakeFartlek(split);
