@@ -29,9 +29,9 @@ const getSubtasks = (
   if (
     formattedTask.match(/(21)|(26) км\(7|9 км.*\+7|9 км.*\+7|8 км.*\)\(пульс\)/)
   ) {
-    formattedTask = formattedTask
-      .slice(6, formattedTask.length - 8)
-      .replace("(до 22)", "");
+    formattedTask =
+      formattedTask.slice(6, formattedTask.length - 8).replace("(до 22)", "") +
+      "(пульс)";
   }
 
   const taskSplitsArray = splitTask(formattedTask);
