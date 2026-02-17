@@ -153,7 +153,7 @@ const handleResultsTypeChange = (value) => {
           <div v-if="showSaveCutoffs" class="subtask__save-cutoffs-container">
             <label class="subtask__save-cutoffs-button">
               <input v-model="subtask.saveCutoffs" :value="0" type="radio" />
-              Не указывать отсечки в отчете
+              Не указывать отсечки
             </label>
 
             <label
@@ -260,7 +260,7 @@ const handleResultsTypeChange = (value) => {
   }
 
   &__save-cutoffs-container {
-    margin-top: 30px;
+    margin-top: 20px;
     display: flex;
     gap: 15px;
   }
@@ -295,9 +295,17 @@ const handleResultsTypeChange = (value) => {
     }
 
     &__save-cutoffs-container {
-      margin-top: 20px;
+      margin-top: 10px;
       flex-direction: column;
       gap: 10px;
+    }
+
+    &__save-cutoffs-button {
+      > input {
+        width: 20px;
+        height: 20px;
+        margin-right: 8px;
+      }
     }
   }
 }
