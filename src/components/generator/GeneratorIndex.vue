@@ -77,7 +77,7 @@ const handleBirthdayPopupClose = () => {
 
 <template>
   <div class="generator">
-    <h1 class="generator__heading">Генератор отчетов</h1>
+    <h1 class="generator__heading">Генератор отчетов<span>2.0.1</span></h1>
 
     <p class="generator__description">
       Инструмент для атоматизации написания отчетов по результатам тренировки.
@@ -152,6 +152,11 @@ const handleBirthdayPopupClose = () => {
 
   &__heading {
     margin-top: 60px;
+    > span {
+      margin-inline-start: 5px;
+      font-size: 16px;
+      color: #717171;
+    }
   }
 
   &__description {
@@ -206,6 +211,9 @@ const handleBirthdayPopupClose = () => {
 
     &__heading {
       margin-top: 30px;
+      > span {
+        font-size: 14px;
+      }
     }
 
     &__description {

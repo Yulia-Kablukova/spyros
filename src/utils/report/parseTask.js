@@ -37,7 +37,6 @@ const getSubtasks = (
   }
 
   const taskSplitsArray = splitTask(formattedTask);
-  console.log(taskSplitsArray);
   const subtasks = taskSplitsArray
     .map((split, index) => {
       // TODO: добавить try catch и при ошибке записывать ошибку и продолжать работу
