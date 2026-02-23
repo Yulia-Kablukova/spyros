@@ -90,9 +90,8 @@ const handleBirthdayPopupClose = () => {
     <h1 class="generator__heading">Генератор отчетов</h1>
 
     <p class="generator__description">
-      Инструмент для атоматизации создания отчетов по результатам тренировки.
-      <br />При возникновении ошибок пишите в тг:
-      <a href="https://t.me/djull_zzz" target="_blank">djull_zzz</a>
+      НОВАЯ ВЕРСИЯ:
+      <a href="https://spyrosrc.ru/gen">spyrosrc.ru/gen</a>
     </p>
 
     <textarea v-model="task" placeholder="Введите задание" />
@@ -164,6 +163,9 @@ const handleBirthdayPopupClose = () => {
   &__description {
     margin-top: 30px;
     margin-bottom: 30px;
+    padding: 20px;
+    background-color: rgba(241, 45, 61, 0.3);
+    border-radius: 5px;
   }
 
   &__task-options {
