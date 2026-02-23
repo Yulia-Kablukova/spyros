@@ -1,6 +1,8 @@
 <script setup>
 import { vMaska } from "maska";
 
+import { autoResize } from "@/utils/document-manipulation";
+
 const props = defineProps({
   data: {
     type: Object,
@@ -8,6 +10,10 @@ const props = defineProps({
     default: () => {},
   },
 });
+
+const getWeightMask = (index) => {
+  return props.data.weights[index] === "-" ? "-" : "##,#";
+};
 </script>
 
 <template>
@@ -43,7 +49,7 @@ const props = defineProps({
         </div>
       </div>
 
-      <textarea v-model="props.data.comment" />
+      <textarea v-model="props.data.comment" @input="autoResize" />
     </div>
 
     <div class="daily-report__data-block">
@@ -81,7 +87,7 @@ const props = defineProps({
           :key="`weight-${weightIndex}`"
           v-model="props.data.weights[weightIndex]"
           v-maska
-          :data-maska="'##,#'"
+          :data-maska="getWeightMask(weightIndex)"
           data-maska-reversed
         />
       </div>

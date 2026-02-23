@@ -4,9 +4,10 @@ import ResultsIndex from "@/components/generator/sections/results/ResultsIndex.v
 import DailyReportResults from "@/components/generator/sections/results/DailyReportResults.vue";
 import ReportIndex from "@/components/generator/sections/report/ReportIndex.vue";
 import ErrorPopupIndex from "@/components/generator/popups/ErrorPopupIndex.vue";
+import BirthdayPopupIndex from "@/components/generator/popups/BirthdayPopupIndex";
 import { parseTask } from "@/utils/report/parseTask";
 import { getReport } from "@/utils/report/getReport";
-import BirthdayPopupIndex from "@/components/generator/popups/BirthdayPopupIndex";
+import { autoResize } from "@/utils/document-manipulation";
 
 const task = ref("");
 const taskDistance = ref(0);
@@ -77,7 +78,7 @@ const handleBirthdayPopupClose = () => {
 
 <template>
   <div class="generator">
-    <h1 class="generator__heading">Генератор отчетов<span>2.0.1</span></h1>
+    <h1 class="generator__heading">Генератор отчетов<span>2.0.2</span></h1>
 
     <p class="generator__description">
       Инструмент для атоматизации написания отчетов по результатам тренировки.
@@ -89,7 +90,11 @@ const handleBirthdayPopupClose = () => {
       <a href="https://t.me/djull_zzz" target="_blank">djull_zzz</a>
     </p>
 
-    <textarea v-model="task" placeholder="Введите задание" />
+    <textarea
+      v-model="task"
+      placeholder="Введите задание"
+      @input="autoResize"
+    />
 
     <div class="generator__task-options">
       <button @click="handleResultsFill">Заполнить результаты</button>

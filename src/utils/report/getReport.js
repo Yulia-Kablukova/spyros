@@ -206,7 +206,13 @@ const getTemplateReportData = ({ templateType, task, results }) => {
   let report = "";
 
   if ([1, 2, 3].includes(templateType)) {
-    report += `${task}: ${results[0]}х${results[1]} раз`;
+    report += `${task}: `;
+
+    if (+results[0] > 1) {
+      report += `${results[0]}х`;
+    }
+
+    report += `${results[1]} раз`;
 
     if (templateType === 1) {
       report += `(${results[2]})`;

@@ -24,3 +24,9 @@ export const copyToClipboard = (str) => {
 
   document.body.removeChild(textarea);
 };
+
+export const autoResize = (e) => {
+  const el = e.target;
+  el.style.height = "auto";
+  el.style.height = el.scrollHeight - 40 + "px";
+};
