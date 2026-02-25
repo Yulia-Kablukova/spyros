@@ -101,8 +101,9 @@ export const getReport = (subtasks, task, dailyReportData, taskDistance) => {
   });
 
   if (
-    subtasks.value.some(({ task }) =>
-      task.match(/400 м\(150 м-близко к max\+250 м-с\.к \d км\)/)
+    subtasks.value.some(
+      ({ task }) =>
+        task && task.match(/400 м\(150 м-близко к max\+250 м-с\.к \d км\)/)
     )
   ) {
     const { reportIndex, totalTime, seriesCount } = reportData.reduce(
