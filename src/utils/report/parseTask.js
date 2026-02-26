@@ -231,14 +231,18 @@ const remakeFartlek = (split) => {
   const totalDistance = getDistance(split.match(/\d+(,\d)? к?м\(/)[0]);
   const firstPartDistance = getDistance(firstPart);
   const secondPartDistance = getDistance(secondPartStart);
-  const seriesCount = (
-    totalDistance /
-    (firstPartDistance + secondPartDistance)
-  ).toFixed(0);
+  const seriesCount = Math.floor(
+    totalDistance / (firstPartDistance + secondPartDistance)
+  );
+  const extraPart =
+    Math.ceil(totalDistance / (firstPartDistance + secondPartDistance)) >
+    seriesCount
+      ? `+${firstPart}`
+      : "";
 
   const splitStart = split.match(/[^(]+/)[0];
 
-  return `${splitStart}(${seriesCount}х(${firstPart}+${secondPartStart})${secondPartEnd}`;
+  return `${splitStart}(${seriesCount}х(${firstPart}+${secondPartStart})${extraPart}${secondPartEnd}`;
 };
 
 const findUnmatchedClosingIndex = (str) => {
