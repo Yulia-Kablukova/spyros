@@ -78,7 +78,7 @@ const handleBirthdayPopupClose = () => {
 
 <template>
   <div class="generator">
-    <h1 class="generator__heading">Генератор отчетов<span>2.0.4</span></h1>
+    <h1 class="generator__heading">Генератор отчетов<span>2.0.5</span></h1>
 
     <p class="generator__description">
       Инструмент для атоматизации написания отчетов по результатам тренировки.
