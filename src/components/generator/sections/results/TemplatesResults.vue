@@ -22,7 +22,14 @@ const props = defineProps({
         <input
           v-if="subtask.results.length > 2"
           v-model="subtask.results[2]"
-          placeholder="10 кг"
+          placeholder="Вес"
+          class="subtask__result-input--width"
+        />
+
+        <input
+          v-if="subtask.templateType === 3"
+          v-model="subtask.results[3]"
+          placeholder="Подтягивания"
           class="subtask__result-input--width"
         />
       </div>
