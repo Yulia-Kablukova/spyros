@@ -126,7 +126,7 @@ const getSubtasks = (
 
       subtask.task = filteredSplit;
       const timeLimit = filteredSplit.match(
-        /(\((\d+:)?\d+(,\d+)?(-(\d+:)?\d+(,\d+)?)?( или быстрее)?\))$|(\(150 м-близко к max\+250 м-с\.к \d км\))$/
+        /(\((\d+:)?\d+(,\d+)?(-(\d+:)?\d+(,\d+)?)?( или быстрее)?\))$|(\(((150)|(100)) м-близко к max\+((250)|(300)) м-с\.к \d км\))$/
       );
       if (timeLimit) {
         filteredSplit = filteredSplit.substring(
@@ -159,10 +159,7 @@ const getSubtasks = (
         filteredSplit = filteredSplit.substring(1, filteredSplit.length - 1);
       }
 
-      if (
-        filteredSplit.match(/\+/) &&
-        !filteredSplit.match(/100 м-спринт\(близко к max\)\+300 м-с\.у\./)
-      ) {
+      if (filteredSplit.match(/\+/)) {
         subtask.subtasks = getSubtasks(
           filteredSplit,
           taskDistance,

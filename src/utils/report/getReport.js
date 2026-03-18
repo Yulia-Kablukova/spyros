@@ -103,7 +103,10 @@ export const getReport = (subtasks, task, dailyReportData, taskDistance) => {
   if (
     subtasks.value.some(
       ({ task }) =>
-        task && task.match(/400 м\(150 м-близко к max\+250 м-с\.к \d км\)/)
+        task &&
+        task.match(
+          /400 м\(((150)|(100)) м-близко к max\+((250)|(300)) м-с\.к \d км\)/
+        )
     )
   ) {
     const { reportIndex, totalTime, seriesCount } = reportData.reduce(
@@ -177,7 +180,9 @@ export const getReport = (subtasks, task, dailyReportData, taskDistance) => {
           if (type === "time") {
             const description =
               !timeLimit ||
-              timeLimit.match(/\(150 м-близко к max\+250 м-с\.к \d км\)/)
+              timeLimit.match(
+                /\(((150)|(100)) м-близко к max\+((250)|(300)) м-с\.к \d км\)/
+              )
                 ? ""
                 : timeLimit;
 
@@ -306,7 +311,9 @@ const getGeneralReportData = (subtask) => {
       const showLimit =
         subtask.timeLimit &&
         !subtask.timeLimit.match(/[1-9]:\d/) &&
-        !subtask.timeLimit.match(/\(150 м-близко к max\+250 м-с\.к \d км\)/);
+        !subtask.timeLimit.match(
+          /\(((150)|(100)) м-близко к max\+((250)|(300)) м-с\.к \d км\)/
+        );
 
       const timeLimit = showLimit ? subtask.timeLimit : "";
 
