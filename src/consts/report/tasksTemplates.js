@@ -1,15 +1,15 @@
 export const templates = [
   {
     type: 1,
-    regexp: /^пресс$/i,
+    regexp: /^пресс(\(\d сери.\))?$/i,
   },
   {
     type: 2,
-    regexp: /^спина$/i,
+    regexp: /^спина(\(\d сери.\))?$/i,
   },
   {
     type: 3,
-    regexp: /^руки$/i,
+    regexp: /^руки(\(\d сери.\))?$/i,
   },
   {
     type: 4,
