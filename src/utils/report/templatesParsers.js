@@ -31,6 +31,10 @@ export const getTemplateSubtask = (split, templateType, taskDistance) => {
       return parseType27(taskDistance);
     case 28:
       return parseType28(taskDistance);
+    case 31:
+      return parseType31(taskDistance);
+    case 32:
+      return parseType32(taskDistance);
     default:
       return null;
   }
@@ -221,6 +225,16 @@ const parseType28 = (taskDistance) => {
     results: [[undefined]],
     pulseResults: Array(3),
   };
+};
+
+const parseType31 = (taskDistance) => {
+  taskDistance.value += 0.25;
+  return null;
+};
+
+const parseType32 = (taskDistance) => {
+  taskDistance.value += 0.05;
+  return null;
 };
 
 const getFormattedTask = (task) => {

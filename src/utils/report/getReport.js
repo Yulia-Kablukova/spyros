@@ -592,7 +592,7 @@ export const getSubtaskReportData = (subtask, seriesIndex) => {
           report += `(${timeBy5km})`;
         }
 
-        if (mergedDistance % 10 === 0) {
+        if (subtask.distance > 10 && mergedDistance % 10 === 0) {
           let timeBy10km = null;
           if (mergedDistance === 10) {
             timeBy10km = getTotalTime(
