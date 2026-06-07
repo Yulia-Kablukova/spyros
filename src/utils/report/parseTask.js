@@ -16,7 +16,8 @@ const getSubtasks = (
   let formattedTask = task
     .replaceAll("\n", "")
     .replaceAll(/  +/g, "")
-    .replaceAll(/ вкл\. [^+]* в любые моменты/g, "")
+    .replaceAll(/[ ,]вкл\. [^+]* в любые моменты/g, "")
+    .replaceAll(/ под гору/g, "")
     .replaceAll("(или день отдыха)", "")
     .replaceAll(/лактат и /g, "")
     .replaceAll(/ и лактат( после \d+ (и \d+ )?раза)?/g, "")
