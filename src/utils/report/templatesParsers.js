@@ -83,7 +83,7 @@ const parseType1 = () => {
     ...emptySubtask,
     templateType: 1,
     task: "Пресс",
-    results: [1, "15", "10 кг"],
+    results: [2, "10", "10 кг"],
   };
 };
 
@@ -92,7 +92,7 @@ const parseType2 = () => {
     ...emptySubtask,
     templateType: 2,
     task: "Спина",
-    results: [1, "15"],
+    results: [2, "10"],
   };
 };
 
@@ -101,7 +101,7 @@ const parseType3 = () => {
     ...emptySubtask,
     templateType: 3,
     task: "Руки",
-    results: [1, "15", "10 кг, 30 кг", null],
+    results: [2, "10", "10 кг, 30 кг", 5],
   };
 };
 

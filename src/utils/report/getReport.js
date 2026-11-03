@@ -225,7 +225,7 @@ const getTemplateReportData = ({ templateType, task, results }) => {
     }
     if (templateType === 3 && ![null, "-", "0"].includes(results[3])) {
       const ending = [2, 3, 4].includes(+results[3]) ? "а" : "";
-      report += ` и ${results[3]} раз${ending}`;
+      report += `, ${results[3]} раз${ending}`;
     }
     if (templateType === 3) {
       report += `(${results[2]})`;
