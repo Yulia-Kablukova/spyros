@@ -7,7 +7,16 @@ import ErrorPopupIndex from "@/components/generator/popups/ErrorPopupIndex.vue";
 import BirthdayPopupIndex from "@/components/generator/popups/BirthdayPopupIndex";
 import { parseTask } from "@/utils/report/parseTask";
 import { getReport } from "@/utils/report/getReport";
+import { parseTaskOld } from "@/utils/report/parseTaskOld";
+import { getReportOld } from "@/utils/report/getReportOld";
 import { autoResize } from "@/utils/document-manipulation";
+
+const props = defineProps({
+  isOld: {
+    type: Boolean,
+    required: false,
+  },
+});
 
 const task = ref("");
 const taskDistance = ref(0);
@@ -37,7 +46,8 @@ const getTaskDistance = computed(() => {
 const handleResultsFill = () => {
   task.value = task.value.trim().replaceAll('"', "").trim();
   resetResults();
-  parseTask(task.value, subtasks, taskDistance);
+  const method = props.isOld ? parseTaskOld : parseTask;
+  method(task.value, subtasks, taskDistance);
   isFillResults.value = true;
 };
 
@@ -63,7 +73,8 @@ const hasResults = computed(() => {
 });
 
 const handleGetReport = () => {
-  report.value = getReport(subtasks, task, dailyReportData, taskDistance);
+  const method = props.isOld ? getReportOld : getReport;
+  report.value = method(subtasks, task, dailyReportData, taskDistance);
 };
 
 const handleErrorPopupClose = () => {
@@ -78,12 +89,13 @@ const handleBirthdayPopupClose = () => {
 
 <template>
   <div class="generator">
-    <h1 class="generator__heading">Генератор отчетов<span>2.0.9</span></h1>
+    <h1 class="generator__heading">Генератор отчетов<span>2.1.0</span></h1>
 
     <p class="generator__description">
       Инструмент для написания отчетов по результатам тренировки.
       <br />При любых неполадках пишите в тг:
       <a href="https://t.me/djull_zzz" target="_blank">djull_zzz</a>
+      <br /><router-link to="/gen-old">Старая версия</router-link>
     </p>
 
     <textarea

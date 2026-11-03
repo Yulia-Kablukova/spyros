@@ -11,7 +11,7 @@ export const getReport = (subtasks, task, dailyReportData, taskDistance) => {
   subtasks.value.forEach((subtask, index) => {
     if (subtask.templateType) {
       reportData.push(getTemplateReportData(subtask));
-    } else if (subtask.pulseZone === "(до 22)" && subtask.distance >= 1) {
+    } else if (subtask.runEffort === "(т)" && subtask.distance >= 1) {
       reportData.push(getRecoveryReportData(subtask, index, subtasks.value));
     } else {
       reportData.push(getGeneralReportData(subtask));
@@ -80,7 +80,7 @@ export const getReport = (subtasks, task, dailyReportData, taskDistance) => {
             type === "pace" &&
             type === average.type &&
             timeLimit === average.timeLimit &&
-            timeLimit !== "(до 22)"
+            timeLimit !== "(т)"
           ) {
             const extraIndex = extraAverages.findIndex(
               (extra) => extra.type === type && extra.timeLimit === timeLimit
@@ -270,7 +270,7 @@ const getRecoveryReportData = (
   subtasks
 ) => {
   const warmUpCoolDownIndex = subtasks.findIndex((subtask) => {
-    return subtask.pulseZone === "(до 22)" && subtask.id !== id;
+    return subtask.runEffort === "(т)" && subtask.id !== id;
   });
   let report = "";
 
@@ -325,7 +325,7 @@ const getGeneralReportData = (subtask) => {
   } else if (!subtask.distance && subtask.subtasks.length) {
     subtask.subtasks.forEach((task, index) => {
       const data = getGeneralReportData(task);
-      if (task.pulseZone !== "(до 22)") {
+      if (task.runEffort !== "(т)") {
         report += data.report;
         if (index < subtask.subtasks.length - 1) {
           report += "\n";
@@ -395,7 +395,7 @@ const getGeneralReportData = (subtask) => {
       type: "time",
       distance: subtask.rest.distance,
       distanceText: `${subtask.rest.distance * 1000} м`,
-      timeLimit: "(до 22)",
+      timeLimit: "(т)",
       seriesCount: subtask.rest.results.length,
       totalTime: getAccumulatedTimeInSeconds(subtask.rest.results),
       isRest: true,
@@ -624,7 +624,7 @@ export const getSubtaskReportData = (subtask, seriesIndex) => {
     averages.push({
       type: "pace",
       distance: subtask.distance,
-      timeLimit: subtask.timeLimit || subtask.pulseZone,
+      timeLimit: subtask.timeLimit || subtask.runEffort,
       totalTime,
       isRest: false,
     });
@@ -646,7 +646,7 @@ const getEnumerationData = (
     totalSeriesCount,
     distance,
     timeLimit,
-    pulseZone,
+    runEffort,
     rest,
     resultsType,
     saveCutoffs,
@@ -680,7 +680,7 @@ const getEnumerationData = (
             type: "time",
             distance: rest.distance,
             distanceText: `${rest.distance * 1000} м`,
-            timeLimit: "(до 22)",
+            timeLimit: "(т)",
             seriesCount: rest.results.length,
             totalTime: getAccumulatedTimeInSeconds(rest.results),
             isRest: true,
@@ -708,7 +708,7 @@ const getEnumerationData = (
           type: "time",
           distance: distance,
           distanceText: getDistanceText({ task }),
-          timeLimit: timeLimit || pulseZone,
+          timeLimit: timeLimit || runEffort,
           seriesCount: saveCutoffs ? totalSeriesCount : formattedCutoffs.length,
           totalTime: getAccumulatedTimeInSeconds(formattedCutoffs),
           isRest: false,
@@ -745,7 +745,7 @@ const getEnumerationData = (
         type: "time",
         distance: rest.distance,
         distanceText: `${rest.distance * 1000} м`,
-        timeLimit: "(до 22)",
+        timeLimit: "(т)",
         seriesCount: rest.results.length,
         totalTime: getAccumulatedTimeInSeconds(rest.results),
         isRest: true,

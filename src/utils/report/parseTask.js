@@ -13,6 +13,7 @@ const getSubtasks = (
   parentSeriesCount = 1,
   parentIndex = 0
 ) => {
+  const timeConstraints = "\\((\\d+:)?\\d+(,\\d+)?(-(\\d+:)?\\d+(,\\d+)?)?\\)";
   let formattedTask = task
     .replaceAll("\n", "")
     .replaceAll(/  +/g, "")
@@ -22,13 +23,13 @@ const getSubtasks = (
     .replaceAll(/лактат и /g, "")
     .replaceAll(/ и лактат( после \d+ (и \d+ )?раза)?/g, "")
     .replaceAll(/\(лактат( после \d+ (и \d+ )?раза)?\)/g, "")
+    .replaceAll(/м\(т\)\((\d+:)?\d+(,\d+)?(-(\d+:)?\d+(,\d+)?)?\)/g, "м(т)")
     .replaceAll(
-      /м\(до 22\)\((\d+:)?\d+(,\d+)?(-(\d+:)?\d+(,\d+)?)?\)/g,
-      "м(до 22)"
-    )
-    .replaceAll(
-      /\(1 км\(до 22\)\+1 км\(до 22\)\+500 м\(до 22\)\+500 м\(до 25\)(\((\d+:)?\d+(,\d+)?(-(\d+:)?\d+(,\d+)?)?\))?\)/g,
-      "(до 22)"
+      new RegExp(
+        `\\(1 км\\(т\\)\\+500 м\\(т\\)\\+500 м\\(т\\)\\+500 м\\(мрб\\)(${timeConstraints})?\\+500 м\\(алб\\)(${timeConstraints})?\\)`,
+        "g"
+      ),
+      "(т)"
     );
 
   if (
@@ -37,7 +38,7 @@ const getSubtasks = (
     )
   ) {
     formattedTask =
-      formattedTask.slice(6, formattedTask.length - 8).replace("(до 22)", "") +
+      formattedTask.slice(6, formattedTask.length - 8).replace("(т)", "") +
       "(пульс)";
   }
 
@@ -75,7 +76,7 @@ const getSubtasks = (
         totalSeriesCount: parentSeriesCount,
         distance: 0,
         timeLimit: null,
-        pulseZone: null,
+        runEffort: null,
         rest: null,
         subtasks: [],
         results: [],
@@ -108,7 +109,7 @@ const getSubtasks = (
       }
 
       const rest = filteredSplit.match(
-        /\(через (\d+(,\d)? (мин\.)?(сек.)? отдыха(\(в конце \d+ м\(до 22\)\))?)?(\d+ м\(до 22\))?\)$/
+        /\(через (\d+(,\d)? (мин\.)?(сек.)? отдыха(\(в конце \d+ м\(т\)\))?)?(\d+ м\(т\))?\)$/
       );
       if (rest) {
         filteredSplit = filteredSplit.substring(
@@ -116,14 +117,14 @@ const getSubtasks = (
           filteredSplit.length - rest[0].length
         );
 
-        if (rest[0].match(/через \d+ м\(до 22\)/)) {
+        if (rest[0].match(/через \d+ м\(т\)/)) {
           subtask.rest = {
             distance: getRestDistance(rest[0]),
             results: Array(subtask.totalSeriesCount - 1),
           };
           taskDistance.value +=
             subtask.rest.results.length * subtask.rest.distance;
-        } else if (rest[0].match(/\(в конце \d+ м\(до 22\)\)/)) {
+        } else if (rest[0].match(/\(в конце \d+ м\(т\)\)/)) {
           taskDistance.value +=
             (subtask.totalSeriesCount - 1) * getRestDistance(rest[0]);
         }
@@ -141,13 +142,13 @@ const getSubtasks = (
         subtask.timeLimit = timeLimit[0];
       }
 
-      const pulseZone = filteredSplit.match(/\(до \d+\)$/);
-      if (pulseZone) {
+      const runEffort = filteredSplit.match(/\((?:т|мрб|алб|асб)\)$/);
+      if (runEffort) {
         filteredSplit = filteredSplit.substring(
           0,
-          filteredSplit.length - pulseZone[0].length
+          filteredSplit.length - runEffort[0].length
         );
-        subtask.pulseZone = pulseZone[0];
+        subtask.runEffort = runEffort[0];
       }
 
       const distance = filteredSplit.match(/^\d+(,\d+)? к?м/);
@@ -185,7 +186,7 @@ const getSubtasks = (
   return subtasks
     .map((subtask, index) => {
       if (
-        subtask.pulseZone === "(до 22)" &&
+        subtask.runEffort === "(т)" &&
         index > 0 &&
         subtask.distance === subtasks[index - 1].rest?.distance
       ) {
@@ -207,6 +208,7 @@ const splitTask = (initialTask) => {
         taskSplitsArray[currentIndex].match(/\)/g)?.length ||
       taskSplitsArray[currentIndex].match(/силовая нагрузка/)
     ) {
+      taskSplitsArray[currentIndex] = taskSplitsArray[currentIndex].trim();
       currentIndex++;
       continue;
     }
@@ -268,7 +270,7 @@ const findUnmatchedClosingIndex = (str) => {
 };
 
 const getRestDistance = (rest) => {
-  const distanceMatch = rest.match(/\d+ м\(до 22\)/);
+  const distanceMatch = rest.match(/\d+ м\(т\)/);
   return distanceMatch ? getDistance(distanceMatch[0]) : 0;
 };
 

@@ -21,7 +21,7 @@ const props = defineProps({
 
 const getResultsTypes = computed(() => {
   const resultsTypes = [TOTAL_TIME];
-  const { distance, pulseZone } = props.subtask;
+  const { distance, runEffort } = props.subtask;
 
   if (distance > 1) {
     resultsTypes.push(CUTOFFS_1_KM);
@@ -31,7 +31,7 @@ const getResultsTypes = computed(() => {
     resultsTypes.push(CUTOFFS_5_KM);
   }
 
-  if (distance >= 1 && pulseZone === "(до 22)") {
+  if (distance >= 1 && runEffort === "(т)") {
     resultsTypes.push(AVERAGE_PACE);
   }
 
@@ -39,10 +39,10 @@ const getResultsTypes = computed(() => {
 });
 
 const showSaveCutoffs = computed(() => {
-  const { resultsType, pulseZone, totalSeriesCount } = props.subtask;
+  const { resultsType, runEffort, totalSeriesCount } = props.subtask;
   return (
     [CUTOFFS_1_KM.value, CUTOFFS_5_KM.value].includes(resultsType?.value) &&
-    pulseZone !== "(до 22)" &&
+    runEffort !== "(т)" &&
     totalSeriesCount === 1
   );
 });
@@ -66,11 +66,11 @@ const getSubtaskLabel = computed(() => {
 });
 
 const getTaskText = computed(() => {
-  const { task, timeLimit, pulseZone } = props.subtask;
+  const { task, timeLimit, runEffort } = props.subtask;
   const match = task.match(/^(\d+х)?\d+(,\d)? (км)?(м)?/);
 
-  return match && (timeLimit || pulseZone)
-    ? `${match[0]}${timeLimit || pulseZone}`
+  return match && (timeLimit || runEffort)
+    ? `${match[0]}${timeLimit || runEffort}`
     : task;
 });
 
@@ -187,7 +187,7 @@ const handleResultsTypeChange = (value) => {
       </div>
 
       <div v-if="subtask.rest" class="subtask__container">
-        <div>{{ getRestDistance(subtask.rest.distance) }} м(до 22)</div>
+        <div>{{ getRestDistance(subtask.rest.distance) }} м(т)</div>
         <div class="subtask__result-inputs">
           <input
             v-for="(result, resultIndex) in subtask.rest.results"

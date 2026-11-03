@@ -14,6 +14,7 @@ export const getTemplateSubtask = (split, templateType, taskDistance) => {
     case 11:
     case 12:
     case 26:
+    case 33:
       return parseType10(split, taskDistance);
     case 13:
     case 14:
@@ -46,7 +47,7 @@ const emptySubtask = {
   seriesCount: 1,
   distance: 0,
   timeLimit: null,
-  pulseZone: null,
+  runEffort: null,
   rest: null,
   subtasks: [],
   results: [],
@@ -71,7 +72,7 @@ const getSeriesDistanceAndRest = (split) => {
     distance /= 1000;
   }
 
-  const restMatches = split.match(/\(через \d+ м\(до 22\)/);
+  const restMatches = split.match(/\(через \d+ м\(т\)/);
   const rest = restMatches ? +restMatches[0].match(/\d+/)[0] / 1000 : 0;
 
   return { seriesCount, distance, rest };
@@ -158,7 +159,7 @@ const parseHillType = (split, taskDistance, templateType) => {
     taskDistance.value += (seriesCount * 10 * subdistance) / 1000;
   }
 
-  const rest = split.match(/через \d+ м\(до 22\)/g);
+  const rest = split.match(/через \d+ м\(т\)/g);
 
   if (!rest) {
     return null;
