@@ -1,11 +1,11 @@
 export const getTemplateSubtask = (split, templateType, taskDistance) => {
   switch (templateType) {
     case 1:
-      return parseType1();
+      return parseType1(split);
     case 2:
-      return parseType2();
+      return parseType2(split);
     case 3:
-      return parseType3();
+      return parseType3(split);
     case 4:
       return parseType4(split);
     case 9:
@@ -78,30 +78,38 @@ const getSeriesDistanceAndRest = (split) => {
   return { seriesCount, distance, rest };
 };
 
-const parseType1 = () => {
+const parseType1 = (split) => {
+  const counts = split.match(/\d+/g);
   return {
     ...emptySubtask,
     templateType: 1,
     task: "Пресс",
-    results: [2, "10", "10 кг"],
+    results: [counts?.[0] || 1, counts?.[1] || 15, "10 кг"],
   };
 };
 
-const parseType2 = () => {
+const parseType2 = (split) => {
+  const counts = split.match(/\d+/g);
   return {
     ...emptySubtask,
     templateType: 2,
     task: "Спина",
-    results: [2, "10"],
+    results: [counts?.[0] || 1, counts?.[1] || 15],
   };
 };
 
-const parseType3 = () => {
+const parseType3 = (split) => {
+  const counts = split.match(/\d+/g);
   return {
     ...emptySubtask,
     templateType: 3,
     task: "Руки",
-    results: [2, "10", "10 кг, 30 кг", 5],
+    results: [
+      counts?.[0] || 1,
+      counts?.[1] || 15,
+      "10 кг, 30 кг",
+      counts?.[2] || 5,
+    ],
   };
 };
 

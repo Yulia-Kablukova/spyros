@@ -95,7 +95,7 @@ const handleBirthdayPopupClose = () => {
       Инструмент для написания отчетов по результатам тренировки.
       <br />При любых неполадках пишите в тг:
       <a href="https://t.me/djull_zzz" target="_blank">djull_zzz</a>
-      <br /><router-link to="/gen-old">Старая версия</router-link>
+      <br /><router-link v-if="!isOld" to="/gen-v2">Старая версия</router-link>
     </p>
 
     <textarea
